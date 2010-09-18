@@ -15,7 +15,7 @@ var PlanetWars = require('./PlanetWars');
 
 function DoTurn(pw) {
     // (1) If we currently have a fleet in flight, just do nothing.
-    if ( pw.myFleets.length >= 1 ) {
+    if ( pw.myFleets.length >= 3 ) {
         return;
     }
 
@@ -31,7 +31,7 @@ function DoTurn(pw) {
     plen = myPlanets.length;
     for (pi = 0; pi < plen; pi++) {
         p = myPlanets[pi];
-        score = p.ships;
+        score = p.ships / (1 + p.growth);
         if (score > sourceScore ) {
             sourceScore = score;
             source = p.id;
@@ -46,7 +46,7 @@ function DoTurn(pw) {
     plen = notMyPlanets.length;
     for (pi = 0; pi < plen; pi++) {
         p = notMyPlanets[pi];
-        score = 1.0 / (1 + p.ships);
+        score = (1.0 + p.growth) / (1 + p.ships);
         if (score > destScore) {
             destScore = score;
             dest = p.id;
