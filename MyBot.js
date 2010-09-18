@@ -57,7 +57,7 @@ function DoTurn(pw) {
     // planet that I do not own.
     if ( source >= 0 && dest >= 0 ) {
         numShips = Math.floor(sourceShips / 2);
-        pw.IssueOrder(source, dest, numShips);
+        pw.issueOrder(source, dest, numShips);
     }
 }
 
