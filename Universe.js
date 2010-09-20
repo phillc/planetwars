@@ -1,27 +1,25 @@
-exports.Universe = function(planets, fleets) {
-    var i;
-    var planetsLength = planets.length;
+var Universe = function(planets, fleets) {
     var myPlanets = [];
     var enemyPlanets = [];
     var neutralPlanets = [];
-    var planet;
     var planetsByOwner = [ neutralPlanets, myPlanets, enemyPlanets ];
-    var owner;
-    for (i = 0; i < planetsLength; i++) {
-        planet = planets[i];
-        owner = planet.owner;
+    for (var i = 0; i <= planets.length; i++) {
+        var planet = planets[i];
+        var owner = planet.owner;
         planetsByOwner[owner < 0 || owner > 1 ? 2 : owner].push(planet);
     }
-
+    
     var myFleets = [];
     var enemyFleets = [];
     var fleetsLength = fleets.length;
     var fleetsByOwner = [ myFleets, enemyFleets ];
-    var fleet;
-    for (i = 0; i < fleetsLength; i++) {
-        fleet = fleets[i];
-        owner = fleet.owner;
+    for (var i = 0; i < fleetsLength; i++) {
+        var fleet = fleets[i];
+        var owner = fleet.owner;
         fleetsByOwner[owner == 1 ? 0 : 1].push(fleet);
+        fleet.owner == planets[fleet.dest].owner ? planets[fleet.dest].addFriendlyIncomingFleet(fleet)
+                                                        : planets[fleet.dest].addEnemyIncomingFleet(fleet);
+        
     }
 
     this.planets           = planets,
@@ -41,3 +39,5 @@ exports.Universe = function(planets, fleets) {
                 Math.floor(dest) + ' ' + Math.floor(ships) + '\n');
     }
 }
+
+exports.Universe = Universe;

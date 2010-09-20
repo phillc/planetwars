@@ -1,4 +1,4 @@
-exports.Fleet = function(id, owner, ships, source, dest, totalLength, remaining) {
+var Fleet = function(id, owner, ships, source, dest, totalLength, remaining) {
     this.id          = id;
     this.owner       = owner;
     this.ships       = ships;
@@ -7,3 +7,9 @@ exports.Fleet = function(id, owner, ships, source, dest, totalLength, remaining)
     this.totalLength = totalLength;
     this.remaining   = remaining;
 }
+
+Fleet.prototype.arriveBy = function(turns) {
+    return this.remaining <= turns
+}
+
+exports.Fleet = Fleet;
