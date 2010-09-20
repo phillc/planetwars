@@ -1,4 +1,8 @@
 .project
 .settings/
-staging/
+commentary.txt
 log.txt
+staging/
+video.txt
+
+
