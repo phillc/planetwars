@@ -4,41 +4,65 @@ var vows = require('vows'),
 var Planet = require('../Planet').Planet,
     Fleet = require('../Fleet').Fleet;
 
-vows.describe('Planet').addBatch({
-    'A Planet' : {
-        'effectiveDefensiveValue()' : {
-            'when the growth rate is 3 and 2 ships are already there,' : {
-                topic: function(){
-                    return new Planet(null, null, null, 1, 2, 3);
-                },
-                'right now is 2' : function(planet){
-                    assert.equal(planet.effectiveDefensiveValue(), 2);
-                },
-                'in 3 turns is 11' : function(planet) {
-                    assert.equal(planet.effectiveDefensiveValue(3), 11);
-                },
-                'when 5 enemy ships are 4 turns away' : {
-                    topic : function(planet){
-                        planet.addEnemyIncomingFleet(new Fleet(null, 1, 5, null, null, null, 4));
-                        return planet;
-                    },
-                    'right now is 2' : function(planet) {
-                        assert.equal(planet.effectiveDefensiveValue(), 2);
-                    },
-                    'in 3 turns is 11' : function(planet) {
-                        assert.equal(planet.effectiveDefensiveValue(3), 11);
-                    },
-                    'in 4 turns is 9' : function(planet) {
-                        assert.equal(planet.effectiveDefensiveValue(4), 9);
-                    }
-                },
-                'when ships are reinforcing' : {
-                    
-                },
-                'when tons of shit happens' : {
-                
-                }
-            }
+vows.describe('Planet effectiveDefensiveValue()').addBatch({
+    'when the growth rate is 3 and 2 ships are already there,' : {
+        topic: function(){
+            return new Planet(null, null, null, null, 2, 3);
+        },
+        'right now is 2' : function(planet){
+            assert.equal(planet.effectiveDefensiveValue(), 2);
+        },
+        'in 3 turns is 11' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(3), 11);
+        }
+    }
+}).addBatch({
+    'when the growth rate is 3, 2 ships are already there, and a fleet of 5 enemy ships are 4 turns away' : {
+        topic : function(){
+            planet = new Planet(null, null, null, null, 2, 3);
+            planet.addEnemyIncomingFleet(new Fleet(null, null, 5, null, null, null, 4));
+            return planet;
+        },
+        'right now is 2' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(), 2);
+        },
+        'in 3 turns is 11' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(3), 11);
+        },
+        'in 4 turns is 9' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(4), 9);
+        }
+    },
+}).addBatch({
+    'when the growth rate is 3, 2 ships are already there, and 9 ships are reinforcing in 3 turns' : {
+        topic : function(){
+            planet = new Planet(null, null, null, null, 2, 3);
+            planet.addFriendlyIncomingFleet(new Fleet(null, null, 9, null, null, null, 3));
+            return planet;
+        },
+        'right now is 2' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(), 2);
+        },
+        'in 3 turns is 20' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(3), 20);
+        },
+    }
+}).addBatch({
+    'when the growth rate is 5, 15 ships are already there, 20 enemy ships are 4 turns away, and 10 ships are reinforcing in 3 turns' : {
+        topic : function() {
+            planet = new Planet(null, null, null, null, 15, 5);
+            planet.addFriendlyIncomingFleet(new Fleet(null, null, 10, null, null, null, 3));
+            planet.addEnemyIncomingFleet(new Fleet(null, null, 20, null, null, null, 4));
+            return planet;
+        },
+        'right now is 15' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(), 15);
+        },
+        'in 3 turns is 40' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(3), 40);
+        },
+        'in 4 turns is 25' : function(planet) {
+            assert.equal(planet.effectiveDefensiveValue(4), 25);
         }
     }
 }).export(module);

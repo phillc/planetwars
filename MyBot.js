@@ -13,45 +13,25 @@
 
 var PlanetWars = require('./PlanetWars');
 
+var distance = function(a, b){
+    var x1 = a.x;
+    var y1 = a.y;
+    var x2 = b.x;
+    var y2 = b.y
+    return sqrt(abs(x2 - x1)^2 + abs(y2-y1)^2);
+}
+
 function DoTurn(pw) {
-    // (1) If we currently have a fleet in flight, just do nothing.
-    if ( pw.myFleets.length >= 3 ) {
-        return;
-    }
-
-    // (2) Find my strongest planet.
-    var source = -1;
-    var score;
-    var sourceScore = -999999.0;
-    var sourceShips = 0;
     var myPlanets = pw.myPlanets;
-    var p, pi, plen;
-    var dest, destScore, notMyPlanets;
-    var numShips;
-    plen = myPlanets.length;
-    for (pi = 0; pi < plen; pi++) {
-        p = myPlanets[pi];
-        score = p.ships / (1 + p.growth);
-        if (score > sourceScore ) {
-            sourceScore = score;
-            source = p.id;
-            sourceShips = p.ships;
-        }
+    var myPlanetsByScore = myPlanets.slice(0) //copy array
+    myPlanetsByScore.sort(function(a, b){
+        (a.ships / (1 + a.growth)) - (b.ships / (1 + b.growth))
+    })
+    
+    for(var planetNum in myPlanetsByScore) {
+        myPlanetsByScore[planetNum]
     }
-
-    // (3) Find the weakest enemy or neutral planet.
-    dest = -1;
-    destScore = -999999.0;
-    notMyPlanets = pw.notMyPlanets;
-    plen = notMyPlanets.length;
-    for (pi = 0; pi < plen; pi++) {
-        p = notMyPlanets[pi];
-        score = (1.0 + p.growth) / (1 + p.ships);
-        if (score > destScore) {
-            destScore = score;
-            dest = p.id;
-        }
-    }
+    
 
     // (4) Send half the ships from my strongest planet to the weakest
     // planet that I do not own.

@@ -12,6 +12,8 @@ var Planet = function(id, x, y, owner, ships, growth) {
 Planet.prototype.effectiveDefensiveValue = function(turns) {
     var willIncreaseBy = 0;
     var willBeAttackedBy = 0;
+    var willBeReinforcedBy = 0;
+    
     if(turns != null) {
         willIncreaseBy = turns * this.growth;
         for(var fleetNum in this.enemyIncomingFleets) {
@@ -20,8 +22,15 @@ Planet.prototype.effectiveDefensiveValue = function(turns) {
                 willBeAttackedBy += fleet.ships;
             }
         }
+        for(var fleetNum in this.friendlyIncomingFleets) {
+            var fleet = this.friendlyIncomingFleets[fleetNum];
+            if(fleet.arriveBy(turns)) {
+                willBeReinforcedBy += fleet.ships;
+            }
+        }
     }
-    return this.ships + willIncreaseBy - willBeAttackedBy;
+    
+    return this.ships + willIncreaseBy - willBeAttackedBy + willBeReinforcedBy;
 }
 
 Planet.prototype.addEnemyIncomingFleet = function(fleet) {
@@ -30,6 +39,10 @@ Planet.prototype.addEnemyIncomingFleet = function(fleet) {
 
 Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
     this.friendlyIncomingFleets.push(fleet);
+}
+
+Planet.prototype.neededToDefend = function(){
+    // max (each incomign ship(number of ships + growth * turns ships away))
 }
 
 exports.Planet = Planet;
