@@ -3,7 +3,7 @@ var Universe = function(planets, fleets) {
     var enemyPlanets = [];
     var neutralPlanets = [];
     var planetsByOwner = [ neutralPlanets, myPlanets, enemyPlanets ];
-    for (var i = 0; i <= planets.length; i++) {
+    for (var i = 0; i < planets.length; i++) {
         var planet = planets[i];
         var owner = planet.owner;
         planetsByOwner[owner < 0 || owner > 1 ? 2 : owner].push(planet);

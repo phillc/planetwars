@@ -1,7 +1,7 @@
-var sys = require('sys');
-var Planet = require('./Planet').Planet;
-var Fleet = require('./Fleet').Fleet;
-var Universe = require('./Universe').Universe;
+var sys = require('sys'),
+    Planet = require('./Planet').Planet,
+    Fleet = require('./Fleet').Fleet,
+    Universe = require('./Universe').Universe;
 
 function parseInput(turnInput, turnFn) {
     var lines = turnInput.split('\n');

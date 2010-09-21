@@ -54,7 +54,7 @@ The "MyBot.js" bot is the sample JavaScript bot.
 In order to run it in a competition on your local server,
 type the following:
 
-	java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 1000 log.txt "java -jar example_bots/RandomBot.jar" "node MyBot.js" \
+	java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 1000 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" \
 	  | java -jar tools/ShowGame-1.2.jar
 
 

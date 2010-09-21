@@ -65,4 +65,16 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
             assert.equal(planet.effectiveDefensiveValue(4), 25);
         }
     }
+}).addBatch({
+    'when the planet is neutral' : {
+        'and the growth rate is 3, and 2 ships are already there' : {
+            topic: new Planet(null, null, null, 0, 2, 3),
+            'right now is 2' : function(planet) {
+                assert.equal(planet.effectiveDefensiveValue(), 2);
+            },
+            'next turn is 2' : function(planet) {
+                assert.equal(planet.effectiveDefensiveValue(1), 2);
+            }
+        }
+    }
 }).export(module);

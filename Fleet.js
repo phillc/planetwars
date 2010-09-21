@@ -1,11 +1,11 @@
 var Fleet = function(id, owner, ships, source, dest, totalLength, remaining) {
-    this.id          = id;
-    this.owner       = owner;
-    this.ships       = ships;
-    this.source      = source;
-    this.dest        = dest;
-    this.totalLength = totalLength;
-    this.remaining   = remaining;
+    this.id          = parseInt(id);
+    this.owner       = parseInt(owner);
+    this.ships       = parseInt(ships);
+    this.source      = parseInt(source);
+    this.dest        = parseInt(dest);
+    this.totalLength = parseInt(totalLength);
+    this.remaining   = parseInt(remaining);
 }
 
 Fleet.prototype.arriveBy = function(turns) {
