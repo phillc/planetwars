@@ -8,8 +8,8 @@ OWNER['ENEMY']   = 2;
 
 var Planet = function(id, x, y, owner, ships, growth) {
     this.id     = parseInt(id);
-    this.x      = parseInt(x);
-    this.y      = parseInt(y);
+    this.x      = parseFloat(x);
+    this.y      = parseFloat(y);
     this.owner  = parseInt(owner);
     this.ships  = parseInt(ships);
     this.growth = parseInt(growth);
@@ -19,6 +19,14 @@ var Planet = function(id, x, y, owner, ships, growth) {
 
 Planet.prototype.getShips = function() {
     return this.ships;
+}
+
+Planet.prototype.getEnemyIncomingFleets = function() {
+    return this.enemyIncomingFleets;
+}
+
+Planet.prototype.getCoordinates = function() {
+    return [this.x, this.y];
 }
 
 Planet.prototype.isNeutral = function() {
@@ -89,7 +97,7 @@ var distance = function(a, b){
     var y1 = a.y;
     var x2 = b.x;
     var y2 = b.y
-    return Math.ceil(Math.sqrt(Math.abs(x2 - x1)^2 + Math.abs(y2-y1)^2));
+    return Math.ceil(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1,2)));
 }
 
 Planet.prototype.distanceFrom = function(otherPlanet) {
@@ -128,10 +136,10 @@ Planet.prototype.considerationWeight = function(){
 }
 
 Planet.prototype.attackConsiderationWeight = function (effDef) {
-    if(this.isEnemy()) {
-        return effDef * 1.75 * this.growth;
-    }
-    return effDef;
+    // if(this.isEnemy()) {
+        return 1 / (effDef + this.growth * 10);
+    // }
+    // return effDef;
 }
 
 

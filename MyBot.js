@@ -21,35 +21,28 @@ function attackConsiderationSort(planet1, planet2) {
 
 function DoTurn(pw) {
     var myPlanets = pw.myPlanets;
-    var myPlanetsByScore = myPlanets.slice(0) //copy array
+    var myPlanetsByScore = myPlanets.slice(0); //copy array
     myPlanetsByScore.sort(function(a, b){
-        a.considerationWeight() - b.considerationWeight()
+        a.considerationWeight() - a.considerationWeight();
     })
     
     for(var planetNum in myPlanetsByScore) {
         var myPlanet = myPlanetsByScore[planetNum];
         var origSendableShips = myPlanet.expendableShipsWithoutReinforce();
-        var sendableShips = origSendableShips
+        var sendableShips = origSendableShips;
         
         if(sendableShips > 0) {
             var takeablePlanets = [];
-            var untakeableEnemyPlanets = []
             for(var consideredPlanetNum in pw.notMyPlanets) {
                 var consideredPlanet = pw.notMyPlanets[consideredPlanetNum];
-                
                 var effDef = consideredPlanet.effectiveDefensiveValue(myPlanet.distanceFrom(consideredPlanet));
                 var tuple = [effDef, consideredPlanet];
                 if(effDef > 0){
-                    if(effDef < sendableShips){
-                        takeablePlanets.push(tuple);
-                    } else if(consideredPlanet.isEnemy()){
-                        untakeableEnemyPlanets.push(tuple);
-                    }
+                    takeablePlanets.push(tuple);
                 }
             }
             
             takeablePlanets.sort(attackConsiderationSort);
-            untakeableEnemyPlanets.sort(attackConsiderationSort);
             
             while(sendableShips > 0 && takeablePlanets.length > 0) {
                 var tuple = takeablePlanets.shift();
@@ -59,18 +52,8 @@ function DoTurn(pw) {
                 if(shipsToSend > targetPlanetEffDef){
                     myPlanet.sendShips(shipsToSend, targetPlanet);
                     sendableShips  = sendableShips - shipsToSend;
+                    sys.debug("sending " + shipsToSend + " from planet with " + myPlanet.getShips() + " @ (" + myPlanet.getCoordinates() + ") to planet @ (" + targetPlanet.getCoordinates() + ") with " + targetPlanetEffDef + " distance: " + myPlanet.distanceFrom(targetPlanet) + " neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy() + " incoming fleets count: " + targetPlanet.getEnemyIncomingFleets())
                 }
-                sys.debug("sending " + shipsToSend + " from planet with " + myPlanet.getShips() + " to takeable planet with " + targetPlanetEffDef + " neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy())
-            }
-            
-            while(sendableShips > 0 && untakeableEnemyPlanets.length > 0) {
-                var tuple = untakeableEnemyPlanets.shift();
-                var targetPlanetEffDef = tuple[0];
-                var targetPlanet = tuple[1];
-                var shipsToSend = Math.min(sendableShips, targetPlanetEffDef + 1);
-                sys.debug("sending " + shipsToSend + " from planet with " + myPlanet.getShips() + " to untakeable enemy planet with " + targetPlanetEffDef + " neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy())
-                myPlanet.sendShips(shipsToSend, targetPlanet);
-                sendableShips  = sendableShips - shipsToSend;
             }
         } else {
             //flag for help by least in danger that is less distance than threat

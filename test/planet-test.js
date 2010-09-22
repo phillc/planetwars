@@ -78,3 +78,17 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
         }
     }
 }).export(module);
+
+
+vows.describe('Planet distanceFrom()').addBatch({
+    'planet at (14.2884238258,0.622568806433) to planet at (23.6079911509,11.6215535875)' : {
+        topic: function(){
+            var planet1 = new Planet(null, 14.2884238258, 0.622568806433, null, null, null);
+            var planet2 = new Planet(null, 23.6079911509, 11.6215535875, null, null, null);
+            return planet1.distanceFrom(planet2);
+        },
+        'is 15' : function(distance){
+            assert.equal(distance, 15);
+        }
+    }
+}).export(module)

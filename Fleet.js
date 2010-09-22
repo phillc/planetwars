@@ -1,3 +1,5 @@
+var sys = require('sys');
+
 var Fleet = function(id, owner, ships, source, dest, totalLength, remaining) {
     this.id          = parseInt(id);
     this.owner       = parseInt(owner);
@@ -10,6 +12,10 @@ var Fleet = function(id, owner, ships, source, dest, totalLength, remaining) {
 
 Fleet.prototype.arriveBy = function(turns) {
     return this.remaining <= turns
+}
+
+Fleet.prototype.getShips = function() {
+    return this.ships;
 }
 
 exports.Fleet = Fleet;
