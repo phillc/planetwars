@@ -23,36 +23,35 @@ function DoTurn(pw) {
     var myPlanets = pw.myPlanets;
     var myPlanetsByScore = myPlanets.slice(0); //copy array
     myPlanetsByScore.sort(function(a, b){
-        a.considerationWeight() - a.considerationWeight();
+        a.decisionConsiderationWeight() - a.decisionConsiderationWeight();
     })
     
     for(var planetNum in myPlanetsByScore) {
         var myPlanet = myPlanetsByScore[planetNum];
-        var origSendableShips = myPlanet.expendableShipsWithoutReinforce();
-        var sendableShips = origSendableShips;
+        var sendableShips = myPlanet.expendableShipsWithoutReinforce();
         
         if(sendableShips > 0) {
-            var takeablePlanets = [];
-            for(var consideredPlanetNum in pw.notMyPlanets) {
-                var consideredPlanet = pw.notMyPlanets[consideredPlanetNum];
-                var effDef = consideredPlanet.effectiveDefensiveValue(myPlanet.distanceFrom(consideredPlanet));
-                var tuple = [effDef, consideredPlanet];
-                if(effDef > 0){
-                    takeablePlanets.push(tuple);
+            var consideredPlanets = [];
+            for(var consideredPlanetNum in pw.planets) {
+                var consideredPlanet = pw.planets[consideredPlanetNum];
+                if(consideredPlanet.id != myPlanet.id) {
+                    var effDef = consideredPlanet.effectiveDefensiveValue(myPlanet.distanceFrom(consideredPlanet));
+                    var tuple = [consideredPlanet.isFriendly() ? -effDef : effDef, consideredPlanet];
+                    consideredPlanets.push(tuple);
                 }
             }
             
-            takeablePlanets.sort(attackConsiderationSort);
+            consideredPlanets.sort(attackConsiderationSort);
             
-            while(sendableShips > 0 && takeablePlanets.length > 0) {
-                var tuple = takeablePlanets.shift();
-                var targetPlanetEffDef = tuple[0];
+            while(sendableShips > 0 && consideredPlanets.length > 0) {
+                var tuple = consideredPlanets.shift();
+                var neededToMatch = tuple[0];
                 var targetPlanet = tuple[1];
-                var shipsToSend = Math.min(sendableShips, targetPlanetEffDef + 1);
-                if(shipsToSend > targetPlanetEffDef){
+                if(neededToMatch >= 0) {
+                    var shipsToSend = Math.min(sendableShips, neededToMatch + 1);
                     myPlanet.sendShips(shipsToSend, targetPlanet);
                     sendableShips  = sendableShips - shipsToSend;
-                    sys.debug("sending " + shipsToSend + " from planet with " + myPlanet.getShips() + " @ (" + myPlanet.getCoordinates() + ") to planet @ (" + targetPlanet.getCoordinates() + ") with " + targetPlanetEffDef + " distance: " + myPlanet.distanceFrom(targetPlanet) + " neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy() + " incoming fleets count: " + targetPlanet.getEnemyIncomingFleets())
+                    sys.debug("sending " + shipsToSend + " from planet with " + myPlanet.getShips() + " @ (" + myPlanet.getCoordinates() + ") to planet @ (" + targetPlanet.getCoordinates() + ") with " + neededToMatch + " distance: " + myPlanet.distanceFrom(targetPlanet) + " neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy() + " incoming fleets count: " + targetPlanet.getEnemyIncomingFleets())
                 }
             }
         } else {

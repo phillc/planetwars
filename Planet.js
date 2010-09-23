@@ -37,6 +37,10 @@ Planet.prototype.isEnemy = function() {
     return this.owner == OWNER['ENEMY'];
 }
 
+Planet.prototype.isNotFriendly = function() {
+    return !this.isFriendly();
+}
+
 Planet.prototype.isFriendly = function() {
     return this.owner == OWNER['ME'];
 }
@@ -86,9 +90,9 @@ Planet.prototype.expendableShipsWithoutReinforce = function() {
                 effDef = lowestEffDef <= effDef ? lowestEffDef : effDef;
             }
         }
-        return expendableShips = lowestEffDef - 1;
+        return expendableShips = this.ships - lowestEffDef;
     }
-    return this.ships - 1;
+    return this.ships;
 }
 
 var planetDistances = [];
@@ -131,16 +135,16 @@ Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
     this.friendlyIncomingFleets.push(fleet);
 }
 
-Planet.prototype.considerationWeight = function(){
+Planet.prototype.decisionConsiderationWeight = function(){
     return this.ships / (1 + this.growth);
 }
 
-Planet.prototype.attackConsiderationWeight = function (effDef) {
-    // if(this.isEnemy()) {
-        return 1 / (effDef + this.growth * 10);
-    // }
-    // return effDef;
+Planet.prototype.attackConsiderationWeight = function(effDef) {
+    var weight = 0;
+    weight += this.isEnemy() ? .25 : 0
+    weight += (1/effDef) * 20
+    weight += this.growth
+    return weight;
 }
-
 
 exports.Planet = Planet;
