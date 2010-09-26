@@ -1,4 +1,4 @@
-BOTS = %w(Bully Dual Prospector Rage Random)
+BOTS = %w(Bully Dual Prospector Rage)
 MAPS = 1..100
 
 def parse_results(output)

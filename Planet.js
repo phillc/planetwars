@@ -90,6 +90,7 @@ Planet.prototype.expendableShipsWithoutReinforce = function() {
                 effDef = lowestEffDef <= effDef ? lowestEffDef : effDef;
             }
         }
+
         return expendableShips = this.ships - lowestEffDef;
     }
     return this.ships;
@@ -139,11 +140,12 @@ Planet.prototype.decisionConsiderationWeight = function(){
     return this.ships / (1 + this.growth);
 }
 
-Planet.prototype.attackConsiderationWeight = function(effDef) {
+Planet.prototype.attackConsiderationWeight = function(effDef, distance) {
     var weight = 0;
     weight += this.isEnemy() ? .25 : 0
     weight += (1/effDef) * 20
     weight += this.growth
+    weight += 1/distance * 6
     return weight;
 }
 
