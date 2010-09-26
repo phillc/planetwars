@@ -122,11 +122,11 @@ Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
     this.friendlyIncomingFleets.push(fleet);
 }
 
-Planet.prototype.decisionConsiderationWeight = function(){
-    return this.ships + (this.growth * 5); // + proximity to friendly, proximity to enemy
+Planet.prototype.decisionConsiderationOrder = function(){
+    return this.ships + (this.growth * 5); // + proximity to friendly, proximity to enemy, #total ships, #total growth of each player, #of planet of each player
 }
 
-Planet.prototype.attackConsiderationWeight = function(effDef, distance) {
+Planet.prototype.attackConsiderationOrder = function(effDef, distance) {
     var weight = 0;
     weight += this.isEnemy() ? 1 : 0
     weight += this.isFriendly() ? 2 : 0

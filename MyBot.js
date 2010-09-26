@@ -3,11 +3,11 @@ var sys = require('sys');
 var PlanetWars = require('./PlanetWars');
 
 function attackConsiderationSort(planet1, planet2) {
-    return planet2.planet.attackConsiderationWeight(planet2.neededToMatch, planet2.distance) - planet1.planet.attackConsiderationWeight(planet1.neededToMatch, planet1.distance)
+    return planet2.planet.attackConsiderationOrder(planet2.neededToMatch, planet2.distance) - planet1.planet.attackConsiderationOrder(planet1.neededToMatch, planet1.distance)
 }
 
 function decisionConsiderationSort(a, b){
-    return b.decisionConsiderationWeight() - a.decisionConsiderationWeight();
+    return b.decisionConsiderationOrder() - a.decisionConsiderationOrder();
 }
 
 function DoTurn(pw) {
