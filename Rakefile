@@ -23,17 +23,20 @@ def play_game(map, challenger)
   parse_results(File.read('commentary.txt'))
 end
 
+desc "Play one game. Set ENV vars MAP and BOT."
 task :play do
   map = ENV['MAP'] || 7
-  bot = ENV['BOT'] || 'Dual'
+  bot = ENV['BOT'] || 'Prospector'
   print_results *play_game(map, bot)
   puts
 end
 
+desc "Watch last game."
 task :watch do
-  `cat video.txt | java -jar tools/ShowGame.jar`
+  `cat video.txt | java -jar tools/ShowGame-1.2.jar`
 end
 
+desc "Play your bot against all bots on all maps"
 task :tournament do
   BOTS.each do |bot|
     wins = losses = turns_sum = 0
@@ -49,9 +52,16 @@ task :tournament do
   end
 end
 
+desc "Info on available bots and maps"
 task :help do
   puts "Available bots: #{BOTS.join(',')}"
   puts "Available maps: #{MAPS.inspect}"
 end
 
 task :default => :tournament
+
+task :print_commentary do
+  puts `cat commentary.txt`
+end
+
+task :one => [:play, :print_commentary, :watch]
