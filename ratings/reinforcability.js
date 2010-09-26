@@ -1,1 +1,0 @@
-/* Ability to be reinforced by a friendly planet */

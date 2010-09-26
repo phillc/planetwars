@@ -1,1 +1,0 @@
-/* Ships on the way, proximity to enemy planets */
