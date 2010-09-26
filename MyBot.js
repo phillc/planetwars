@@ -6,15 +6,17 @@ function attackConsiderationSort(planet1, planet2) {
     return planet2.planet.attackConsiderationWeight(planet2.neededToMatch, planet2.distance) - planet1.planet.attackConsiderationWeight(planet1.neededToMatch, planet1.distance)
 }
 
+function decisionConsiderationSort(a, b){
+    return a.decisionConsiderationWeight() - b.decisionConsiderationWeight();
+}
+
 function DoTurn(pw) {
     var myPlanets = pw.myPlanets;
-    var myPlanetsByScore = myPlanets.slice(0); //copy array
-    myPlanetsByScore.sort(function(a, b){
-        a.decisionConsiderationWeight() - a.decisionConsiderationWeight();
-    })
+    var myPlanetsForDecision = myPlanets.slice(0); //copy array
+    myPlanetsForDecision.sort(decisionConsiderationSort)
     
-    for(var planetNum in myPlanetsByScore) {
-        var myPlanet = myPlanetsByScore[planetNum];
+    for(var planetNum in myPlanetsForDecision) {
+        var myPlanet = myPlanetsForDecision[planetNum];
         var sendableShips = myPlanet.expendableShipsWithoutReinforce();
         
         if(sendableShips > 0) {
@@ -26,7 +28,7 @@ function DoTurn(pw) {
                     var neededToMatch = consideredPlanet.isFriendly() ? -effDef : effDef
                     var calcedPlanet = { neededToMatch: neededToMatch,
                                          planet: consideredPlanet,
-                                         distance: consideredPlanet.distanceFrom(myPlanet)};
+                                         distance: consideredPlanet.distanceFrom(myPlanet) };
                     consideredPlanets.push(calcedPlanet);
                 }
             }
