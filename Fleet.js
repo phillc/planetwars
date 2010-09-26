@@ -22,4 +22,11 @@ Fleet.prototype.toString = function() {
     var f_or_e = this.owner == 1 ? "My" : "Enemy"
     return f_or_e + " Fleet of " + this.ships + " is " + this.remaining + " away";
 }
+
+Fleet.prototype.trickIntoOneTurn = function() {
+    if(this.dest == this.source) {
+        this.remaining = 1;
+    }
+}
+
 exports.Fleet = Fleet;

@@ -115,6 +115,10 @@ Planet.prototype.addEnemyIncomingFleet = function(fleet) {
 }
 
 Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
+    fleet.trickIntoOneTurn(); // In the main loops, a planet can send ships to its
+                              // self, but we trick it to thinking the help comes
+                              // next turn to remove the ships from the sendable
+                              // pool.
     this.friendlyIncomingFleets.push(fleet);
 }
 
