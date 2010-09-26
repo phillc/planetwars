@@ -50,6 +50,7 @@ Planet.prototype.effectiveDefensiveValue = function(turns) {
     var willBeAttackedBy = 0;
     var willBeReinforcedBy = 0;
     
+    // But this doesn't account for ownership changes
     if(turns != null) {
         willIncreaseBy = turns * (this.isNeutral() ? 0 : this.growth);
         for(var fleetNum in this.enemyIncomingFleets) {
@@ -71,29 +72,10 @@ Planet.prototype.effectiveDefensiveValue = function(turns) {
 
 Planet.prototype.expendableShipsWithoutReinforce = function() {
     var expendableShips;
-    if(this.enemyIncomingFleets.length > 0) {
-        var farthestDistance;
-        for(var fleetNum in this.enemyIncomingFleets) {
-            var fleet = this.enemyIncomingFleets[fleetNum];
-            if(farthestDistance == null) {
-                farthestDistance = fleet.distance;
-            } else {
-                farthestDistance = farthestDistance > fleet.remaining ? farthestDistance : fleet.remaining;
-            }
-        }
-        var lowestEffDef;
-        for(var turnNum = 1 ; turnNum <= farthestDistance ; turnNum++) {
-            var effDef = planet.effectiveDefensiveValue(turnNum);
-            if(lowestEffDef == null) {
-                lowestEffDef = effDef;
-            } else {
-                effDef = lowestEffDef <= effDef ? lowestEffDef : effDef;
-            }
-        }
-
-        return expendableShips = this.ships - lowestEffDef;
-    }
-    return this.ships;
+    var incEnemyFleets = this.enemyIncomingFleets.slice(0);
+    incEnemyFleets.sort(function(a, b){a.remaining - b.remaining});
+    farthestDistance = incEnemyFleets[0] ? incEnemyFleets[0].remaining : 0;
+    return this.effectiveDefensiveValue(farthestDistance);
 }
 
 var planetDistances = [];

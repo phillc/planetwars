@@ -95,18 +95,25 @@ vows.describe('Planet distanceFrom()').addBatch({
 
 vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
     'when the growth rate is 4 and 16 ships are already there,' : {
-        'should be 15' : function() {
-            var planet = new Planet(null, null, null, null, 2, 3);
-            assert.equal(planet.expendableShipsWithoutReinforce(), 15)
+        'should be 16' : function() {
+            var planet = new Planet(null, null, null, null, 16, 4);
+            assert.equal(planet.expendableShipsWithoutReinforce(), 16);
         },
         'and there are 20 enemy ships 3 turns away' : {
             'should be 8' : function() {
-                var planet = new Planet(null, null, null, null, 2, 3);
+                var planet = new Planet(null, null, null, null, 16, 4);
                 planet.addEnemyIncomingFleet(new Fleet(null, null, 20, null, null, null, 3));
-                assert.equal(planet.expendableShipsWithoutReinforce(), 12)
+                assert.equal(planet.expendableShipsWithoutReinforce(), 8)
+            },
+            'and there are 10 friendly ships 2 turns away' : {
+                'should be 18' : function() {
+                    var planet = new Planet(null, null, null, null, 16, 4);
+                    planet.addEnemyIncomingFleet(new Fleet(null, null, 20, null, null, null, 3));
+                    planet.addFriendlyIncomingFleet(new Fleet(null, null, 10, null, null, null, 2));
+                    assert.equal(planet.expendableShipsWithoutReinforce(), 18)
+                }
             }
         }
-        
     }
 }).export(module)
     

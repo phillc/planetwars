@@ -41,7 +41,7 @@ function DoTurn(pw) {
                     var shipsToSend = Math.min(sendableShips, neededToMatch + 1);
                     myPlanet.sendShips(shipsToSend, targetPlanet);
                     sendableShips  = sendableShips - shipsToSend;
-                    // sys.debug("sending " + shipsToSend + " from planet with " + myPlanet.getShips() + " @ (" + myPlanet.getCoordinates() + ") to planet @ (" + targetPlanet.getCoordinates() + ") with " + neededToMatch + " distance: " + myPlanet.distanceFrom(targetPlanet) + " neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy() + " incoming fleets count: " + targetPlanet.getEnemyIncomingFleets())
+                    sys.debug("sending " + shipsToSend + " from planet with " + myPlanet.getShips() + " @ (" + myPlanet.getCoordinates() + ") to planet @ (" + targetPlanet.getCoordinates() + ") with " + neededToMatch + " distance: " + myPlanet.distanceFrom(targetPlanet) + " neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy() + " incoming fleets count: " + targetPlanet.getEnemyIncomingFleets())
                 }
             }
         }
