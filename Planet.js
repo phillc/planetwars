@@ -123,12 +123,13 @@ Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
 }
 
 Planet.prototype.decisionConsiderationWeight = function(){
-    return this.ships / (1 + this.growth);
+    return this.ships + (this.growth * 5); // + proximity to friendly, proximity to enemy
 }
 
 Planet.prototype.attackConsiderationWeight = function(effDef, distance) {
     var weight = 0;
-    weight += this.isEnemy() ? .25 : 0
+    weight += this.isEnemy() ? 1 : 0
+    weight += this.isFriendly() ? 2 : 0
     weight += (1/effDef) * 20
     weight += this.growth
     weight += 1/distance * 6

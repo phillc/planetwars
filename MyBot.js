@@ -7,7 +7,7 @@ function attackConsiderationSort(planet1, planet2) {
 }
 
 function decisionConsiderationSort(a, b){
-    return a.decisionConsiderationWeight() - b.decisionConsiderationWeight();
+    return b.decisionConsiderationWeight() - a.decisionConsiderationWeight();
 }
 
 function DoTurn(pw) {
