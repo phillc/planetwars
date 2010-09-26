@@ -1,3 +1,5 @@
+var sys = require('sys');
+
 var Universe = function(planets, fleets) {
     var myPlanets = [];
     var enemyPlanets = [];

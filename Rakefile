@@ -60,8 +60,6 @@ end
 
 task :default => :tournament
 
-task :print_commentary do
-  puts `cat commentary.txt`
+task :one do
+  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 1000 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
 end
-
-task :one => [:play, :print_commentary, :watch]

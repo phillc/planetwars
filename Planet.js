@@ -75,7 +75,7 @@ Planet.prototype.expendableShipsWithoutReinforce = function() {
     var incEnemyFleets = this.enemyIncomingFleets.slice(0);
     incEnemyFleets.sort(function(a, b){a.remaining - b.remaining});
     farthestDistance = incEnemyFleets[0] ? incEnemyFleets[0].remaining : 0;
-    return this.effectiveDefensiveValue(farthestDistance);
+    return Math.min(this.ships, this.effectiveDefensiveValue(farthestDistance));
 }
 
 var planetDistances = [];
@@ -129,6 +129,18 @@ Planet.prototype.attackConsiderationWeight = function(effDef, distance) {
     weight += this.growth
     weight += 1/distance * 6
     return weight;
+}
+
+Planet.prototype.toString = function() {
+    var f_or_e = this.owner == 1 ? "My" : "Enemy"
+    var str = [ [ f_or_e + " Planet id:" + this.id + " with ",
+                   this.ships + " ships,",
+                   this.growth + " growth,",
+                   "@(" + this.getCoordinates() + ")",
+                   "with incoming fleets of:"].join(" ") ];
+    str.push(this.friendlyIncomingFleets.join("\n"))
+    str.push(this.enemyIncomingFleets.join("\n"))
+    return str.join("\n");
 }
 
 exports.Planet = Planet;

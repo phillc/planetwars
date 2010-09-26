@@ -20,6 +20,6 @@ Fleet.prototype.getShips = function() {
 
 Fleet.prototype.toString = function() {
     var f_or_e = this.owner == 1 ? "My" : "Enemy"
-    return "\n****" + f_or_e + " fleet of " + this.ships + " is " + this.remaining + " away";
+    return f_or_e + " Fleet of " + this.ships + " is " + this.remaining + " away";
 }
 exports.Fleet = Fleet;
