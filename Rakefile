@@ -63,3 +63,17 @@ task :default => :tournament
 task :one do
   puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 1000 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
 end
+
+
+task :create_neuron_templates do
+  require 'json'
+  # template = ERB.new <<-EOF
+    # exports.weights = <%= 
+  # EOF
+  
+  JSON.parse(`node printNetworkInfo.js`)["networks"].each do |networkName, inputs|
+    puts networkName
+    puts inputs
+  end
+    # puts template.result(binding)
+end

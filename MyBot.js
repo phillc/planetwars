@@ -1,4 +1,5 @@
 var sys = require('sys');
+require('./underscore');
 
 var PlanetWars = require('./PlanetWars');
 

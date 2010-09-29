@@ -123,17 +123,26 @@ Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
 }
 
 Planet.prototype.decisionConsiderationOrder = function(){
-    return this.ships + (this.growth * 5); // + proximity to friendly, proximity to enemy, #total ships, #total growth of each player, #of planet of each player
+    var order = 0;
+    order += this.ships * weight.decisionConsideration.ships;
+    order += this.growth * weight.decisionConsideration.growth;
+    return order;
+    // proximity to friendly, proximity to enemy, #total ships, #total growth of each player, #of planet of each player
+    // sum of distances of 3 closest planets
+    // what sending ships to a planet would do to its link, as in closest x friendly planets
 }
 
 Planet.prototype.attackConsiderationOrder = function(effDef, distance) {
-    var weight = 0;
-    weight += this.isEnemy() ? 1 : 0
-    weight += this.isFriendly() ? 2 : 0
-    weight += (1/effDef) * 20
-    weight += this.growth
-    weight += 1/distance * 6
-    return weight;
+    return new AttackConsiderationNetwork({ isEnemy         : this.isEnemy() ? 1 : 0,
+                                            isFriendly      : this.isFriendly() ? 1 : 0,
+                                            isNeutral       : this.isNeutral() ? 1 : 0,
+                                            canTakeRightNow : this.ships > effDef ? 1 : 0,
+                                            incomingEnemyFleets : this.enemyIncomingFleets.length > 0 ? 1 : 0,
+                                            incomingFriendlyFleets : this.friendlyIncomingFleets.length > 0 ? 1 : 0,
+                                            growth          : this.growth,
+                                            effDef          : effDef,
+                                            distance        : distance }).compute();
+    
 }
 
 Planet.prototype.toString = function() {
