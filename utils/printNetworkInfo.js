@@ -1,4 +1,4 @@
-var nn = require("./NeuralNetwork");
+var nn = require("../networkDefinition");
 var sys = require("sys");
 
 sys.print(JSON.stringify(nn));
