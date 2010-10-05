@@ -1,7 +1,7 @@
 var vows = require('vows'),
     assert = require('assert');
 
-var NeuralNetwork = require('../NeuralNetwork'),
+var NeuralNetwork = require('../network'),
     sigmoid = NeuralNetwork.sigmoid;
 
 vows.describe('sigmoid function').addBatch({

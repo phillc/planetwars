@@ -1,5 +1,6 @@
 var sys = require('sys'),
     Fleet = require('./Fleet').Fleet;
+    network = require('./network');
 
 var OWNER = [];
 OWNER['NEUTRAL'] = 0;
@@ -123,25 +124,24 @@ Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
 }
 
 Planet.prototype.decisionConsiderationOrder = function(){
-    var order = 0;
-    order += this.ships * weight.decisionConsideration.ships;
-    order += this.growth * weight.decisionConsideration.growth;
-    return order;
+    return network.compute("decisionConsideration", { ships  : this.ships,
+                                                      growth : this.growth });    
     // proximity to friendly, proximity to enemy, #total ships, #total growth of each player, #of planet of each player
     // sum of distances of 3 closest planets
     // what sending ships to a planet would do to its link, as in closest x friendly planets
+    // turns remaining
 }
 
 Planet.prototype.attackConsiderationOrder = function(effDef, distance) {
-    return new AttackConsiderationNetwork({ isEnemy         : this.isEnemy() ? 1 : 0,
-                                            isFriendly      : this.isFriendly() ? 1 : 0,
-                                            isNeutral       : this.isNeutral() ? 1 : 0,
-                                            canTakeRightNow : this.ships > effDef ? 1 : 0,
-                                            incomingEnemyFleets : this.enemyIncomingFleets.length > 0 ? 1 : 0,
-                                            incomingFriendlyFleets : this.friendlyIncomingFleets.length > 0 ? 1 : 0,
-                                            growth          : this.growth,
-                                            effDef          : effDef,
-                                            distance        : distance }).compute();
+    return network.compute("attackConsideration", { isEnemy         : this.isEnemy() ? 1 : 0,
+                                                    isFriendly      : this.isFriendly() ? 1 : 0,
+                                                    isNeutral       : this.isNeutral() ? 1 : 0,
+                                                    canTakeRightNow : this.ships > effDef ? 1 : 0,
+                                                    incomingEnemyFleets : this.enemyIncomingFleets.length > 0 ? 1 : 0,
+                                                    incomingFriendlyFleets : this.friendlyIncomingFleets.length > 0 ? 1 : 0,
+                                                    growth          : this.growth,
+                                                    effDef          : effDef,
+                                                    distance        : distance });
     
 }
 

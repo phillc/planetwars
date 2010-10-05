@@ -1,20 +1,8 @@
-var sys = require("sys");
-require("./underscore");
-
-exports.sigmoid = function(t) {
-    return 1/(1+Math.exp(-t));
-}
-
-function Neuron() {
-    
-}
-exports.Neuron = Neuron;
-
-exports.networks = {
+var networks = {
     decisionConsideration : {
         inputs : [ "ships",
                    "growth"],
-        hiddenLayer : 4
+        hiddenLayer : 1
     },
     attackConsideration : {
         inputs : [ "isEnemy",
@@ -26,7 +14,8 @@ exports.networks = {
                    "growth",
                    "effDef",
                    "distance"],
-        hiddenLayer : 12
+        hiddenLayer : 2
     }
 }
-exports.toJSON = exports.networks;
+exports.networks = networks;
+exports.toJSON = networks;

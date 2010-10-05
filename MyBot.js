@@ -17,6 +17,7 @@ function DoTurn(pw) {
     myPlanetsForDecision.sort(decisionConsiderationSort)
     
     for(var planetNum in myPlanetsForDecision) {
+        sys.debug("iterating through planet number " + planetNum);
         var myPlanet = myPlanetsForDecision[planetNum];
         var sendableShips = myPlanet.expendableShipsWithoutReinforce();
         
@@ -42,16 +43,16 @@ function DoTurn(pw) {
                 var targetPlanet = pHash.planet;
                 if(neededToMatch >= 0) {
                     var shipsToSend = Math.min(sendableShips, neededToMatch + 1);
-                    // sys.debug([ "==================================================",
-                    //             "sendableShips " + sendableShips,
-                    //             "sending " + shipsToSend + " ships",
-                    //             "****from:",
-                    //             myPlanet,
-                    //             "****to planet",
-                    //             targetPlanet,
-                    //             "needing " + neededToMatch + " to match",
-                    //             "distance of " + myPlanet.distanceFrom(targetPlanet),
-                    //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
+                    sys.debug([ "==================================================",
+                                "sendableShips " + sendableShips,
+                                "sending " + shipsToSend + " ships",
+                                "****from:",
+                                myPlanet,
+                                "****to planet",
+                                targetPlanet,
+                                "needing " + neededToMatch + " to match",
+                                "distance of " + myPlanet.distanceFrom(targetPlanet),
+                                "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
                     myPlanet.sendShips(shipsToSend, targetPlanet);
                     sendableShips  = sendableShips - shipsToSend;
                 }
