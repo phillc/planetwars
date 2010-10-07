@@ -16,7 +16,15 @@ var activation = function() {
     var cosh = function(x) { return (exp(x)+exp(-x))/2 };
     var tanh = function(x) { return sinh(x)/cosh(x) };
     
-    return function(t) { return tanh(t) };
+    return function(t) { 
+        if(t > 20) {
+            return 1;
+        }
+        if(t < -20) {
+            return -1;
+        }
+        return tanh(t)
+    };
 }();
 
 exports.activation = activation;
@@ -37,7 +45,7 @@ var compute = function(networkName, values) {
         
     var result = 0;
     for(var hidden_layer_result_num in hidden_layer_results) {
-        result += activation(hidden_layer_results[hidden_layer_result_num] * network_hidden_weights[hidden_layer_result_num])
+        result += activation(hidden_layer_results[hidden_layer_result_num] * (network_hidden_weights[hidden_layer_result_num] || 0))
     }
     
     if(isNaN(result)){
