@@ -70,6 +70,21 @@ task :mutate do
   Mutations.create_mutations
 end
 
+desc "mutate and run a round, deleting the losing networks"
+task :run do
+  run_times = (ENV['MUTATIONS'] || 1).to_i
+  p "running #{run_times} times"
+  run_times.times do
+    Rake::Task["mutate"].execute
+    Rake::Task["matchup"].execute
+  end
+end
+
+desc "run a round, deleting the losing networks"
+task :matchup do
+  Mutations.matchup
+end
+
 require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
@@ -266,19 +281,3 @@ module Mutations
     end
   end
 end
-
-desc "mutate and run a round, deleting the losing networks"
-task :run do
-  run_times = (ENV['MUTATIONS'] || 1).to_i
-  p "running #{run_times} times"
-  run_times.times do
-    Rake::Task["mutate"].execute
-    Rake::Task["matchup"].execute
-  end
-end
-
-desc "run a round, deleting the losing networks"
-task :matchup do
-  Mutations.matchup
-end
-

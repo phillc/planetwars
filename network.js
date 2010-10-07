@@ -4,11 +4,11 @@ require("./underscore");
 var networks = require("./networkDefinition").networks;
 
 var weights;
-// if(process.argv.length > 2) {
+if(process.argv.length > 2) {
     weights = require("./" + process.argv[2]).weights
-// } else {
-    // weights = require("./weights").weights;
-// }
+} else {
+    weights = require("./weights").weights;
+}
     
 var activation = function() {
     var exp = Math.exp;
