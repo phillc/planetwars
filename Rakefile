@@ -72,12 +72,13 @@ end
 
 require 'json'
 module Mutations
-  NUMBER_OF_MUTATIONS = 5
+  KEEP_MUTATIONS = 15
+  RUN_MUTATIONS = 30
   
   def self.create_mutations
     Mutations::CreatedMutation.create_random if filenames.empty?
     filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate }
-    create_mutations if filenames.length < NUMBER_OF_MUTATIONS
+    create_mutations if filenames.length < RUN_MUTATIONS
   end
   
   def self.filenames
@@ -88,14 +89,14 @@ module Mutations
     JS_IFY = "exports.weights = "
     BASE_FILENAME = "mutation"
     
-    def networks
-      @@networks ||= JSON.parse(`node utils/printNetworkInfo.js`)["networks"]
+    def self.defined_networks
+      @defined_networks ||= JSON.parse(`node utils/printNetworkInfo.js`)["networks"]
     end
     
     def next_number!
       file = "mutations/number"
       number = File.read(file).chomp.to_i + 1
-      File.open(file, "w"){|f| f.write number}
+      File.open(file, "w"){ |f| f.write number }
       number
     end
     
@@ -124,37 +125,9 @@ module Mutations
     
   class CreatedMutation < Mutation
     def self.create_random
-      m = new
-      m.assign_random_weights
-      m.store
-    end
-    
-    def self.create_from mutation_weights
       weights = {}
-      raise
-      m = new
-      m.store
-    end
       
-    end
-    
-    def initialize weights={}
-      @network_number = self.next_number!
-      @network_weights = weights
-    end
-    
-    def store
-      unless File.exists? filename
-        File.open(filename, 'w') { |f| f.write(JS_IFY + JSON.pretty_generate(@network_weights)) }
-      end
-    end
-    
-    def mutate_from mutation
-      @network_weights[:created_on] = Time.now
-    end
-    
-    def assign_random_weights
-      networks.each do |network_name, info|
+      defined_networks.each do |network_name, info|
         hidden_layer_number = info["hiddenLayer"].to_i
         inputs = info["inputs"]
         
@@ -165,24 +138,83 @@ module Mutations
         
         hidden_weights = []
         hidden_layer_number.times do
-          hidden_weights.push(-3 + rand(7))
+          hidden_weights.push(random_input_value)
         end
         
-        @network_weights[network_name] = { :input_weights => input_weights,
-                                          :hidden_weights => hidden_weights }
+        weights[network_name] = { :input_weights => input_weights,
+                                  :hidden_weights => hidden_weights }
       end
-      @network_weights[:created_on] = Time.now
+      weights[:created_on] = Time.now
+      m = new weights
+      m.store
     end
     
-    protected
-    
-    def randomize_inputs inputs
+    def self.create_from mutation_weights
+      weights = {}
+      defined_networks.each do |network_name, info|
+        hidden_layer_number = info["hiddenLayer"].to_i
+        inputs = info["inputs"]
+        
+        input_weights = []
+        hidden_layer_number.times do |num|
+          input_weights.push(mutate_inputs(inputs, mutation_weights[network_name]["input_weights"][num]))
+        end
+        
+        hidden_weights = []
+        hidden_layer_number.times do |num|
+          hidden_weights.push(mutate_input_value(mutation_weights[network_name]["hidden_weights"][num]))
+        end
+        
+        weights[network_name] = { :input_weights => input_weights,
+                                  :hidden_weights => hidden_weights }
+      end
+      
+      weights[:created_on] = Time.now
+      m = new weights
+      m.store
+    end
+      
+    def self.randomize_inputs inputs
       weights = inputs.inject({}) do |memo, input_name|
-        memo[input_name] = -3 + rand(7)
+        memo[input_name] = random_input_value
         memo
       end
       weights
     end
+    
+    def self.random_input_value
+      -3 + rand(7)
+    end
+    
+    def self.mutate_inputs inputs, original_values
+      weights = inputs.inject({}) do |memo, input_name|
+        memo[input_name] = mutate_input_value(original_values[input_name])
+        memo
+      end
+      weights
+    end
+    
+    def self.mutate_input_value original_value
+      case rand(6)
+        when 0..1 then original_value / 2
+        when 2..3 then original_value * 2
+        when 4 then original_value * -1
+        when 5 then original_value
+      end
+    end
+    
+    def initialize weights
+      @network_number = self.next_number!
+      @network_weights = weights
+    end
+    
+    def store
+      unless File.exists? filename
+        File.open(filename, 'w') { |f| f.write(JS_IFY + JSON.pretty_generate(@network_weights)) }
+      end
+    end
+    
+    
   end
 end
 

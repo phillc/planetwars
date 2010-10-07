@@ -7,7 +7,7 @@ var weights;
 if(process.argv.length > 2) {
     weights = require("./mutations/" + process.argv[2]).weights
 } else {
-    weights = require("./mutations/weights0").weights;
+    weights = require("./weights").weights;
 }
     
 var sigmoid = function(t) {
