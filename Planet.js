@@ -79,25 +79,26 @@ Planet.prototype.expendableShipsWithoutReinforce = function() {
     return Math.min(this.ships, this.effectiveDefensiveValue(farthestDistance));
 }
 
-var planetDistances = [];
-var distance = function(a, b){
-    var x1 = a.x;
-    var y1 = a.y;
-    var x2 = b.x;
-    var y2 = b.y
-    return Math.ceil(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1,2)));
-}
 
-Planet.prototype.distanceFrom = function(otherPlanet) {
-    var ids = [this.id, otherPlanet.id].sort();
-    if (planetDistances[ids[0]] == null){
-        planetDistances[ids[0]] = [];
+Planet.prototype.distanceFrom = function() {
+    var planetDistances = [];
+    var distance = function(a, b){
+        var x1 = a.x;
+        var y1 = a.y;
+        var x2 = b.x;
+        var y2 = b.y
+        return Math.ceil(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1,2)));
     }
-    if(planetDistances[ids[0]][otherPlanet.id] == null) {
-        planetDistances[ids[0]][otherPlanet.id] = distance(this, otherPlanet);
+    return function(otherPlanet) {
+        if (planetDistances[this.id] == null){
+            planetDistances[this.id] = [];
+        }
+        if(planetDistances[this.id][otherPlanet.id] == null) {
+            planetDistances[this.id][otherPlanet.id] = distance(this, otherPlanet);
+        }
+        return planetDistances[this.id][otherPlanet.id];
     }
-    return planetDistances[ids[0]][otherPlanet.id];
-}
+}();
 
 Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);
