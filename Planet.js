@@ -31,11 +31,11 @@ Planet.prototype.getCoordinates = function() {
 }
 
 Planet.prototype.isNeutral = function() {
-    return this.owner == OWNER['NEUTRAL'];
+    return this.owner === OWNER['NEUTRAL'];
 }
 
 Planet.prototype.isEnemy = function() {
-    return this.owner == OWNER['ENEMY'];
+    return this.owner === OWNER['ENEMY'];
 }
 
 Planet.prototype.isNotFriendly = function() {
@@ -43,7 +43,7 @@ Planet.prototype.isNotFriendly = function() {
 }
 
 Planet.prototype.isFriendly = function() {
-    return this.owner == OWNER['ME'];
+    return this.owner === OWNER['ME'];
 }
 
 Planet.prototype.effectiveDefensiveValue = function(turns) {
@@ -90,10 +90,10 @@ Planet.prototype.distanceFrom = function() {
         return Math.ceil(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1,2)));
     }
     return function(otherPlanet) {
-        if (planetDistances[this.id] == null){
+        if (planetDistances[this.id] === undefined){
             planetDistances[this.id] = [];
         }
-        if(planetDistances[this.id][otherPlanet.id] == null) {
+        if(planetDistances[this.id][otherPlanet.id] === undefined) {
             planetDistances[this.id][otherPlanet.id] = distance(this, otherPlanet);
         }
         return planetDistances[this.id][otherPlanet.id];
@@ -138,8 +138,8 @@ Planet.prototype.attackConsiderationOrder = function(effDef, distance) {
                                                     isFriendly      : this.isFriendly() ? 1 : 0,
                                                     isNeutral       : this.isNeutral() ? 1 : 0,
                                                     canTakeRightNow : this.ships > effDef ? 1 : 0,
-                                                    incomingEnemyFleets : this.enemyIncomingFleets.length > 0 ? 1 : 0,
-                                                    incomingFriendlyFleets : this.friendlyIncomingFleets.length > 0 ? 1 : 0,
+                                                    incomingEnemyFleets : this.enemyIncomingFleets.length,
+                                                    incomingFriendlyFleets : this.friendlyIncomingFleets.length,
                                                     growth          : this.growth,
                                                     effDef          : effDef,
                                                     distance        : distance });
@@ -147,7 +147,7 @@ Planet.prototype.attackConsiderationOrder = function(effDef, distance) {
 }
 
 Planet.prototype.toString = function() {
-    var f_or_e = this.owner == 1 ? "My" : "Enemy"
+    var f_or_e = this.owner === 1 ? "My" : "Enemy"
     var str = [ [ f_or_e + " Planet id:" + this.id + " with ",
                    this.ships + " ships,",
                    this.growth + " growth,",

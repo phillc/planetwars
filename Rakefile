@@ -67,53 +67,64 @@ end
 
 desc "mutate existing networks"
 task :mutate do
-  Mutations.create_mutations
+  run_times = (ENV['MUTATIONS'] || 1).to_i
+  p "running #{run_times} times"
+  run_times.times { Mutations.create_mutations }
 end
 
 require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
   RUN_MUTATIONS = 30
-  MAX_MUTATION_THRESHOLD = 45
-  NUMBER_OF_MATCHES = 1
+  NUMBER_OF_MATCHES = 10
   
   def self.create_mutations
-    Mutations::CreatedMutation.create_random if filenames.empty?
-    filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate } if filenames.length < MAX_MUTATION_THRESHOLD
+    get_and_increment("mutations/count")
+    RUN_MUTATIONS.times { Mutations::CreatedMutation.create_random } if filenames.empty?
+    filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate } if filenames.length < RUN_MUTATIONS
     create_mutations if filenames.length < RUN_MUTATIONS
   end
   
   def self.matchup
     file_records = {}
     filenames.each do |filename|
-      map = rand(MAPS.end + 1)
       my_command = "node MyBot.js #{filename}"
       
       possible_opponents = filenames.sort_by { rand }
       possible_opponents.delete(filename)
       
       NUMBER_OF_MATCHES.times do
+        map = rand(MAPS.end + 1)
         challenger = possible_opponents.shift
         challenger_command = "node MyBot.js #{challenger}"
-        cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt '#{my_command}' '#{challenger_command}'}
+        cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt '#{my_command}' '#{challenger_command}' 2>&1}
         p "running #{cmd}"
-        results = `#{cmd}`
+        output = `#{cmd}`.split("\n")
         file_records[filename] ||= 0
-        if results =~ /Player 1 Wins/
-          file_records[filename] = file_records[filename] + 2
+        file_records[challenger] ||= 0
+        if output[-1] =~ /Player 1 Wins/
           p "#{filename} wins"
-        elsif results =~ /Draw/
-          file_records[filename] = file_records[filename] + 0.25
+          file_records[filename] = file_records[filename] + 2
+          file_records[challenger] = file_records[challenger] -0.25
+        elsif output[-2] =~ /Draw/
           p "#{filename} drawed"
+          file_records[filename] = file_records[filename] + 1
+          file_records[challenger] = file_records[challenger] + 0.25
         else
-          p "#{filename} did not win"
+          p "#{filename} lost"
+          file_records[filename] = file_records[filename] - 1
+          file_records[challenger] = file_records[challenger] + 0.5
         end
       end
     end
     
-    file_records.sort_by {|filename, wins| wins}.reverse[KEEP_MUTATIONS..-1].each do |filename, wins|
-      p "deleting mutation #{filename} which only had #{wins} wins"
-      File.delete filename
+    file_records.sort_by {|filename, wins| wins}.reverse.each_with_index do |(filename, wins), index|
+      if index < KEEP_MUTATIONS
+        p "keeping mutation #{filename} which has #{wins} points"
+      else
+        p "deleting mutation #{filename} which only had #{wins} points"
+        File.delete filename
+      end
     end
     
   end
@@ -122,6 +133,12 @@ module Mutations
     Dir["mutations/mutation*.js"]
   end
       
+  def self.get_and_increment file
+    number = File.read(file).chomp.to_i + 1
+    File.open(file, "w"){ |f| f.write number }
+    number
+  end
+
   class Mutation
     JS_IFY = "exports.weights = "
     BASE_FILENAME = "mutation"
@@ -131,12 +148,9 @@ module Mutations
     end
     
     def next_number!
-      file = "mutations/number"
-      number = File.read(file).chomp.to_i + 1
-      File.open(file, "w"){ |f| f.write number }
-      number
+      Mutations.get_and_increment("mutations/number")
     end
-    
+        
     def filename
       "mutations/#{BASE_FILENAME}#{@network_number}.js"
     end
@@ -235,7 +249,7 @@ module Mutations
       case rand(8)
         when 0..1 then original_value / 2.0
         when 2..3 then original_value * 2.0
-        when 4 then original_value * - 1
+        when 4 then original_value * -1
         when 5 then original_value + 0.1
         when 6 then original_value - 0.1
         when 7 then original_value
