@@ -4,11 +4,11 @@ require("./underscore");
 var networks = require("./networkDefinition").networks;
 
 var weights;
-if(process.argv.length > 2) {
-    weights = require("./mutations/" + process.argv[2]).weights
-} else {
-    weights = require("./weights").weights;
-}
+// if(process.argv.length > 2) {
+    weights = require("./" + process.argv[2]).weights
+// } else {
+    // weights = require("./weights").weights;
+// }
     
 var sigmoid = function(t) {
     return 1/(1+Math.exp(-t));

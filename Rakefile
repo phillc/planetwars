@@ -61,8 +61,8 @@ end
 task :default => :tournament
 
 task :one do
-  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 1000 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
-  # puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 1000 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js"`
+  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
+  # puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js"`
 end
 
 desc "mutate existing networks"
@@ -74,11 +74,44 @@ require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
   RUN_MUTATIONS = 30
+  NUMBER_OF_MATCHES = 1
   
   def self.create_mutations
     Mutations::CreatedMutation.create_random if filenames.empty?
     filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate }
     create_mutations if filenames.length < RUN_MUTATIONS
+  end
+  
+  def self.matchup
+    file_records = {}
+    filenames.each do |filename|
+      map = rand(MAPS.end + 1)
+      my_command = "node MyBot.js #{filename}"
+      
+      possible_opponents = filenames.sort_by { rand }
+      possible_opponents.delete(filename)
+      
+      NUMBER_OF_MATCHES.times do
+        challenger = possible_opponents.shift
+        challenger_command = "node MyBot.js #{challenger}"
+        cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt "#{my_command}" "#{challenger_command}"}
+        p "running #{cmd}"
+        results = `#{cmd}`
+        if results =~ /Player 1 Wins/
+          file_records[filename] ||= 0
+          file_records[filename] = file_records[filename] + 1
+          p "#{filename} wins"
+        else
+          p "#{filename} did not win"
+        end
+      end
+    end
+    
+    file_records.sort_by {|filename, wins| wins}.reverse[KEEP_MUTATIONS..-1].each do |filename, wins|
+      p "deleting mutation #{filename} which only had #{wins} wins"
+      File.delete filename
+    end
+    
   end
   
   def self.filenames
@@ -195,11 +228,13 @@ module Mutations
     end
     
     def self.mutate_input_value original_value
-      case rand(6)
-        when 0..1 then original_value / 2
-        when 2..3 then original_value * 2
-        when 4 then original_value * -1
-        when 5 then original_value
+      case rand(8)
+        when 0..1 then original_value / 2.0
+        when 2..3 then original_value * 2.0
+        when 4 then original_value * - 1
+        when 5 then original_value + 1
+        when 6 then original_value - 1
+        when 7 then original_value
       end
     end
     
@@ -213,12 +248,14 @@ module Mutations
         File.open(filename, 'w') { |f| f.write(JS_IFY + JSON.pretty_generate(@network_weights)) }
       end
     end
-    
-    
   end
 end
 
+desc "mutate and run a round, deleting the losing networks"
+task :run => [:mutate, :matchup]
+
 desc "run a round, deleting the losing networks"
-task :run do
-  
+task :matchup do
+  Mutations.matchup
 end
+
