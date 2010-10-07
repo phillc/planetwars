@@ -3,11 +3,11 @@ require('./underscore');
 
 var PlanetWars = require('./PlanetWars');
 
-function attackConsiderationSort(planet1, planet2) {
-    return planet2.planet.attackConsiderationOrder(planet2.neededToMatch, planet2.distance) - planet1.planet.attackConsiderationOrder(planet1.neededToMatch, planet1.distance)
+var attackConsiderationSort = function(planet1, planet2) {
+    return planet2.planet.attackConsiderationOrder(planet2.neededToMatch, planet2.distance, 0, 0) - planet1.planet.attackConsiderationOrder(planet1.neededToMatch, planet1.distance, 0, 0)
 }
 
-function decisionConsiderationSort(a, b){
+var decisionConsiderationSort = function(a, b){
     return b.decisionConsiderationOrder() - a.decisionConsiderationOrder();
 }
 

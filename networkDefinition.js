@@ -13,7 +13,9 @@ var networks = {
                    "incomingFriendlyFleets",
                    "growth",
                    "effDef",
-                   "distance"],
+                   "distance",
+                   "distanceThreeFriendlyPlanets",
+                   "distanceThreeEnemyPlanets"],
         hiddenLayer : 12
     }
 }
