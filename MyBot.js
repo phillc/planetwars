@@ -59,9 +59,11 @@ function DoTurn(pw) {
                     }
                 }
             
+                checkTime();
                 consideredPlanets.sort(attackConsiderationSort);
             
                 while(sendableShips > 0 && consideredPlanets.length > 0) {
+                    checkTime();
                     var pHash = consideredPlanets.shift();
                     var neededToMatch = pHash.neededToMatch;
                     var targetPlanet = pHash.planet;
