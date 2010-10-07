@@ -27,9 +27,17 @@ function DoTurn(pw) {
                 if(consideredPlanet.id != myPlanet.id) {
                     var effDef = consideredPlanet.effectiveDefensiveValue(myPlanet.distanceFrom(consideredPlanet));
                     var neededToMatch = consideredPlanet.isFriendly() ? -effDef : effDef
-                    var calcedPlanet = { neededToMatch: neededToMatch,
-                                         planet: consideredPlanet,
-                                         distance: consideredPlanet.distanceFrom(myPlanet) };
+                    
+                    var nearbyMyPlanets = consideredPlanet.nearbyPlanets(pw.myPlanets.slice(0));
+                    var distanceThreeMyPlanets = nearbyMyPlanets[0] + nearbyMyPlanets[1] + nearbyMyPlanets[2];
+                    var nearbyEnemyPlanets = consideredPlanet.nearbyPlanets(pw.enemyPlanets.slice(0));
+                    var distanceThreeEnemyPlanets = nearbyEnemyPlanets[0] + nearbyEnemyPlanets[1] + nearbyEnemyPlanets[2];
+                    
+                    var calcedPlanet = { neededToMatch                : neededToMatch,
+                                         planet                       : consideredPlanet,
+                                         distance                     : consideredPlanet.distanceFrom(myPlanet),
+                                         distanceThreeFriendlyPlanets : distanceThreeMyPlanets,
+                                         distanceThreeEnemyPlanets    : distanceThreeEnemyPlanets };
                     consideredPlanets.push(calcedPlanet);
                 }
             }

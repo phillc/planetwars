@@ -133,7 +133,7 @@ Planet.prototype.decisionConsiderationOrder = function(){
     // turns remaining
 }
 
-Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceThreeFriendlyPlanets, distanceThreeEnemyPlanets) {
+Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceThreeMyPlanets, distanceThreeEnemyPlanets) {
     return network.compute("attackConsideration", { isEnemy         : this.isEnemy() ? 1 : 0,
                                                     isFriendly      : this.isFriendly() ? 1 : 0,
                                                     isNeutral       : this.isNeutral() ? 1 : 0,
@@ -143,17 +143,15 @@ Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceT
                                                     growth          : this.growth,
                                                     effDef          : effDef,
                                                     distance        : distance,
-                                                    distanceThreeFriendlyPlanets : distanceThreeFriendlyPlanets,
+                                                    distanceThreeMyPlanets : distanceThreeMyPlanets,
                                                     distanceThreeEnemyPlanets :  distanceThreeEnemyPlanets});
     
 }
 
-Planet.prototype.nearbyFriendlyPlanets = function(){
-    
-}
-
-Planet.prototype.nearbyEnemyPlanets = function() {
-    
+Planet.prototype.nearbyPlanets = function(planets){
+    return planets.sort(function(a, b){
+        return this.distanceFrom(a) - this.distanceFrom(b);
+    });
 }
 
 Planet.prototype.toString = function() {

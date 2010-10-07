@@ -31,14 +31,19 @@ var compute = function(networkName, values) {
     for(var weight_set_number in network_input_weights) {
         var input_weights = network_input_weights[weight_set_number];
         hidden_layer_results.push(_.reduce(keys, function(memo, key){
-            return memo + activation(values[key] * input_weights[key]);
+            return memo + activation(values[key] * (input_weights[key] || 1));
         }, 0));
     }
-    
+        
     var result = 0;
     for(var hidden_layer_result_num in hidden_layer_results) {
         result += activation(hidden_layer_results[hidden_layer_result_num] * network_hidden_weights[hidden_layer_result_num])
     }
+    
+    if(isNaN(result)){
+        throw "result is NaN";
+    }
+    return result;
 }
 exports.compute = compute;
 
