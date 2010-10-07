@@ -89,12 +89,14 @@ require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
   RUN_MUTATIONS = 30
-  NUMBER_OF_MATCHES = 10
+  NUMBER_OF_MATCHES = 3
   
   def self.create_mutations
-    get_and_increment("mutations/count")
     RUN_MUTATIONS.times { Mutations::CreatedMutation.create_random } if filenames.empty?
-    filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate } if filenames.length < RUN_MUTATIONS
+    if filenames.length < RUN_MUTATIONS
+      get_and_increment("mutations/count")
+      filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate } 
+    end
     create_mutations if filenames.length < RUN_MUTATIONS
   end
   
