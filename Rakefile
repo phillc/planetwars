@@ -89,7 +89,7 @@ require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
   RUN_MUTATIONS = 30
-  NUMBER_OF_MATCHES = 3
+  NUMBER_OF_MATCHES = 5
   
   def self.create_mutations
     RUN_MUTATIONS.times { Mutations::CreatedMutation.create_random } if filenames.empty?
@@ -109,7 +109,7 @@ module Mutations
       possible_opponents.delete(filename)
       
       NUMBER_OF_MATCHES.times do
-        map = rand(MAPS.end + 1)
+        map = rand(MAPS.end) + 1
         challenger = possible_opponents.shift
         challenger_command = "node MyBot.js #{challenger}"
         cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt '#{my_command}' '#{challenger_command}' 2>&1}
