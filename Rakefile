@@ -74,11 +74,12 @@ require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
   RUN_MUTATIONS = 30
+  MAX_MUTATION_THRESHOLD = 45
   NUMBER_OF_MATCHES = 1
   
   def self.create_mutations
     Mutations::CreatedMutation.create_random if filenames.empty?
-    filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate }
+    filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate } if filenames.length < MAX_MUTATION_THRESHOLD
     create_mutations if filenames.length < RUN_MUTATIONS
   end
   
@@ -101,6 +102,8 @@ module Mutations
           file_records[filename] ||= 0
           file_records[filename] = file_records[filename] + 1
           p "#{filename} wins"
+        elsif results =~ /Draw/
+          p "#{filename} drawed"
         else
           p "#{filename} did not win"
         end
@@ -216,7 +219,7 @@ module Mutations
     end
     
     def self.random_input_value
-      -3 + rand(7)
+      0.5 - rand
     end
     
     def self.mutate_inputs inputs, original_values
@@ -232,8 +235,8 @@ module Mutations
         when 0..1 then original_value / 2.0
         when 2..3 then original_value * 2.0
         when 4 then original_value * - 1
-        when 5 then original_value + 1
-        when 6 then original_value - 1
+        when 5 then original_value + 0.1
+        when 6 then original_value - 0.1
         when 7 then original_value
       end
     end

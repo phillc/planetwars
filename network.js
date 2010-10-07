@@ -29,10 +29,15 @@ var compute = function(networkName, values) {
         }, 0));
     }
     
+    sys.debug("hidden_layer_results")
+    sys.debug(hidden_layer_results)
+    
     var result = 0;
     for(var hidden_layer_result_num in hidden_layer_results) {
         result += sigmoid(hidden_layer_results[hidden_layer_result_num] + network_hidden_weights[hidden_layer_result_num])
     }
+    sys.debug("result")
+    sys.debug(result)
 }
 exports.compute = compute;
 
