@@ -259,6 +259,7 @@ module Mutations
     end
     
     def self.mutate_input_value original_value
+      original_value ||= 0
       case rand(8)
         when 0..1 then original_value / 2.0
         when 2..3 then original_value * 2.0
