@@ -98,11 +98,12 @@ module Mutations
         cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt "#{my_command}" "#{challenger_command}"}
         p "running #{cmd}"
         results = `#{cmd}`
+        file_records[filename] ||= 0
         if results =~ /Player 1 Wins/
-          file_records[filename] ||= 0
-          file_records[filename] = file_records[filename] + 1
+          file_records[filename] = file_records[filename] + 2
           p "#{filename} wins"
         elsif results =~ /Draw/
+          file_records[filename] = file_records[filename] + 0.25
           p "#{filename} drawed"
         else
           p "#{filename} did not win"
