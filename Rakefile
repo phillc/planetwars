@@ -61,29 +61,106 @@ end
 task :default => :tournament
 
 task :one do
-  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 200 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
+  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 1000 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
+  # puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 1000 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js"`
 end
 
-NUMBER_OF_MUTATIONS = 5
-desc "create default set of mutations"
-task :create_neuron_templates do
-  require 'json'
-  networks = JSON.parse(`node utils/printNetworkInfo.js`)["networks"]
+desc "mutate existing networks"
+task :mutate do
+  Mutations.create_mutations
+end
+
+require 'json'
+module Mutations
+  NUMBER_OF_MUTATIONS = 5
   
-  NUMBER_OF_MUTATIONS.times do |mutation_number|
-    filename = "mutations/weights#{mutation_number}.json"
-    unless File.exists?(filename)
-      networks = JSON.parse(`node utils/printNetworkInfo.js`)["networks"]
+  def self.create_mutations
+    Mutations::CreatedMutation.create_random if filenames.empty?
+    filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate }
+    create_mutations if filenames.length < NUMBER_OF_MUTATIONS
+  end
+  
+  def self.filenames
+    Dir["mutations/mutation*.js"]
+  end
       
-      network_weights = {}
+  class Mutation
+    JS_IFY = "exports.weights = "
+    BASE_FILENAME = "mutation"
+    
+    def networks
+      @@networks ||= JSON.parse(`node utils/printNetworkInfo.js`)["networks"]
+    end
+    
+    def next_number!
+      file = "mutations/number"
+      number = File.read(file).chomp.to_i + 1
+      File.open(file, "w"){|f| f.write number}
+      number
+    end
+    
+    def filename
+      "mutations/#{BASE_FILENAME}#{@network_number}.js"
+    end
+    
+    def mutate# strategy = :random
+      # if strategy == :crossover
+      CreatedMutation.create_from @network_weights
+    end
+  end
+  
+  class ExistingMutation < Mutation
+    def initialize filename
+      @network_number = File.basename(filename, ".js").sub(BASE_FILENAME, "")
+      @network_weights = read
+    end
+    
+    protected
+    
+    def read
+      JSON.parse(File.read(filename).sub(JS_IFY, ""))
+    end
+  end
+    
+  class CreatedMutation < Mutation
+    def self.create_random
+      m = new
+      m.assign_random_weights
+      m.store
+    end
+    
+    def self.create_from mutation_weights
+      weights = {}
+      raise
+      m = new
+      m.store
+    end
       
+    end
+    
+    def initialize weights={}
+      @network_number = self.next_number!
+      @network_weights = weights
+    end
+    
+    def store
+      unless File.exists? filename
+        File.open(filename, 'w') { |f| f.write(JS_IFY + JSON.pretty_generate(@network_weights)) }
+      end
+    end
+    
+    def mutate_from mutation
+      @network_weights[:created_on] = Time.now
+    end
+    
+    def assign_random_weights
       networks.each do |network_name, info|
         hidden_layer_number = info["hiddenLayer"].to_i
         inputs = info["inputs"]
         
         input_weights = []
         hidden_layer_number.times do
-          input_weights.push(create_random_weights(inputs))
+          input_weights.push(randomize_inputs(inputs))
         end
         
         hidden_weights = []
@@ -91,24 +168,25 @@ task :create_neuron_templates do
           hidden_weights.push(-3 + rand(7))
         end
         
-        network_weights[network_name] = { :input_weights => input_weights,
+        @network_weights[network_name] = { :input_weights => input_weights,
                                           :hidden_weights => hidden_weights }
       end
-      
-      File.open(filename, 'w') {|f| f.write(JSON.pretty_generate(network_weights)) }
+      @network_weights[:created_on] = Time.now
+    end
+    
+    protected
+    
+    def randomize_inputs inputs
+      weights = inputs.inject({}) do |memo, input_name|
+        memo[input_name] = -3 + rand(7)
+        memo
+      end
+      weights
     end
   end
 end
 
-def create_random_weights inputs
-  weights = inputs.inject({}) do |memo, input_name|
-    memo[input_name] = -3 + rand(7)
-    memo
-  end
-  weights
-end
-
-desc "mutate existing mutations"
-task :mutate do
+desc "run a round, deleting the losing networks"
+task :run do
   
 end

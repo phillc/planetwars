@@ -2,7 +2,7 @@ var networks = {
     decisionConsideration : {
         inputs : [ "ships",
                    "growth"],
-        hiddenLayer : 1
+        hiddenLayer : 4
     },
     attackConsideration : {
         inputs : [ "isEnemy",
@@ -14,7 +14,7 @@ var networks = {
                    "growth",
                    "effDef",
                    "distance"],
-        hiddenLayer : 2
+        hiddenLayer : 12
     }
 }
 exports.networks = networks;

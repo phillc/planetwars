@@ -1,26 +1,31 @@
 var sys = require("sys");
 require("./underscore");
 
-var networks = require("./networkDefinition").networks,
-    weights = require("./weights").weights;
+var networks = require("./networkDefinition").networks;
 
+var weights;
+if(process.argv.length > 2) {
+    weights = require("./mutations/" + process.argv[2]).weights
+} else {
+    weights = require("./mutations/weights0").weights;
+}
+    
 var sigmoid = function(t) {
     return 1/(1+Math.exp(-t));
 }
 exports.sigmoid = sigmoid;
 
 var compute = function(networkName, values) {
-    sys.debug(weights)
     var network = networks[networkName];
-    var keys = values.keys;
+    var keys = _.keys(values);
     var network_input_weights = weights[networkName].input_weights;
     var network_hidden_weights = weights[networkName].hidden_weights;
     
     var hidden_layer_results = [];
     for(var weight_set_number in network_input_weights) {
-        var weights = network_input_weights[weight_set_number];
+        var input_weights = network_input_weights[weight_set_number];
         hidden_layer_results.push(_.reduce(keys, function(memo, key){
-            return memo + sigmoid(values[key] * weights[key]);
+            return memo + sigmoid(values[key] * input_weights[key]);
         }, 0));
     }
     
