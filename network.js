@@ -31,7 +31,7 @@ var compute = function(networkName, values) {
     for(var weight_set_number in network_input_weights) {
         var input_weights = network_input_weights[weight_set_number];
         hidden_layer_results.push(_.reduce(keys, function(memo, key){
-            return memo + activation(values[key] * (input_weights[key] || 1));
+            return memo + activation(values[key] * (input_weights[key] || 0));
         }, 0));
     }
         

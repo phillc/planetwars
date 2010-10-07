@@ -149,8 +149,9 @@ Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceT
 }
 
 Planet.prototype.nearbyPlanets = function(planets){
+    var that = this;
     return planets.sort(function(a, b){
-        return this.distanceFrom(a) - this.distanceFrom(b);
+        return that.distanceFrom(a) - that.distanceFrom(b);
     });
 }
 
