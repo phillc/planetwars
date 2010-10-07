@@ -18,7 +18,7 @@ var currentTime = function(){
 var TIME_ERROR = "Time!"
 
 var checkTime = function(startTime){
-    if(currentTime() - startTime > 900) {
+    if(currentTime() - startTime > 800) {
         sys.debug("********* TIMED OUT ***********")
         throw TIME_ERROR;
     };
