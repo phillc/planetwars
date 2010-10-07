@@ -39,6 +39,7 @@ function DoTurn(pw) {
             if(sendableShips > 0) {
                 var consideredPlanets = [];
                 for(var consideredPlanetNum in pw.planets) {
+                    checkTime();
                     var consideredPlanet = pw.planets[consideredPlanetNum];
                     if(consideredPlanet.id != myPlanet.id) {
                         var effDef = consideredPlanet.effectiveDefensiveValue(myPlanet.distanceFrom(consideredPlanet));
