@@ -117,12 +117,13 @@ module Mutations
         output = `#{cmd}`.split("\n")
         file_records[filename] ||= 0
         file_records[challenger] ||= 0
+        
         if output.any?{ |line| line =~ /timed out/ }
           puts output.join("\n")
           raise "Problem!!!"
         end
         
-        if output[-1] =~ /Player 1 Wins/
+        if output[-2] =~ /Player 1 Wins/
           p "#{filename} wins"
           file_records[filename] = file_records[filename] + 2
           file_records[challenger] = file_records[challenger] -0.25
@@ -130,10 +131,13 @@ module Mutations
           p "#{filename} drawed"
           file_records[filename] = file_records[filename] + 1
           file_records[challenger] = file_records[challenger] + 0.25
-        else
+        elsif output[-2] =~ /Player 2 Wins/
           p "#{filename} lost"
           file_records[filename] = file_records[filename] - 1
           file_records[challenger] = file_records[challenger] + 0.5
+        else
+          p output[-2]
+          raise "if none won, lost, or draw, wtf is it?"
         end
       end
     end

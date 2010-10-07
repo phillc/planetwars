@@ -55,6 +55,7 @@ function DoTurn(pw) {
                                              distance                     : consideredPlanet.distanceFrom(myPlanet),
                                              distanceThreeFriendlyPlanets : distanceThreeMyPlanets,
                                              distanceThreeEnemyPlanets    : distanceThreeEnemyPlanets };
+                                             // and number of ships those 3 have
                         consideredPlanets.push(calcedPlanet);
                     }
                 }
