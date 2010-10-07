@@ -10,10 +10,16 @@ var weights;
     // weights = require("./weights").weights;
 // }
     
-var sigmoid = function(t) {
-    return 1/(1+Math.exp(-t));
-}
-exports.sigmoid = sigmoid;
+var activation = function() {
+    var exp = Math.exp;
+    var sinh = function(x) { return (exp(x)-exp(-x))/2 };
+    var cosh = function(x) { return (exp(x)+exp(-x))/2 };
+    var tanh = function(x) { return sinh(x)/cosh(x) };
+    
+    return function(t) { return tanh(t) };
+}();
+
+exports.activation = activation;
 
 var compute = function(networkName, values) {
     var network = networks[networkName];
@@ -25,19 +31,14 @@ var compute = function(networkName, values) {
     for(var weight_set_number in network_input_weights) {
         var input_weights = network_input_weights[weight_set_number];
         hidden_layer_results.push(_.reduce(keys, function(memo, key){
-            return memo + sigmoid(values[key] * input_weights[key]);
+            return memo + activation(values[key] * input_weights[key]);
         }, 0));
     }
     
-    sys.debug("hidden_layer_results")
-    sys.debug(hidden_layer_results)
-    
     var result = 0;
     for(var hidden_layer_result_num in hidden_layer_results) {
-        result += sigmoid(hidden_layer_results[hidden_layer_result_num] * network_hidden_weights[hidden_layer_result_num])
+        result += activation(hidden_layer_results[hidden_layer_result_num] * network_hidden_weights[hidden_layer_result_num])
     }
-    sys.debug("result")
-    sys.debug(result)
 }
 exports.compute = compute;
 

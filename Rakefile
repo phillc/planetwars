@@ -95,7 +95,7 @@ module Mutations
       NUMBER_OF_MATCHES.times do
         challenger = possible_opponents.shift
         challenger_command = "node MyBot.js #{challenger}"
-        cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt "#{my_command}" "#{challenger_command}"}
+        cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt '#{my_command}' '#{challenger_command}'}
         p "running #{cmd}"
         results = `#{cmd}`
         file_records[filename] ||= 0
