@@ -22,6 +22,10 @@ Planet.prototype.getShips = function() {
     return this.ships;
 }
 
+Planet.prototype.samePlanet = function(otherPlanet) {
+    return this.id == otherPlanet.id;
+}
+
 Planet.prototype.getEnemyIncomingFleets = function() {
     return this.enemyIncomingFleets;
 }
@@ -133,20 +137,21 @@ Planet.prototype.decisionConsiderationOrder = function(){
     // turns remaining
 }
 
-Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceThreeMyPlanets, distanceThreeEnemyPlanets) {
-    return network.compute("attackConsideration", { isEnemy         : this.isEnemy() ? 1 : 0, // is effectively enemy?
-                                                    isFriendly      : this.isFriendly() ? 1 : 0,
-                                                    isNeutral       : this.isNeutral() ? 1 : 0,
-                                                    canTakeRightNow : this.ships > effDef ? 1 : 0,
+Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceThreeMyPlanets, distanceThreeEnemyPlanets, isSelf) {
+    return network.compute("attackConsideration", { isEnemy         : this.isEnemy() ? 1 : -1, // is effectively enemy? (in x turns, where x is distance (to help sniping))
+                                                    isFriendly      : this.isFriendly() ? 1 : -1,
+                                                    isNeutral       : this.isNeutral() ? 1 : -1,
+                                                    canTakeRightNow : this.ships > effDef ? 1 : -1,
                                                     incomingEnemyFleets : this.enemyIncomingFleets.length,
                                                     incomingFriendlyFleets : this.friendlyIncomingFleets.length,
                                                     growth          : this.growth,
                                                     effDef          : effDef,
                                                     distance        : distance,
                                                     distanceThreeMyPlanets : distanceThreeMyPlanets,
-                                                    distanceThreeEnemyPlanets :  distanceThreeEnemyPlanets});
+                                                    distanceThreeEnemyPlanets :  distanceThreeEnemyPlanets,
+                                                    isSelf : isSelf
+                                                    });
                                                     // is self (and remove self restriction)
-    
 }
 
 Planet.prototype.nearbyPlanets = function(planets){

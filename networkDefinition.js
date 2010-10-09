@@ -15,7 +15,8 @@ var networks = {
                    "effDef",
                    "distance",
                    "distanceThreeMyPlanets",
-                   "distanceThreeEnemyPlanets"],
+                   "distanceThreeEnemyPlanets",
+                   "isSelf"],
         hiddenLayer : 12
     }
 }

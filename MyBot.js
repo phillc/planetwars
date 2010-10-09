@@ -7,7 +7,8 @@ var PlanetWars = require('./PlanetWars'),
     checkTime = timer.checkTime;
 
 var attackConsiderationSort = function(planet1, planet2) {
-    return planet2.planet.attackConsiderationOrder(planet2.neededToMatch, planet2.distance, 0, 0) - planet1.planet.attackConsiderationOrder(planet1.neededToMatch, planet1.distance, 0, 0)
+    // need to feed in closest 3 of each still
+    return planet2.planet.attackConsiderationOrder(planet2.neededToMatch, planet2.distance, 0, 0, planet2.isSelf) - planet1.planet.attackConsiderationOrder(planet1.neededToMatch, planet1.distance, 0, 0, planet1.isSelf)
 }
 
 var decisionConsiderationSort = function(a, b){
@@ -30,7 +31,7 @@ function DoTurn(pw) {
                 for(var consideredPlanetNum in pw.planets) {
                     checkTime();
                     var consideredPlanet = pw.planets[consideredPlanetNum];
-                    if(consideredPlanet.id != myPlanet.id) {
+                    // if(consideredPlanet.id != myPlanet.id) {
                         var effDef = consideredPlanet.effectiveDefensiveValue(myPlanet.distanceFrom(consideredPlanet));
                         var neededToMatch = consideredPlanet.isFriendly() ? -effDef : effDef
                     
@@ -43,10 +44,11 @@ function DoTurn(pw) {
                                              planet                       : consideredPlanet,
                                              distance                     : consideredPlanet.distanceFrom(myPlanet),
                                              distanceThreeFriendlyPlanets : distanceThreeMyPlanets,
-                                             distanceThreeEnemyPlanets    : distanceThreeEnemyPlanets };
+                                             distanceThreeEnemyPlanets    : distanceThreeEnemyPlanets,
                                              // and number of ships those 3 have
+                                             isSelf                       : myPlanet.samePlanet(consideredPlanet) ? 1 : -1 };
                         consideredPlanets.push(calcedPlanet);
-                    }
+                    // }
                 }
             
                 checkTime();
@@ -77,6 +79,7 @@ function DoTurn(pw) {
         }
     } catch(err) {
         if(err !== TIME_ERROR) {
+            sys.debug(err);
             throw err;
         }
     }
