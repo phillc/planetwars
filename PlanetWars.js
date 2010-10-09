@@ -1,7 +1,8 @@
 var sys = require('sys'),
     Planet = require('./Planet').Planet,
     Fleet = require('./Fleet').Fleet,
-    Universe = require('./Universe').Universe;
+    Universe = require('./Universe').Universe,
+    setStartTime = require('./timer').setStartTime;
 
 function parseInput(turnInput, turnFn) {
     var lines = turnInput.split('\n');
@@ -47,6 +48,7 @@ exports.Play = function Play(turnFn) {
         if (endOfTurn >= 0) {
             var turnInput = buffer.substring(0, endOfTurn);
             buffer = buffer.substring(endOfTurn + 4);
+            setStartTime();
             parseInput(turnInput, turnFn);
         }
     });

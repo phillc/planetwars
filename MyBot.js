@@ -1,7 +1,10 @@
 var sys = require('sys');
 require('./underscore');
 
-var PlanetWars = require('./PlanetWars');
+var PlanetWars = require('./PlanetWars'),
+    timer = require('./timer'),
+    TIME_ERROR = timer.TIME_ERROR,
+    checkTime = timer.checkTime;
 
 var attackConsiderationSort = function(planet1, planet2) {
     return planet2.planet.attackConsiderationOrder(planet2.neededToMatch, planet2.distance, 0, 0) - planet1.planet.attackConsiderationOrder(planet1.neededToMatch, planet1.distance, 0, 0)
@@ -11,22 +14,8 @@ var decisionConsiderationSort = function(a, b){
     return b.decisionConsiderationOrder() - a.decisionConsiderationOrder();
 }
 
-var currentTime = function(){
-    return new Date().valeueOf;
-}
-
-var TIME_ERROR = "Time!"
-
-var checkTime = function(startTime){
-    if(currentTime() - startTime > 800) {
-        sys.debug("********* TIMED OUT ***********")
-        throw TIME_ERROR;
-    };
-}
-
 function DoTurn(pw) {
     try {
-        var startTime = currentTime();
         var myPlanets = pw.myPlanets;
         var myPlanetsForDecision = myPlanets.slice(0); //copy array
         myPlanetsForDecision.sort(decisionConsiderationSort)
