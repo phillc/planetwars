@@ -1,8 +1,8 @@
 var vows = require('vows'),
     assert = require('assert');
 
-var NeuralNetwork = require('../network'),
-    activation = NeuralNetwork.activation;
+var network = require('../network'),
+    activation = network.activation;
 
 vows.describe('activation function').addBatch({
     'of 0 is 0' : function() {

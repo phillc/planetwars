@@ -26,8 +26,8 @@ var activation = function() {
         return tanh(t)
     };
 }();
-
 exports.activation = activation;
+
 
 var compute = function(networkName, values) {
     var network = networks[networkName];
@@ -54,4 +54,3 @@ var compute = function(networkName, values) {
     return result;
 }
 exports.compute = compute;
-
