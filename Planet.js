@@ -134,7 +134,7 @@ Planet.prototype.decisionConsiderationOrder = function(){
 }
 
 Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceThreeMyPlanets, distanceThreeEnemyPlanets) {
-    return network.compute("attackConsideration", { isEnemy         : this.isEnemy() ? 1 : 0,
+    return network.compute("attackConsideration", { isEnemy         : this.isEnemy() ? 1 : 0, // is effectively enemy?
                                                     isFriendly      : this.isFriendly() ? 1 : 0,
                                                     isNeutral       : this.isNeutral() ? 1 : 0,
                                                     canTakeRightNow : this.ships > effDef ? 1 : 0,
@@ -145,6 +145,7 @@ Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceT
                                                     distance        : distance,
                                                     distanceThreeMyPlanets : distanceThreeMyPlanets,
                                                     distanceThreeEnemyPlanets :  distanceThreeEnemyPlanets});
+                                                    // is self (and remove self restriction)
     
 }
 

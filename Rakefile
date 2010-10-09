@@ -143,6 +143,7 @@ module Mutations
     end
     
     file_records.sort_by {|filename, wins| wins}.reverse.each_with_index do |(filename, wins), index|
+      p "cp #{filename} weights.js" if index == 0
       if index < KEEP_MUTATIONS
         p "keeping mutation #{filename} which has #{wins} points"
       else
