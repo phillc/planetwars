@@ -58,8 +58,6 @@ task :help do
   puts "Available maps: #{MAPS.inspect}"
 end
 
-task :default => :tournament
-
 task :one do
   puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
   # puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js"`
@@ -80,6 +78,8 @@ task :run do
   end
 end
 
+task :default => :run
+
 desc "run a round, deleting the losing networks"
 task :matchup do
   Mutations.matchup
@@ -89,7 +89,7 @@ require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
   RUN_MUTATIONS = 30
-  NUMBER_OF_MATCHES = 5
+  NUMBER_OF_MATCHES = 6
   
   def self.create_mutations
     RUN_MUTATIONS.times { Mutations::CreatedMutation.create_random } if filenames.empty?
