@@ -122,7 +122,7 @@ module Mutations
         file_records[filename] ||= 0
         file_records[challenger] ||= 0
         
-        if output.any?{ |line| line =~ /timed out/ }
+        if output.any?{ |line| line =~ /timed out|crashed/ }
           puts output.join("\n")
           raise "Problem!!!"
         end
