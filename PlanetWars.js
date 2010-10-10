@@ -46,9 +46,9 @@ exports.Play = function Play(turnFn) {
         buffer += chunk;
         var endOfTurn = buffer.indexOf('\ngo\n');
         if (endOfTurn >= 0) {
+            setStartTime();
             var turnInput = buffer.substring(0, endOfTurn);
             buffer = buffer.substring(endOfTurn + 4);
-            setStartTime();
             parseInput(turnInput, turnFn);
         }
     });

@@ -28,7 +28,6 @@ var activation = function() {
 }();
 exports.activation = activation;
 
-
 var compute = function(networkName, values) {
     var network = networks[networkName];
     var keys = _.keys(values);

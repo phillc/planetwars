@@ -14,7 +14,7 @@ var setStartTime = function(){
 exports.setStartTime = setStartTime;
 
 var checkTime = function(){
-    if(currentTime() - startTime > 800) {
+    if(currentTime() - startTime > 750) {
         sys.debug("********* TIMED OUT ***********")
         throw TIME_ERROR;
     };

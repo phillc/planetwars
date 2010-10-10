@@ -6,9 +6,8 @@ var PlanetWars = require('./PlanetWars'),
     TIME_ERROR = timer.TIME_ERROR,
     checkTime = timer.checkTime;
 
-var attackConsiderationSort = function(planet1, planet2) {
-    // need to feed in closest 3 of each still
-    return planet2.planet.attackConsiderationOrder(planet2.neededToMatch, planet2.distance, 0, 0, planet2.isSelf) - planet1.planet.attackConsiderationOrder(planet1.neededToMatch, planet1.distance, 0, 0, planet1.isSelf)
+var tupleSort = function(tuple1, tuple2) {
+    return tuple2[0] - tuple1[0];
 }
 
 var decisionConsiderationSort = function(a, b){
@@ -17,7 +16,9 @@ var decisionConsiderationSort = function(a, b){
 
 function DoTurn(pw) {
     try {
+        var planets = pw.planets;
         var myPlanets = pw.myPlanets;
+        var enemyPlanets = pw.enemyPlanets;
         var myPlanetsForDecision = myPlanets.slice(0); //copy array
         myPlanetsForDecision.sort(decisionConsiderationSort)
     
@@ -27,53 +28,39 @@ function DoTurn(pw) {
             var sendableShips = myPlanet.expendableShipsWithoutReinforce();
         
             if(sendableShips > 0) {
-                var consideredPlanets = [];
-                for(var consideredPlanetNum in pw.planets) {
+                var planetEvaluations = [];
+                for(var consideredPlanetNum in planets) {
                     checkTime();
-                    var consideredPlanet = pw.planets[consideredPlanetNum];
-                    // if(consideredPlanet.id != myPlanet.id) {
-                        var effDef = consideredPlanet.effectiveDefensiveValue(myPlanet.distanceFrom(consideredPlanet));
-                        var neededToMatch = consideredPlanet.isFriendly() ? -effDef : effDef
-                    
-                        var nearbyMyPlanets = consideredPlanet.nearbyPlanets(pw.myPlanets.slice(0));
-                        var distanceThreeMyPlanets = nearbyMyPlanets[0] + nearbyMyPlanets[1] + nearbyMyPlanets[2];
-                        var nearbyEnemyPlanets = consideredPlanet.nearbyPlanets(pw.enemyPlanets.slice(0));
-                        var distanceThreeEnemyPlanets = nearbyEnemyPlanets[0] + nearbyEnemyPlanets[1] + nearbyEnemyPlanets[2];
-                    
-                        var calcedPlanet = { neededToMatch                : neededToMatch,
-                                             planet                       : consideredPlanet,
-                                             distance                     : consideredPlanet.distanceFrom(myPlanet),
-                                             distanceThreeFriendlyPlanets : distanceThreeMyPlanets,
-                                             distanceThreeEnemyPlanets    : distanceThreeEnemyPlanets,
-                                             // and number of ships those 3 have
-                                             isSelf                       : myPlanet.samePlanet(consideredPlanet) ? 1 : -1 };
-                        consideredPlanets.push(calcedPlanet);
-                    // }
+                    var otherPlanet = planets[consideredPlanetNum];
+                    planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, myPlanets, enemyPlanets));
                 }
             
-                checkTime();
-                consideredPlanets.sort(attackConsiderationSort);
+                planetEvaluations.sort(tupleSort);
             
-                while(sendableShips > 0 && consideredPlanets.length > 0) {
+                while(sendableShips > 0 && planetEvaluations.length > 0) {
                     checkTime();
-                    var pHash = consideredPlanets.shift();
-                    var neededToMatch = pHash.neededToMatch;
-                    var targetPlanet = pHash.planet;
-                    if(neededToMatch >= 0) {
+                    var pTuple = planetEvaluations.shift();
+                    var targetPlanet = pTuple[1];
+                    var values = pTuple[2];
+                    var neededToMatch = values.neededToMatch;
+                    
+                    // sys.debug([ "==================================================",
+                    //             "sendableShips " + sendableShips,
+                    //             "sending " + shipsToSend + " ships",
+                    //             "****from:",
+                    //             myPlanet,
+                    //             "****to planet",
+                    //             targetPlanet,
+                    //             "needing " + values.neededToMatch + " to match",
+                    //             "distance of " + myPlanet.distanceFrom(targetPlanet),
+                    //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
+                    // 
+                    
+                   if(neededToMatch >= 0) {
                         var shipsToSend = Math.min(sendableShips, neededToMatch + 1);
-                        // sys.debug([ "==================================================",
-                        //             "sendableShips " + sendableShips,
-                        //             "sending " + shipsToSend + " ships",
-                        //             "****from:",
-                        //             myPlanet,
-                        //             "****to planet",
-                        //             targetPlanet,
-                        //             "needing " + neededToMatch + " to match",
-                        //             "distance of " + myPlanet.distanceFrom(targetPlanet),
-                        //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
                         myPlanet.sendShips(shipsToSend, targetPlanet);
-                        sendableShips  = sendableShips - shipsToSend;
-                    }
+                        sendableShips -= shipsToSend;
+                    }                    
                 }
             }
         }

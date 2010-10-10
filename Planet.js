@@ -22,8 +22,8 @@ Planet.prototype.getShips = function() {
     return this.ships;
 }
 
-Planet.prototype.samePlanet = function(otherPlanet) {
-    return this.id == otherPlanet.id;
+Planet.prototype.isSamePlanet = function(otherPlanet) {
+    return this.id === otherPlanet.id;
 }
 
 Planet.prototype.getEnemyIncomingFleets = function() {
@@ -137,24 +137,51 @@ Planet.prototype.decisionConsiderationOrder = function(){
     // turns remaining
 }
 
-Planet.prototype.attackConsiderationOrder = function(effDef, distance, distanceThreeMyPlanets, distanceThreeEnemyPlanets, isSelf) {
-    return network.compute("attackConsideration", { isEnemy         : this.isEnemy() ? 1 : -1, // is effectively enemy? (in x turns, where x is distance (to help sniping))
-                                                    isFriendly      : this.isFriendly() ? 1 : -1,
-                                                    isNeutral       : this.isNeutral() ? 1 : -1,
-                                                    canTakeRightNow : this.ships > effDef ? 1 : -1,
-                                                    incomingEnemyFleets : this.enemyIncomingFleets.length,
-                                                    incomingFriendlyFleets : this.friendlyIncomingFleets.length,
-                                                    growth          : this.growth,
-                                                    effDef          : effDef,
-                                                    distance        : distance,
-                                                    distanceThreeMyPlanets : distanceThreeMyPlanets,
-                                                    distanceThreeEnemyPlanets :  distanceThreeEnemyPlanets,
-                                                    isSelf : isSelf
-                                                    });
-                                                    // is self (and remove self restriction)
+var summateDistanceOf = function(numberOf, planets, fromPlanet) {
+    var planetsLength = planets.length;
+    var distance = 0;
+    for(var i=0 ; (i < numberOf) && (i < planetsLength) ; i++) {
+        distance += fromPlanet.distanceFrom(planets[i]);
+    }
+    return distance;
 }
 
-Planet.prototype.nearbyPlanets = function(planets){
+
+Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlanets) {
+    var distance = this.distanceFrom(targetPlanet);
+    var effDef = targetPlanet.effectiveDefensiveValue(distance);
+    
+    var nearbyMyPlanets = targetPlanet.nearbyPlanetsOutOf(myPlanets);
+    var nearbyEnemyPlanets = targetPlanet.nearbyPlanetsOutOf(enemyPlanets);
+    
+    var distanceThreeMyPlanets = summateDistanceOf(3, nearbyMyPlanets, this);
+    var distanceThreeEnemyPlanets = summateDistanceOf(3, nearbyEnemyPlanets, this);
+    
+    var neededToMatch = targetPlanet.isFriendly() ? -effDef : effDef
+    
+    var values = { 
+                   canTakeRightNow           : targetPlanet.ships > effDef ? 1 : -1,
+                   distance                  : distance,
+                   distanceThreeMyPlanets    : distanceThreeMyPlanets,
+                   distanceThreeEnemyPlanets : distanceThreeEnemyPlanets,
+                   effDef                    : effDef,
+                   incomingEnemyFleets       : targetPlanet.enemyIncomingFleets.length,
+                   incomingFriendlyFleets    : targetPlanet.friendlyIncomingFleets.length,
+                   isEnemy                   : targetPlanet.isEnemy() ? 1 : -1, // is effectively enemy? (in x turns, where x is distance (to help sniping))
+                   isFriendly                : targetPlanet.isFriendly() ? 1 : -1,
+                   isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
+                   isSelf                    : this.isSamePlanet(targetPlanet) ? 1 : -1,
+                   growth                    : targetPlanet.growth,
+                   neededToMatch             : neededToMatch };
+                   //my total growth
+                   //enemy total growth
+    
+    return [network.compute("attackConsideration", values), targetPlanet, values]
+                           
+}
+
+Planet.prototype.nearbyPlanetsOutOf = function(planets){
+    planets.slice(0);
     var that = this;
     return planets.sort(function(a, b){
         return that.distanceFrom(a) - that.distanceFrom(b);
