@@ -93,7 +93,7 @@ require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
   RUN_MUTATIONS = 30
-  NUMBER_OF_MATCHES = 6
+  NUMBER_OF_MATCHES = 8
   
   def self.create_mutations
     RUN_MUTATIONS.times { Mutations::CreatedMutation.create_random } if filenames.empty?
@@ -107,6 +107,7 @@ module Mutations
   def self.matchup
     file_records = {}
     filenames.each do |filename|
+      p "*" * 80
       my_command = "node MyBot.js #{filename}"
       
       possible_opponents = filenames.sort_by { rand }

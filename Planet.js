@@ -131,8 +131,7 @@ Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
 Planet.prototype.decisionConsiderationOrder = function(){
     return network.compute("decisionConsideration", { ships  : this.ships,
                                                       growth : this.growth });    
-    // proximity to friendly, proximity to enemy, #total ships, #total growth of each player, #of planet of each player
-    // sum of distances of 3 closest planets
+    // #total growth of each player, #of planet of each player
     // what sending ships to a planet would do to its link, as in closest x friendly planets
     // turns remaining
 }
