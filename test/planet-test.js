@@ -1,5 +1,6 @@
 var vows = require('vows'),
-    assert = require('assert');
+    assert = require('assert'),
+    sys = require('sys');
 
 var Planet = require('../Planet').Planet,
     Fleet = require('../Fleet').Fleet;
@@ -125,21 +126,78 @@ vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
 vows.describe('Planet considerSendingTo()').addBatch({
     'when given the same planet' : {
         topic : function() {
-            planet = new Planet(42, 3, 5, null, 32, 5);
+            var planet = new Planet(42, 3, 5, null, 32, 4);
             return planet.considerSendingTo(planet, [], []);
         },
-        'should know it is its self' : function(tuple) {
-            assert.equal(1, tuple[2].isSelf);
+        'the values computed' : {
+            topic : function(tuple) {
+                return tuple[2];
+            },
+            'should know it is its self' : function(values) {
+                assert.equal(values.isSelf, 1);
+            },
+            'should not consider the ships that are already on the planet' : function(values) {
+                assert.equal(values.shipsDocked, 0)
+            }
         }
     },
     'when given another planet' : {
         topic : function() {
-            fromPlanet = new Planet(42, 3, 5, null, 32, 5);
-            toPlanet = new Planet(42, 5, 3, null, 32, 5);
-            return planet.considerSendingTo(planet, [], []);
+            var fromPlanet = new Planet(42, 0, 0, null, 32, 4);
+            var toPlanet = new Planet(43, 5, 3, null, 32, 4);
+            
+            closeFriendly = new Planet(44, 13, 15, null, 13, 4);
+            assert.equal(toPlanet.distanceFrom(closeFriendly), 15)
+            
+            closerFriendly = new Planet(45, 9, 11, null, 12, 3);
+            assert.equal(toPlanet.distanceFrom(closerFriendly), 9)
+            
+            closestFriendly = new Planet(47, 5, 7, null, 122, 5);
+            assert.equal(toPlanet.distanceFrom(closestFriendly), 4)
+            
+            farFriendly = new Planet(48, 32, 32, null, 100, 5);
+            assert.equal(toPlanet.distanceFrom(farFriendly), 40)
+            
+            var friendlyPlanets = [closestFriendly, closerFriendly, closeFriendly, farFriendly];
+            
+            closeEnemy = new Planet(46, 14, 12, null, 3, 2);
+            assert.equal(toPlanet.distanceFrom(closeEnemy), 13)
+            
+            closerEnemy = new Planet(49, 10, 8, null, 5, 2);
+            assert.equal(toPlanet.distanceFrom(closerEnemy), 8)
+            
+            closestEnemy = new Planet(50, 6, 4, null, 13, 2);
+            assert.equal(toPlanet.distanceFrom(closestEnemy), 2)
+            
+            farEnemy = new Planet(51, 32, 32, null, 32, 2);
+            assert.equal(toPlanet.distanceFrom(farEnemy), 40)
+            
+            var enemyPlanets = [closestEnemy, closerEnemy, closeEnemy, farEnemy];
+            
+            return fromPlanet.considerSendingTo(toPlanet, friendlyPlanets, enemyPlanets);
         },
-        'should know it is not self' : function(tuple) {
-            assert.equal(-1, tuple[2].isSelf);
+        'the values computed' : {
+            topic : function(tuple) {
+                return tuple[2]
+            },
+            'should know it is not self' : function(values) {
+                assert.equal(values.isSelf, -1);
+            },
+            'should consider the ships that are already on the planet' : function(values) {
+                assert.equal(values.shipsDocked, 32)
+            },
+            'should return distance of 3 closest friendly' : function(values) {
+                assert.equal(values.distanceThreeMyPlanets, 28);
+            },
+            'should return ships of 3 closest friendly' : function(values) {
+                assert.equal(values.shipsThreeMyPlanets, 147);
+            },
+            'should return distance of 3 closest enemy' : function(values) {
+                assert.equal(values.distanceThreeEnemyPlanets, 23);
+            },
+            'should return ships of 3 closest enemy' : function(values) {
+                assert.equal(values.shipsThreeEnemyPlanets, 21);
+            }
         }
     }
 }).export(module);

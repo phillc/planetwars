@@ -146,6 +146,15 @@ var summateDistanceOf = function(numberOf, planets, fromPlanet) {
     return distance;
 }
 
+var summateShipsOf = function(numberOf, planets, fromPlanet) {
+    var planetsLength = planets.length;
+    var ships = 0;
+    for(var i=0 ; (i < numberOf) && (i < planetsLength) ; i++) {
+        ships += planets[i].ships;
+    }
+    return ships;
+}
+
 
 Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlanets) {
     var distance = this.distanceFrom(targetPlanet);
@@ -154,8 +163,11 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
     var nearbyMyPlanets = targetPlanet.nearbyPlanetsOutOf(myPlanets);
     var nearbyEnemyPlanets = targetPlanet.nearbyPlanetsOutOf(enemyPlanets);
     
-    var distanceThreeMyPlanets = summateDistanceOf(3, nearbyMyPlanets, this);
-    var distanceThreeEnemyPlanets = summateDistanceOf(3, nearbyEnemyPlanets, this);
+    var distanceThreeMyPlanets = summateDistanceOf(3, nearbyMyPlanets, targetPlanet);
+    var distanceThreeEnemyPlanets = summateDistanceOf(3, nearbyEnemyPlanets, targetPlanet);
+    
+    var shipsThreeMyPlanets = summateShipsOf(3, nearbyMyPlanets, targetPlanet);
+    var shipsThreeEnemyPlanets = summateShipsOf(3, nearbyEnemyPlanets, targetPlanet);
     
     var neededToMatch = targetPlanet.isFriendly() ? -effDef : effDef
     
@@ -163,7 +175,9 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
                    canTakeRightNow           : targetPlanet.ships > effDef ? 1 : -1,
                    distance                  : distance,
                    distanceThreeMyPlanets    : distanceThreeMyPlanets,
+                   shipsThreeMyPlanets       : shipsThreeMyPlanets,
                    distanceThreeEnemyPlanets : distanceThreeEnemyPlanets,
+                   shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
                    effDef                    : effDef,
                    incomingEnemyFleets       : targetPlanet.enemyIncomingFleets.length,
                    incomingFriendlyFleets    : targetPlanet.friendlyIncomingFleets.length,
@@ -171,6 +185,7 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
                    isFriendly                : targetPlanet.isFriendly() ? 1 : -1,
                    isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
                    isSelf                    : this.isSamePlanet(targetPlanet) ? 1 : -1,
+                   shipsDocked               : this.isSamePlanet(targetPlanet) ? 0 : targetPlanet.ships,
                    growth                    : targetPlanet.growth,
                    neededToMatch             : neededToMatch };
                    //my total growth
