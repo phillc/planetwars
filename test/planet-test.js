@@ -91,7 +91,7 @@ vows.describe('Planet distanceFrom()').addBatch({
             assert.equal(distance, 15);
         }
     }
-}).export(module)
+}).export(module);
 
 vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
     'when the growth rate is 4 and 16 ships are already there,' : {
@@ -120,5 +120,27 @@ vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
         planet.addEnemyIncomingFleet(new Fleet(null, null, 26, null, null, null, 16));
         assert.equal(planet.expendableShipsWithoutReinforce(), 2);
     }
-}).export(module)
+}).export(module);
+
+vows.describe('Planet considerSendingTo()').addBatch({
+    'when given the same planet' : {
+        topic : function() {
+            planet = new Planet(42, 3, 5, null, 32, 5);
+            return planet.considerSendingTo(planet, [], []);
+        },
+        'should know it is its self' : function(tuple) {
+            assert.equal(1, tuple[2].isSelf);
+        }
+    },
+    'when given another planet' : {
+        topic : function() {
+            fromPlanet = new Planet(42, 3, 5, null, 32, 5);
+            toPlanet = new Planet(42, 5, 3, null, 32, 5);
+            return planet.considerSendingTo(planet, [], []);
+        },
+        'should know it is not self' : function(tuple) {
+            assert.equal(-1, tuple[2].isSelf);
+        }
+    }
+}).export(module);
     
