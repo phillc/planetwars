@@ -128,15 +128,15 @@ module Mutations
         end
         
         if output[-2] =~ /Player 1 Wins/
-          p "#{filename} wins"
+          p "#{filename} wins in #{output[-3].split[1]} turns"
           file_records[filename] = file_records[filename] + 2
           file_records[challenger] = file_records[challenger] -0.25
         elsif output[-2] =~ /Draw/
-          p "#{filename} drawed"
+          p "#{filename} drawed in #{output[-3].split[1]} turns"
           file_records[filename] = file_records[filename] + 1
           file_records[challenger] = file_records[challenger] + 0.25
         elsif output[-2] =~ /Player 2 Wins/
-          p "#{filename} lost"
+          p "#{filename} lost in #{output[-3].split[1]} turns"
           file_records[filename] = file_records[filename] - 1
           file_records[challenger] = file_records[challenger] + 0.5
         else
