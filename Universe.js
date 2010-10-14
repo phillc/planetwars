@@ -19,7 +19,7 @@ var Universe = function(planets, fleets) {
         var fleet = fleets[i];
         var owner = fleet.owner;
         fleetsByOwner[owner == 1 ? 0 : 1].push(fleet);
-        fleet.owner == planets[fleet.dest].owner ? planets[fleet.dest].addFriendlyIncomingFleet(fleet)
+        owner == 1 ? planets[fleet.dest].addMyIncomingFleet(fleet)
                                                         : planets[fleet.dest].addEnemyIncomingFleet(fleet);
     }
 

@@ -42,7 +42,7 @@ function DoTurn(pw) {
                     var pTuple = planetEvaluations.shift();
                     var targetPlanet = pTuple[1];
                     var values = pTuple[2];
-                    var neededToMatch = values.neededToMatch;
+                    var neededToMatch = -values.effDef;
                     
                     // sys.debug([ "==================================================",
                     //             "sendableShips " + sendableShips,

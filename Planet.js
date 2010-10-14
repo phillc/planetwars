@@ -2,11 +2,6 @@ var sys = require('sys'),
     Fleet = require('./Fleet').Fleet;
     network = require('./network');
 
-var OWNER = [];
-OWNER['NEUTRAL'] = 0;
-OWNER['ME']      = 1;
-OWNER['ENEMY']   = 2;
-
 var Planet = function(id, x, y, owner, ships, growth) {
     this.id     = parseInt(id);
     this.x      = parseFloat(x);
@@ -15,7 +10,7 @@ var Planet = function(id, x, y, owner, ships, growth) {
     this.ships  = parseInt(ships);
     this.growth = parseInt(growth);
     this.enemyIncomingFleets    = [];
-    this.friendlyIncomingFleets = [];
+    this.myIncomingFleets = [];
 }
 
 Planet.prototype.getShips = function() {
@@ -35,40 +30,40 @@ Planet.prototype.getCoordinates = function() {
 }
 
 Planet.prototype.isNeutral = function() {
-    return this.owner === OWNER['NEUTRAL'];
+    return this.owner === 0;
 }
 
 Planet.prototype.isEnemy = function() {
-    return this.owner === OWNER['ENEMY'];
+    return this.owner === 2;
 }
 
-Planet.prototype.isNotFriendly = function() {
-    return !this.isFriendly();
+Planet.prototype.isNotMine = function() {
+    return !this.isMine();
 }
 
-Planet.prototype.isFriendly = function() {
-    return this.owner === OWNER['ME'];
+Planet.prototype.isMine = function() {
+    return this.owner === 1;
 }
 
 Planet.prototype.effectiveDefensiveValue = function(turns) {
     var numTurns = turns ? turns : 0
-    var ships = this.ships;
+    var ships = this.isMine() ? this.ships : -this.ships;
     
-    for(var i = 1 ; i <= numTurns ; i++) {
+    for(var turn = 1 ; turn <= numTurns ; turn++) {
         if(!this.isNeutral()) {
             ships += ships >= 0 ? this.growth : -this.growth;
         }
         
         for(var fleetNum in this.enemyIncomingFleets) {
             var fleet = this.enemyIncomingFleets[fleetNum];
-            if(fleet.getRemaining() == i) {
+            if(fleet.getRemaining() == turn) {
                 ships -= fleet.ships;
             }
         }
         
-        for(var fleetNum in this.friendlyIncomingFleets) {
-            var fleet = this.friendlyIncomingFleets[fleetNum];
-            if(fleet.getRemaining() == i) {
+        for(var fleetNum in this.myIncomingFleets) {
+            var fleet = this.myIncomingFleets[fleetNum];
+            if(fleet.getRemaining() == turn) {
                 ships += fleet.ships;
             }
         }
@@ -107,12 +102,9 @@ Planet.prototype.distanceFrom = function() {
 
 Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);
-    var fleet = new Fleet(null, OWNER['ME'], shipsNum, this.id, toPlanet.id, dist, dist);
-    if(toPlanet.isFriendly()) {
-        toPlanet.addFriendlyIncomingFleet(fleet);
-    } else {
-        toPlanet.addEnemyIncomingFleet(fleet);
-    }
+    var fleet = new Fleet(null, 1, shipsNum, this.id, toPlanet.id, dist, dist);
+    toPlanet.addMyIncomingFleet(fleet);
+    
     process.stdout.write('' + Math.floor(this.id) + ' ' +
             Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
 }
@@ -121,12 +113,12 @@ Planet.prototype.addEnemyIncomingFleet = function(fleet) {
     this.enemyIncomingFleets.push(fleet);
 }
 
-Planet.prototype.addFriendlyIncomingFleet = function(fleet) {
+Planet.prototype.addMyIncomingFleet = function(fleet) {
     fleet.trickIntoOneTurn(); // In the main loops, a planet can send ships to its
                               // self, but we trick it to thinking the help comes
                               // next turn to remove the ships from the sendable
                               // pool.
-    this.friendlyIncomingFleets.push(fleet);
+    this.myIncomingFleets.push(fleet);
 }
 
 Planet.prototype.decisionConsiderationOrder = function(){
@@ -169,8 +161,6 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
     var shipsThreeMyPlanets = summateShipsOf(3, nearbyMyPlanets, targetPlanet);
     var shipsThreeEnemyPlanets = summateShipsOf(3, nearbyEnemyPlanets, targetPlanet);
     
-    var neededToMatch = targetPlanet.isFriendly() ? -effDef : effDef
-    
     var values = { 
                    canTakeRightNow           : targetPlanet.ships > effDef ? 1 : -1,
                    distance                  : distance,
@@ -180,14 +170,13 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
                    effDef                    : effDef,
                    incomingEnemyFleets       : targetPlanet.enemyIncomingFleets.length,
-                   incomingFriendlyFleets    : targetPlanet.friendlyIncomingFleets.length,
+                   incomingFriendlyFleets    : targetPlanet.myIncomingFleets.length,
                    isEnemy                   : targetPlanet.isEnemy() ? 1 : -1, // is effectively enemy? (in x turns, where x is distance (to help sniping))
-                   isFriendly                : targetPlanet.isFriendly() ? 1 : -1,
+                   isFriendly                : targetPlanet.isMine() ? 1 : -1,
                    isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
                    isSelf                    : this.isSamePlanet(targetPlanet) ? 1 : -1,
                    shipsDocked               : this.isSamePlanet(targetPlanet) ? 0 : targetPlanet.ships,
-                   growth                    : targetPlanet.growth,
-                   neededToMatch             : neededToMatch };
+                   growth                    : targetPlanet.growth };
                    //my total growth
                    //enemy total growth
     
