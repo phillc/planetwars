@@ -100,6 +100,7 @@ module Mutations
     RUN_MUTATIONS.times { Mutations::CreatedMutation.create_random } if filenames.empty?
     if filenames.length < RUN_MUTATIONS
       get_and_increment("mutations/count")
+      Mutations::CreatedMutation.create_random
       filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate } 
     end
     create_mutations if filenames.length < RUN_MUTATIONS
