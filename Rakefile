@@ -1,3 +1,4 @@
+require 'rubygems'
 BOTS = %w(Bully Dual Prospector Rage)
 MAPS = 1..100
 
