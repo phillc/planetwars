@@ -13,10 +13,19 @@ var setStartTime = function(){
 }
 exports.setStartTime = setStartTime;
 
+var timeDiff = function() {
+    return currentTime() - startTime;
+}
+
 var checkTime = function(){
-    if(currentTime() - startTime > 750) {
+    if(timeDiff() > 750) {
         sys.debug("********* TIMED OUT ***********")
         throw TIME_ERROR;
     };
 }
 exports.checkTime = checkTime;
+
+var sayTime = function () {
+    sys.debug("TIME: " + timeDiff());
+}
+exports.sayTime = sayTime;

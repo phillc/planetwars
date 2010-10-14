@@ -3,6 +3,7 @@ var sys = require('sys'),
     Fleet = require('./Fleet').Fleet,
     Universe = require('./Universe').Universe,
     setStartTime = require('./timer').setStartTime;
+    sayTime = require('./timer').sayTime;
 
 function parseInput(turnInput, turnFn) {
     var lines = turnInput.split('\n');
@@ -50,6 +51,7 @@ exports.Play = function Play(turnFn) {
             var turnInput = buffer.substring(0, endOfTurn);
             buffer = buffer.substring(endOfTurn + 4);
             parseInput(turnInput, turnFn);
+            // sayTime();
         }
     });
 
