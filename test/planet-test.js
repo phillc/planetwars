@@ -78,6 +78,22 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
             }
         }
     }
+}).addBatch({
+    'when the planet switches ownership' : {
+        'should take into consideration the growth for each player' : function() {
+            planet = new Planet(null, null, null, null, 15, 5);
+            
+            planet.addEnemyIncomingFleet(new Fleet(null, null, 25, null, null, null, 1));
+            assert.equal(planet.effectiveDefensiveValue(1), -5);
+            assert.equal(planet.effectiveDefensiveValue(2), -10);
+            assert.equal(planet.effectiveDefensiveValue(3), -15);
+            
+            planet.addFriendlyIncomingFleet(new Fleet(null, null, 25, null, null, null, 4));
+            assert.equal(planet.effectiveDefensiveValue(4), 5);
+            assert.equal(planet.effectiveDefensiveValue(5), 10);
+            
+        }
+    }
 }).export(module);
 
 

@@ -51,28 +51,29 @@ Planet.prototype.isFriendly = function() {
 }
 
 Planet.prototype.effectiveDefensiveValue = function(turns) {
-    var willIncreaseBy = 0;
-    var willBeAttackedBy = 0;
-    var willBeReinforcedBy = 0;
+    var numTurns = turns ? turns : 0
+    var ships = this.ships;
     
-    // But this doesn't account for ownership changes
-    if(turns != null) {
-        willIncreaseBy = turns * (this.isNeutral() ? 0 : this.growth);
+    for(var i = 1 ; i <= numTurns ; i++) {
+        if(!this.isNeutral()) {
+            ships += ships >= 0 ? this.growth : -this.growth;
+        }
+        
         for(var fleetNum in this.enemyIncomingFleets) {
             var fleet = this.enemyIncomingFleets[fleetNum];
-            if(fleet.arriveBy(turns)) {
-                willBeAttackedBy += fleet.ships;
+            if(fleet.getRemaining() == i) {
+                ships -= fleet.ships;
             }
         }
+        
         for(var fleetNum in this.friendlyIncomingFleets) {
             var fleet = this.friendlyIncomingFleets[fleetNum];
-            if(fleet.arriveBy(turns)) {
-                willBeReinforcedBy += fleet.ships;
+            if(fleet.getRemaining() == i) {
+                ships += fleet.ships;
             }
         }
     }
-    
-    return this.ships + willIncreaseBy - willBeAttackedBy + willBeReinforcedBy;
+    return ships;
 }
 
 Planet.prototype.expendableShipsWithoutReinforce = function() {

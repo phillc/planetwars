@@ -14,6 +14,10 @@ Fleet.prototype.arriveBy = function(turns) {
     return this.remaining <= turns
 }
 
+Fleet.prototype.getRemaining = function(turns) {
+    return this.remaining;
+}
+
 Fleet.prototype.getShips = function() {
     return this.ships;
 }
