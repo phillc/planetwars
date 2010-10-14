@@ -107,7 +107,8 @@ module Mutations
   
   def self.matchup
     file_records = {}
-    filenames.each do |filename|
+    p filenames
+    filenames.sort.each do |filename|
       p "*" * 80
       my_command = "node MyBot.js #{filename}"
       
