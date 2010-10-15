@@ -39,10 +39,7 @@ var decisionConsiderationSort = function(a, b){
 }
 
 Universe.prototype.run = function() {
-    var planets = this.planets;
-    var myPlanets = this.myPlanets;
-    var enemyPlanets = this.enemyPlanets;
-    var myPlanetsForDecision = myPlanets.slice(0); //copy array
+    var myPlanetsForDecision = this.myPlanets.slice(0); //copy array
     myPlanetsForDecision.sort(decisionConsiderationSort)
 
     for(var planetNum in myPlanetsForDecision) {
@@ -52,10 +49,10 @@ Universe.prototype.run = function() {
     
         if(sendableShips > 0) {
             var planetEvaluations = [];
-            for(var consideredPlanetNum in planets) {
+            for(var consideredPlanetNum in this.planets) {
                 checkTime();
-                var otherPlanet = planets[consideredPlanetNum];
-                planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, myPlanets, enemyPlanets));
+                var otherPlanet = this.planets[consideredPlanetNum];
+                planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, this.myPlanets, this.enemyPlanets));
             }
 
             planetEvaluations.sort(tupleSort);
