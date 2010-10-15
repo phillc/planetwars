@@ -2,7 +2,7 @@ var sys = require('sys'),
     timer = require('./timer'),
     checkTime = timer.checkTime;
 
-var Universe = function(planets, fleets) {
+var Universe = function(planets) {
     var myPlanets = [];
     var enemyPlanets = [];
     for (var i = 0; i < planets.length; i++) {
@@ -15,11 +15,6 @@ var Universe = function(planets, fleets) {
         }
     }
     
-    var fleetsLength = fleets.length;
-    for (var i = 0; i < fleetsLength; i++) {
-        fleets[i].registerDestination(planets);
-    }
-
     this.planets           = planets,
     this.myPlanets         = myPlanets,
     this.enemyPlanets      = enemyPlanets,
@@ -75,10 +70,7 @@ var runEvaluations = function(ply, universePlanets, fromPlanet, toPlanets) {
 
 
 Universe.prototype.run = function() {
-    var planets = this.planets;
-    var myPlanets = this.myPlanets;
-    var enemyPlanets = this.enemyPlanets;
-    var myPlanetsForDecision = myPlanets.slice(0); //copy array
+    var myPlanetsForDecision = this.myPlanets.slice(0); //copy array
     myPlanetsForDecision.sort(decisionConsiderationSort)
 
     for(var planetNum in myPlanetsForDecision) {
@@ -86,17 +78,15 @@ Universe.prototype.run = function() {
         var myPlanet = myPlanetsForDecision[planetNum];
         
         var planetEvaluations = [];
-        for(var consideredPlanetNum in planets) {
+        for(var consideredPlanetNum in this.planets) {
             checkTime();
-            var otherPlanet = planets[consideredPlanetNum];
+            var otherPlanet = this.planets[consideredPlanetNum];
             if(!myPlanet.isSamePlanet(otherPlanet)){
-                planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, myPlanets, enemyPlanets));
+                planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, this.myPlanets, this.enemyPlanets));
             }
         }
                 
         planetEvaluations.sort(tupleSort);
-
-
         
         runEvaluations(3, planetEvaluations[0, 3]).each {
             command.execute
