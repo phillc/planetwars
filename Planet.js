@@ -102,7 +102,13 @@ Planet.prototype.distanceFrom = function() {
 
 Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);
-    var fleet = new Fleet(null, 1, shipsNum, this.id, toPlanet.id, dist, dist);
+    var fleet = new Fleet({ owner       : 1, 
+                            ships       : shipsNum,
+                            source      : this.id,
+                            dest        : toPlanet.id,
+                            totalLength : dist,
+                            remaining   : dist });
+                            
     toPlanet.addMyIncomingFleet(fleet);
     
     process.stdout.write('' + Math.floor(this.id) + ' ' +
@@ -195,7 +201,7 @@ Planet.prototype.toString = function() {
                    this.growth + " growth,",
                    "@(" + this.getCoordinates() + ")",
                    "with incoming fleets of:"].join(" ") ];
-    str.push(this.friendlyIncomingFleets.join("\n"))
+    str.push(this.myIncomingFleets.join("\n"))
     str.push(this.enemyIncomingFleets.join("\n"))
     return str.join("\n");
 }

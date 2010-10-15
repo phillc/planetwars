@@ -27,14 +27,31 @@ function parseInput(turnInput, turnFn) {
                     toks[4], toks[5]));
             break;
         case 'F':
-            fleets.push(new Fleet(fleets.length, toks[1], toks[2], toks[3],
-                    toks[4], toks[5], toks[6]));
+            fleets.push({ id          : parseInt(fleets.length),
+                          owner       : parseInt(toks[1]),
+                          ships       : parseInt(toks[2]),
+                          source      : parseInt(toks[3]),
+                          dest        : parseInt(toks[4]),
+                          totalLength : parseInt(toks[5]),
+                          remaining   : parseInt(toks[6]) });
             break;
         default:
             throw "Unknown command token: " + line;
         }
     }
-    universe = new Universe(planets, fleets);
+    for(var fleetNum in fleets) {
+        var fleet = fleets[fleetNum];
+        var destPlanet = planets[fleet.dest];
+        if(fleet.owner === 1) {
+            sys.debug("adding to My")
+            destPlanet.addMyIncomingFleet(new Fleet(fleet));
+        } else {
+            sys.debug("adding to Enemy")
+            destPlanet.addEnemyIncomingFleet(new Fleet(fleet));
+        }
+    }
+    
+    universe = new Universe(planets);
     turnFn(universe);
     process.stdout.write('go\n');
 }

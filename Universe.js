@@ -2,7 +2,7 @@ var sys = require('sys'),
     timer = require('./timer'),
     checkTime = timer.checkTime;
 
-var Universe = function(planets, fleets) {
+var Universe = function(planets) {
     var myPlanets = [];
     var enemyPlanets = [];
     for (var i = 0; i < planets.length; i++) {
@@ -15,11 +15,6 @@ var Universe = function(planets, fleets) {
         }
     }
     
-    var fleetsLength = fleets.length;
-    for (var i = 0; i < fleetsLength; i++) {
-        fleets[i].registerDestination(planets);
-    }
-
     this.planets           = planets,
     this.myPlanets         = myPlanets,
     this.enemyPlanets      = enemyPlanets,
@@ -64,20 +59,20 @@ Universe.prototype.run = function() {
                 var values = pTuple[2];
                 var neededToMatch = -values.effDef;
                 
-                // sys.debug([ "==================================================",
-                //             "sendableShips " + sendableShips,
-                //             "sending " + shipsToSend + " ships",
-                //             "****from:",
-                //             myPlanet,
-                //             "****to planet",
-                //             targetPlanet,
-                //             "needing " + values.neededToMatch + " to match",
-                //             "distance of " + myPlanet.distanceFrom(targetPlanet),
-                //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
-                // 
+                
                 
                if(neededToMatch >= 0) {
                     var shipsToSend = Math.min(sendableShips, neededToMatch + 1);
+                    // sys.debug([ "==================================================",
+                    //             "sendableShips " + sendableShips,
+                    //             "sending " + shipsToSend + " ships",
+                    //             "****from:",
+                    //             myPlanet,
+                    //             "****to planet",
+                    //             targetPlanet,
+                    //             "needing " + neededToMatch + " to match",
+                    //             "distance of " + myPlanet.distanceFrom(targetPlanet),
+                    //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
                     myPlanet.sendShips(shipsToSend, targetPlanet);
                     sendableShips -= shipsToSend;
                 }                    
