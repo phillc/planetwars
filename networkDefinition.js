@@ -9,8 +9,6 @@ var networks = {
                    "isFriendly",
                    "isNeutral",
                    "canTakeRightNow",
-                   "incomingEnemyFleets",
-                   "incomingFriendlyFleets",
                    "growth",
                    "effDef",
                    "distance",

@@ -169,16 +169,12 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
                    distanceThreeEnemyPlanets : distanceThreeEnemyPlanets,
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
                    effDef                    : effDef,
-                   incomingEnemyFleets       : targetPlanet.enemyIncomingFleets.length,
-                   incomingFriendlyFleets    : targetPlanet.myIncomingFleets.length,
                    isEnemy                   : targetPlanet.isEnemy() ? 1 : -1, // is effectively enemy? (in x turns, where x is distance (to help sniping))
                    isFriendly                : targetPlanet.isMine() ? 1 : -1,
                    isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
                    isSelf                    : this.isSamePlanet(targetPlanet) ? 1 : -1,
                    shipsDocked               : this.isSamePlanet(targetPlanet) ? 0 : targetPlanet.ships,
                    growth                    : targetPlanet.growth };
-                   //my total growth
-                   //enemy total growth
     
     return [network.compute("attackConsideration", values), targetPlanet, values]
                            
