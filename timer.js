@@ -8,24 +8,25 @@ var currentTime = function(){
     return (new Date()).valueOf();
 }
 
-var setStartTime = function(){
-    startTime = currentTime();
-}
-exports.setStartTime = setStartTime;
-
 var timeDiff = function() {
     return currentTime() - startTime;
 }
 
-var checkTime = function(){
+exports.setStartTime = function(){
+    startTime = currentTime();
+}
+
+exports.checkTime = function(){
     if(timeDiff() > 800) {
         sys.debug("********* TIMED OUT ***********")
         throw TIME_ERROR;
     };
 }
-exports.checkTime = checkTime;
 
-var sayTime = function () {
+exports.isTimeException = function(err) {
+    return err === TIME_ERROR;
+}
+
+exports.sayTime = function () {
     sys.debug("TIME: " + timeDiff());
 }
-exports.sayTime = sayTime;
