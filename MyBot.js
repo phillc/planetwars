@@ -40,7 +40,7 @@ function DoTurn(pw) {
 
             
             var sendNothing = function() {
-                
+                return []
             }
             var sendNeededToTake = function(upTo) {
                 while(sendable > 0 && numCount < up To){
@@ -49,21 +49,27 @@ function DoTurn(pw) {
             }
             
             var sendAll = function() {
-                
+                return from, to, this.ships
             }
             
-            var sendGrowth  = function() {
+            var sendGrowth  = function(upTo) {
+                var actions = []
+                actions.push [from, to, this.growth]
                 
+                return actions;
             }
             
             
 
-            var evaluateBoard = function(planets)
+            var evaluateBoard = function(planets) {
+                
+            }
 
-            var runEvaluations = function(ply, planets) {
+            var runEvaluations = function(ply, universePlanets, fromPlanet, toPlanets) {
                 // can skip if equal (like growth and sendAll)
                 strategies.each {
-                    strategy.execute
+                    from, to, ships = strategy()
+                    
                     runEvaluations(ply - 1);
                 }
             }
