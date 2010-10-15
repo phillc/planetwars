@@ -7,7 +7,7 @@ vows.describe('Fleet').addBatch({
     'A Fleet' : {
         'arriveBy()' : {
             'when 6 turns remaining ' : {
-                topic: new Fleet(null, null, null, null, null, null, 6),
+                topic: new Fleet({ remaining: 6 }),
                 'for 4 is false' : function(fleet) {
                     assert.isFalse(fleet.arriveBy(4));
                 },

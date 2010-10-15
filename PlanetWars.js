@@ -43,10 +43,8 @@ function parseInput(turnInput, turnFn) {
         var fleet = fleets[fleetNum];
         var destPlanet = planets[fleet.dest];
         if(fleet.owner === 1) {
-            sys.debug("adding to My")
             destPlanet.addMyIncomingFleet(new Fleet(fleet));
         } else {
-            sys.debug("adding to Enemy")
             destPlanet.addEnemyIncomingFleet(new Fleet(fleet));
         }
     }

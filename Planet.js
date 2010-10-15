@@ -46,9 +46,9 @@ Planet.prototype.isMine = function() {
 }
 
 Planet.prototype.effectiveDefensiveValue = function(turns) {
+    // turn this recursive???
     var numTurns = turns ? turns : 0
     var ships = this.isMine() ? this.ships : -this.ships;
-    
     for(var turn = 1 ; turn <= numTurns ; turn++) {
         if(!this.isNeutral()) {
             ships += ships >= 0 ? this.growth : -this.growth;
@@ -56,14 +56,14 @@ Planet.prototype.effectiveDefensiveValue = function(turns) {
         
         for(var fleetNum in this.enemyIncomingFleets) {
             var fleet = this.enemyIncomingFleets[fleetNum];
-            if(fleet.getRemaining() == turn) {
+            if(fleet.getRemaining() === turn) {
                 ships -= fleet.ships;
             }
         }
         
         for(var fleetNum in this.myIncomingFleets) {
             var fleet = this.myIncomingFleets[fleetNum];
-            if(fleet.getRemaining() == turn) {
+            if(fleet.getRemaining() === turn) {
                 ships += fleet.ships;
             }
         }
@@ -120,10 +120,6 @@ Planet.prototype.addEnemyIncomingFleet = function(fleet) {
 }
 
 Planet.prototype.addMyIncomingFleet = function(fleet) {
-    fleet.trickIntoOneTurn(); // In the main loops, a planet can send ships to its
-                              // self, but we trick it to thinking the help comes
-                              // next turn to remove the ships from the sendable
-                              // pool.
     this.myIncomingFleets.push(fleet);
 }
 
