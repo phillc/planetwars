@@ -18,7 +18,7 @@ var timeDiff = function() {
 }
 
 var checkTime = function(){
-    if(timeDiff() > 800) {
+    if(timeDiff() > 750) {
         sys.debug("********* TIMED OUT ***********")
         throw TIME_ERROR;
     };

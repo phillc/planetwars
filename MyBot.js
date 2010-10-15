@@ -25,43 +25,86 @@ function DoTurn(pw) {
         for(var planetNum in myPlanetsForDecision) {
             checkTime();
             var myPlanet = myPlanetsForDecision[planetNum];
-            var sendableShips = myPlanet.expendableShipsWithoutReinforce();
-        
-            if(sendableShips > 0) {
-                var planetEvaluations = [];
-                for(var consideredPlanetNum in planets) {
-                    checkTime();
-                    var otherPlanet = planets[consideredPlanetNum];
+            
+            var planetEvaluations = [];
+            for(var consideredPlanetNum in planets) {
+                checkTime();
+                var otherPlanet = planets[consideredPlanetNum];
+                if(!myPlanet.isSamePlanet(otherPlanet)){
                     planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, myPlanets, enemyPlanets));
                 }
+            }
+                    
+            planetEvaluations.sort(tupleSort);
 
-                planetEvaluations.sort(tupleSort);
+
             
-                while(sendableShips > 0 && planetEvaluations.length > 0) {
-                    checkTime();
-                    var pTuple = planetEvaluations.shift();
-                    var targetPlanet = pTuple[1];
-                    var values = pTuple[2];
-                    var neededToMatch = -values.effDef;
-                    
-                    // sys.debug([ "==================================================",
-                    //             "sendableShips " + sendableShips,
-                    //             "sending " + shipsToSend + " ships",
-                    //             "****from:",
-                    //             myPlanet,
-                    //             "****to planet",
-                    //             targetPlanet,
-                    //             "needing " + values.neededToMatch + " to match",
-                    //             "distance of " + myPlanet.distanceFrom(targetPlanet),
-                    //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
-                    // 
-                    
-                   if(neededToMatch >= 0) {
-                        var shipsToSend = Math.min(sendableShips, neededToMatch + 1);
-                        myPlanet.sendShips(shipsToSend, targetPlanet);
-                        sendableShips -= shipsToSend;
-                    }                    
+            var sendNothing = function() {
+                
+            }
+            var sendNeededToTake = function(upTo) {
+                while(sendable > 0 && numCount < up To){
+                    numCount++
                 }
+            }
+            
+            var sendAll = function() {
+                
+            }
+            
+            var sendGrowth  = function() {
+                
+            }
+            
+            
+
+            var evaluateBoard = function(planets)
+
+            var runEvaluations = function(ply, planets) {
+                // can skip if equal (like growth and sendAll)
+                strategies.each {
+                    strategy.execute
+                    runEvaluations(ply - 1);
+                }
+            }
+            runEvaluations(3, planetEvaluations[0, 3]).each {
+                command.execute
+            }
+            
+            
+                    
+                    check board score for each action in x turns, where x max(distance, 10)
+                    
+                    
+            
+
+            //         
+            // 
+            // while(sendableShips > 0 && planetEvaluations.length > 0) {
+            //     checkTime();
+            //     var pTuple = planetEvaluations.shift();
+            //     var targetPlanet = pTuple[1];
+            //     var values = pTuple[2];
+            //     var neededToMatch = -values.effDef;
+            //     
+            //     // sys.debug([ "==================================================",
+            //     //             "sendableShips " + sendableShips,
+            //     //             "sending " + shipsToSend + " ships",
+            //     //             "****from:",
+            //     //             myPlanet,
+            //     //             "****to planet",
+            //     //             targetPlanet,
+            //     //             "needing " + values.neededToMatch + " to match",
+            //     //             "distance of " + myPlanet.distanceFrom(targetPlanet),
+            //     //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
+            //     // 
+            //     
+            //    if(neededToMatch >= 0) {
+            //         var shipsToSend = Math.min(sendableShips, neededToMatch + 1);
+            //         myPlanet.sendShips(shipsToSend, targetPlanet);
+            //         sendableShips -= shipsToSend;
+            //     }                    
+            //     // }
             }
         }
     } catch(err) {
