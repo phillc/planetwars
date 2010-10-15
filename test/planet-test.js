@@ -248,4 +248,15 @@ vows.describe('Planet considerSendingTo()').addBatch({
         }
     }
 }).export(module);
-    
+
+vows.describe('Planet isSamePlanet()').addBatch({
+    'should be true when given the same planet' : function() {
+        var planet = new Planet(1, null, null, null, null, null);
+        assert.isTrue(planet.isSamePlanet(planet));
+    },
+    'should be false when given a different planet' : function() {
+        var planet1 = new Planet(1, null, null, null, null, null);
+        var planet2 = new Planet(2, null, null, null, null, null);
+        assert.isFalse(planet1.isSamePlanet(planet2));
+    }
+}).export(module);

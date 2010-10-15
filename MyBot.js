@@ -34,7 +34,7 @@ function DoTurn(pw) {
                     var otherPlanet = planets[consideredPlanetNum];
                     planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, myPlanets, enemyPlanets));
                 }
-            
+
                 planetEvaluations.sort(tupleSort);
             
                 while(sendableShips > 0 && planetEvaluations.length > 0) {

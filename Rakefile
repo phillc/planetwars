@@ -1,5 +1,5 @@
 require 'rubygems'
-BOTS = %w(Bully Dual Prospector Rage)
+BOTS = %w(Rage Bully Prospector Dual)
 MAPS = 1..100
 
 def parse_results(output)
