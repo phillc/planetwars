@@ -22,6 +22,23 @@ Fleet.prototype.getShips = function() {
     return this.ships;
 }
 
+Fleet.prototype.registerDestination = function(planetsById) {
+    var destPlanet = planetsById[this.dest];
+    if(this.isMine()) {
+        destPlanet.addMyIncomingFleet(this);
+    } else {
+        destPlanet.addEnemyIncomingFleet(this);
+    }
+}
+
+Fleet.prototype.isEnemy = function() {
+    return this.owner === 2;
+}
+
+Fleet.prototype.isMine = function() {
+    return this.owner === 1;
+}
+
 Fleet.prototype.toString = function() {
     var f_or_e = this.owner == 1 ? "My" : "Enemy"
     return f_or_e + " Fleet of " + this.ships + " is " + this.remaining + " away";
