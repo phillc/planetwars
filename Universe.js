@@ -33,25 +33,29 @@ var decisionConsiderationSort = function(a, b){
     return b.decisionConsiderationOrder() - a.decisionConsiderationOrder();
 }
 
-var sendNothing = function() {
-    return []
-}
-var sendNeededToTake = function(upTo) {
-    while(sendable > 0 && numCount < up To){
-        numCount++
+var strategies = {
+    sendNothing : function() {
+        return [];
+    },
+    sendNeededToTake : function(fromPlanet, toPlanets) {
+        var moves = []
+        while(sendable > 0 && numCount < up To){
+            numCount++
+        }
+    },
+    sendAll : function() {
+        return from, to, this.ships
+    },
+    sendGrowth : function(upTo) {
+        var actions = []
+        actions.push [from, to, this.growth]
+
+        return actions;
     }
-}
-
-var sendAll = function() {
-    return from, to, this.ships
-}
-
-var sendGrowth  = function(upTo) {
-    var actions = []
-    actions.push [from, to, this.growth]
     
-    return actions;
 }
+
+
 
 
 
@@ -59,12 +63,14 @@ var evaluateBoard = function(planets) {
     
 }
 
-var runEvaluations = function(ply, universePlanets, fromPlanet, toPlanets) {
+var evaluateCommands = function(ply, universePlanets, fromPlanet, toPlanets) {
+    var commandScores = [];
     // can skip if equal (like growth and sendAll)
-    strategies.each {
-        from, to, ships = strategy()
-        
-        runEvaluations(ply - 1);
+    for(var stratName in strategies) {
+        var strategy = strategies[stratName];
+        var command = strategy(fromPlanet, toPlanets);
+        var score = evaluateCommands(ply - 1, universePlanets, afterFromPlanet, afterToPlanets);
+        allCommands.push([score, command]);
     }
 }
 
@@ -81,20 +87,12 @@ Universe.prototype.run = function() {
         for(var consideredPlanetNum in this.planets) {
             checkTime();
             var otherPlanet = this.planets[consideredPlanetNum];
-            if(!myPlanet.isSamePlanet(otherPlanet)){
-                planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, this.myPlanets, this.enemyPlanets));
-            }
+            planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, this.myPlanets, this.enemyPlanets));
         }
                 
         planetEvaluations.sort(tupleSort);
         
-        runEvaluations(3, planetEvaluations[0, 3]).each {
-            command.execute
-        }
-        
-        
-                
-                check board score for each action in x turns, where x max(distance, 10)
+        return evaluateCommands(3, planetEvaluations[0, 3])
     }
 }
 
