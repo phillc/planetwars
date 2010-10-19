@@ -40,6 +40,7 @@ function parseInput(turnInput, turnFn) {
         }
     }
     for(var fleetNum in fleets) {
+        // fleetsByTurn???
         var fleet = fleets[fleetNum];
         var destPlanet = planets[fleet.dest];
         if(fleet.owner === 1) {
