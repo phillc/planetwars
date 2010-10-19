@@ -33,46 +33,54 @@ var decisionConsiderationSort = function(a, b){
     return b.decisionConsiderationOrder() - a.decisionConsiderationOrder();
 }
 
-var strategies = {
-    sendNothing : function() {
-        return [];
-    },
-    sendNeededToTake : function(fromPlanet, toPlanets) {
-        var moves = []
-        while(sendable > 0 && numCount < up To){
-            numCount++
-        }
-    },
-    sendAll : function() {
-        return from, to, this.ships
-    },
-    sendGrowth : function(upTo) {
-        var actions = []
-        actions.push [from, to, this.growth]
 
-        return actions;
+Universe.prototype.evaluateNextCommand = function() {
+    var evaluateBoard = function(planets) {
+    
     }
     
-}
+    var strategies = {
+        sendNothing : function() {
+            return [];
+        },
+        sendNeededToTake : function(fromPlanet, toPlanets) {
+            var moves = []
+            while(sendable > 0 && numCount < up To){
+                numCount++
+            }
+        },
+        sendAll : function() {
+            return from, to, this.ships
+        },
+        sendGrowth : function(upTo) {
+            var actions = []
+            actions.push [from, to, this.growth]
 
-
-
-
-
-var evaluateBoard = function(planets) {
+            return actions;
+        }
     
-}
-
-var evaluateCommands = function(ply, universePlanets, fromPlanet, toPlanets) {
+    }
+    
+    var keys = _.keys(strategies);
+    
+    var iterator = 0;
+    var nextStrategy() {
+        var strategy = strategies[keys[iterator % keys.length]]
+        iterator++;
+        return strategy;
+    }
+    
     var commandScores = [];
-    // can skip if equal (like growth and sendAll)
-    for(var stratName in strategies) {
-        var strategy = strategies[stratName];
-        var command = strategy(fromPlanet, toPlanets);
-        var score = evaluateCommands(ply - 1, universePlanets, afterFromPlanet, afterToPlanets);
+    
+    return function(maxPly, universePlanets, fromPlanet, toPlanets) {
+        // can skip if equal (like growth and sendAll)
+        var strategy = nextStrategy();
+        var myCommand = strategy(fromPlanet, toPlanets);
+        var enemyCommand = 
+        var score = evaluateCommands(maxPly - 1, universePlanets, afterFromPlanet, afterToPlanets);
         allCommands.push([score, command]);
     }
-}
+}();
 
 
 Universe.prototype.run = function() {
@@ -92,7 +100,15 @@ Universe.prototype.run = function() {
                 
         planetEvaluations.sort(tupleSort);
         
-        return evaluateCommands(3, planetEvaluations[0, 3])
+        var i = 0; //replace with do while time < time threshold
+        var best = [];
+        while (i < 10) {
+            i++;
+            
+            best = evaluateNextCommand(3, planetEvaluations[0, 3]);
+        }
+        
+        best.each.execute;
     }
 }
 
