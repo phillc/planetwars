@@ -73,6 +73,6 @@ exports.Play = function Play(turnFn) {
 
     stdin.on('end', function() {
         sys.debug('end of stdin, exiting');
-        sys.exit();
+        process.exit();
     });
 };
