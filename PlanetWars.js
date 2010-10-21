@@ -1,6 +1,5 @@
 var sys = require('sys'),
     Planet = require('./Planet').Planet,
-    Fleet = require('./Fleet').Fleet,
     Universe = require('./Universe').Universe,
     setStartTime = require('./timer').setStartTime;
     sayTime = require('./timer').sayTime;
@@ -27,26 +26,14 @@ function parseInput(turnInput, turnFn) {
                     toks[4], toks[5]));
             break;
         case 'F':
-            fleets.push({ id          : parseInt(fleets.length),
-                          owner       : parseInt(toks[1]),
-                          ships       : parseInt(toks[2]),
-                          source      : parseInt(toks[3]),
-                          dest        : parseInt(toks[4]),
-                          totalLength : parseInt(toks[5]),
-                          remaining   : parseInt(toks[6]) });
+            if(parseInt(toks[1]) === 1) {
+                planets[parseInt(toks[4])].addMyIncomingFleet(parseInt(toks[6]), parseInt(toks[2]))
+            } else {
+                planets[parseInt(toks[4])].addEnemyIncomingFleet(parseInt(toks[6]), parseInt(toks[2]))
+            }
             break;
         default:
             throw "Unknown command token: " + line;
-        }
-    }
-    for(var fleetNum in fleets) {
-        // fleetsByTurn???
-        var fleet = fleets[fleetNum];
-        var destPlanet = planets[fleet.dest];
-        if(fleet.owner === 1) {
-            destPlanet.addMyIncomingFleet(new Fleet(fleet));
-        } else {
-            destPlanet.addEnemyIncomingFleet(new Fleet(fleet));
         }
     }
     

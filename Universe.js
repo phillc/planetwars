@@ -1,4 +1,4 @@
-var sys = require('sys'),
+ var sys = require('sys'),
     timer = require('./timer'),
     checkTime = timer.checkTime;
 
@@ -58,25 +58,21 @@ Universe.prototype.run = function() {
                 var targetPlanet = pTuple[1];
                 var values = pTuple[2];
                 var neededToMatch = -values.effDef;
-                
+
+                var shipsToSend = 0;
+                // sys.debug("effEnemy: " + values.isEffectivelyEnemy + " sendableShips: " + sendableShips + " neededToMatch: " + neededToMatch + " targetPlanet.ships: " + targetPlanet.getShips())
                 if(values.isEffectivelyEnemy === 1 && sendableShips > neededToMatch) {
-                    var shipsToSend = neededToMatch;
-                    myPlanet.sendShips(shipsToSend, targetPlanet);
-                    sendableShips -= shipsToSend;
-                } else {
-                    myPlanet.sendShips(sendableShips, targetPlanet);
-                    sendableShips = 0;
-                }
+                    shipsToSend = neededToMatch;
                     // sys.debug([ "==================================================",
                     //             "sendableShips " + sendableShips,
                     //             "sending " + shipsToSend + " ships",
-                    //             "****from:",
-                    //             myPlanet,
-                    //             "****to planet",
-                    //             targetPlanet,
                     //             "needing " + neededToMatch + " to match",
-                    //             "distance of " + myPlanet.distanceFrom(targetPlanet),
-                    //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
+                    //             ].join("\n"));
+                } else {
+                    shipsToSend = sendableShips;
+                }
+                myPlanet.sendShips(shipsToSend, targetPlanet);
+                sendableShips -= shipsToSend;
             }
         }
     }
