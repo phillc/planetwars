@@ -114,6 +114,16 @@ Planet.prototype.effectiveDefensiveValue = function(turns) {
     return (-1 * ships) - 1;
 }
 
+Planet.prototype.isEffectivelyEnemy = function(turns) {
+    var numTurns = turns ? turns : 0
+    
+    var defVal = this.defenseValue(numTurns);
+    var owner = defVal[1];
+
+    return owner === ENEMY;
+}
+
+
 Planet.prototype.expendableShipsWithoutReinforce = function() {
     var expendableShips;
     var incEnemyFleets = this.enemyIncomingFleets.slice(0);
@@ -169,9 +179,6 @@ Planet.prototype.addMyIncomingFleet = function(fleet) {
 Planet.prototype.decisionConsiderationOrder = function(){
     return network.compute("decisionConsideration", { ships  : this.ships,
                                                       growth : this.growth });    
-    // #total growth of each player, #of planet of each player
-    // what sending ships to a planet would do to its link, as in closest x friendly planets
-    // turns remaining
 }
 
 var summateDistanceOf = function(numberOf, planets, fromPlanet) {
@@ -192,7 +199,6 @@ var summateShipsOf = function(numberOf, planets, fromPlanet) {
     return ships;
 }
 
-
 Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlanets) {
     var distance = this.distanceFrom(targetPlanet);
     var effDef = targetPlanet.effectiveDefensiveValue(distance);
@@ -206,8 +212,7 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
     var shipsThreeMyPlanets = summateShipsOf(3, nearbyMyPlanets, targetPlanet);
     var shipsThreeEnemyPlanets = summateShipsOf(3, nearbyEnemyPlanets, targetPlanet);
     
-    var values = { 
-                   canTakeRightNow           : this.ships + effDef > 0 ? 1 : -1,
+    var values = { canTakeRightNow           : this.ships + effDef > 0 ? 1 : -1,
                    distance                  : distance,
                    distanceThreeMyPlanets    : distanceThreeMyPlanets,
                    shipsThreeMyPlanets       : shipsThreeMyPlanets,
@@ -215,7 +220,7 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
                    effDef                    : effDef,
                    isEnemy                   : targetPlanet.isEnemy() ? 1 : -1,
-                   isEffectivelyEnemy        : targetPlanet.isEnemy() ? 1 : -1, // is effectively enemy? (in x turns, where x is distance (to help sniping))
+                   isEffectivelyEnemy        : targetPlanet.isEffectivelyEnemy(distance) ? 1 : -1,
                    isFriendly                : targetPlanet.isMine() ? 1 : -1,
                    isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
                    isSelf                    : this.isSamePlanet(targetPlanet) ? 1 : -1,

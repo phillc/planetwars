@@ -59,10 +59,14 @@ Universe.prototype.run = function() {
                 var values = pTuple[2];
                 var neededToMatch = -values.effDef;
                 
-                
-                
-               if(neededToMatch >= 0) {
-                    var shipsToSend = Math.min(sendableShips, neededToMatch + 1);
+                if(values.isEffectivelyEnemy === 1 && sendableShips > neededToMatch) {
+                    var shipsToSend = neededToMatch;
+                    myPlanet.sendShips(shipsToSend, targetPlanet);
+                    sendableShips -= shipsToSend;
+                } else {
+                    myPlanet.sendShips(sendableShips, targetPlanet);
+                    sendableShips = 0;
+                }
                     // sys.debug([ "==================================================",
                     //             "sendableShips " + sendableShips,
                     //             "sending " + shipsToSend + " ships",
@@ -73,9 +77,6 @@ Universe.prototype.run = function() {
                     //             "needing " + neededToMatch + " to match",
                     //             "distance of " + myPlanet.distanceFrom(targetPlanet),
                     //             "neutral? " + targetPlanet.isNeutral() + " enemy? " + targetPlanet.isEnemy()].join("\n"));
-                    myPlanet.sendShips(shipsToSend, targetPlanet);
-                    sendableShips -= shipsToSend;
-                }                    
             }
         }
     }
