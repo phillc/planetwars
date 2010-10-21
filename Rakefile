@@ -19,7 +19,7 @@ def play_game(map, challenger)
   my_cmd = 'node MyBot.js'
   opp_cmd = "java -jar example_bots/#{challenger}Bot.jar"
 
-  cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 1000 log.txt "#{my_cmd}" "#{opp_cmd}"}
+  cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt "#{my_cmd}" "#{opp_cmd}"}
   `#{cmd} 2> commentary.txt > video.txt`
   parse_results(File.read('commentary.txt'))
 end
