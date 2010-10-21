@@ -209,6 +209,7 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
                    effDef                    : effDef,
                    isEnemy                   : targetPlanet.isEnemy() ? 1 : -1,
+                   isEffectivelyEnemy        : targetPlanet.isEffectivelyEnemy(distance) ? 1 : -1,
                    isEffectivelyNotMine      : targetPlanet.isEffectivelyNotMine(distance) ? 1 : -1,
                    isFriendly                : targetPlanet.isMine() ? 1 : -1,
                    isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
