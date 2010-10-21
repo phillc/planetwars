@@ -147,8 +147,10 @@ Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);
     toPlanet.addMyIncomingFleet(dist, shipsNum);
     
-    process.stdout.write('' + Math.floor(this.id) + ' ' +
-            Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
+    if(!this.isSamePlanet(toPlanet)){
+        process.stdout.write('' + Math.floor(this.id) + ' ' +
+                Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
+    }
 }
 
 Planet.prototype.addEnemyIncomingFleet = function(turn, ships) {
