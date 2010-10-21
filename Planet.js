@@ -28,6 +28,10 @@ Planet.prototype.getEnemyIncomingFleets = function() {
     return this.enemyIncomingFleets;
 }
 
+Planet.prototype.getMyIncomingFleets = function() {
+    return this.myIncomingFleets;
+}
+
 Planet.prototype.getCoordinates = function() {
     return [this.x, this.y];
 }
@@ -103,6 +107,13 @@ Planet.prototype.isEffectivelyEnemy = function(turns) {
     var owner = defVal[1];
 
     return owner === ENEMY;
+}
+
+Planet.prototype.isEffectivelyNotMine = function(turns) {
+    var defVal = this.defenseValue(turns || 0);
+    var owner = defVal[1];
+
+    return owner !== MINE;
 }
 
 
@@ -198,7 +209,7 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
                    effDef                    : effDef,
                    isEnemy                   : targetPlanet.isEnemy() ? 1 : -1,
-                   isEffectivelyEnemy        : targetPlanet.isEffectivelyEnemy(distance) ? 1 : -1,
+                   isEffectivelyNotMine      : targetPlanet.isEffectivelyNotMine(distance) ? 1 : -1,
                    isFriendly                : targetPlanet.isMine() ? 1 : -1,
                    isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
                    isSelf                    : this.isSamePlanet(targetPlanet) ? 1 : -1,

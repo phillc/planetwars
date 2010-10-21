@@ -60,8 +60,7 @@ Universe.prototype.run = function() {
                 var neededToMatch = -values.effDef;
 
                 var shipsToSend = 0;
-                // sys.debug("effEnemy: " + values.isEffectivelyEnemy + " sendableShips: " + sendableShips + " neededToMatch: " + neededToMatch + " targetPlanet.ships: " + targetPlanet.getShips())
-                if(values.isEffectivelyEnemy === 1 && sendableShips > neededToMatch) {
+                if(values.isEffectivelyNotMine === 1 && sendableShips > neededToMatch) {
                     shipsToSend = neededToMatch;
                     // sys.debug([ "==================================================",
                     //             "sendableShips " + sendableShips,
