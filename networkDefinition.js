@@ -1,9 +1,4 @@
 var networks = {
-    decisionConsideration : {
-        inputs : [ "ships",
-                   "growth"],
-        hiddenLayer : 4
-    },
     attackConsideration : {
         inputs : [ "isEnemy",
                    "isEffectivelyEnemy",
@@ -26,8 +21,7 @@ var networks = {
         inputs : [ "totalShips",
                    "totalGrowth",
                    "totalShipsDocked",
-                   "totalShipsMoving",
-                   "closestPlanetWouldTake"
+                   "totalShipsMoving"
                   ],
         hiddenLayer : 12
     }

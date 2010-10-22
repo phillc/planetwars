@@ -148,8 +148,8 @@ Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     toPlanet.addMyIncomingFleet(dist, shipsNum);
     
     if(!this.isSamePlanet(toPlanet)){
-        process.stdout.write('' + Math.floor(this.id) + ' ' +
-                Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
+        sys.debug('' + Math.floor(this.id) + ' ' + Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
+        process.stdout.write('' + Math.floor(this.id) + ' ' + Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
     }
 }
 
@@ -165,11 +165,6 @@ Planet.prototype.addMyIncomingFleet = function(turn, ships) {
         this.myIncomingFleets[turn] = 0;
     }
     this.myIncomingFleets[turn] += ships;
-}
-
-Planet.prototype.decisionConsiderationOrder = function(){
-    return network.compute("decisionConsideration", { ships  : this.ships,
-                                                      growth : this.growth });    
 }
 
 var summateDistanceOf = function(numberOf, planets, fromPlanet) {
@@ -190,36 +185,28 @@ var summateShipsOf = function(numberOf, planets, fromPlanet) {
     return ships;
 }
 
-Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlanets) {
-    var distance = this.distanceFrom(targetPlanet);
-    var effDef = targetPlanet.effectiveDefensiveValue(distance);
+Planet.prototype.consider = function(myPlanets, enemyPlanets) {
+    var nearbyMyPlanets = this.nearbyPlanetsOutOf(myPlanets);
+    var nearbyEnemyPlanets = this.nearbyPlanetsOutOf(enemyPlanets);
     
-    var nearbyMyPlanets = targetPlanet.nearbyPlanetsOutOf(myPlanets);
-    var nearbyEnemyPlanets = targetPlanet.nearbyPlanetsOutOf(enemyPlanets);
+    var distanceThreeMyPlanets = summateDistanceOf(3, nearbyMyPlanets, this);
+    var distanceThreeEnemyPlanets = summateDistanceOf(3, nearbyEnemyPlanets, this);
     
-    var distanceThreeMyPlanets = summateDistanceOf(3, nearbyMyPlanets, targetPlanet);
-    var distanceThreeEnemyPlanets = summateDistanceOf(3, nearbyEnemyPlanets, targetPlanet);
+    var shipsThreeMyPlanets = summateShipsOf(3, nearbyMyPlanets, this);
+    var shipsThreeEnemyPlanets = summateShipsOf(3, nearbyEnemyPlanets, this);
     
-    var shipsThreeMyPlanets = summateShipsOf(3, nearbyMyPlanets, targetPlanet);
-    var shipsThreeEnemyPlanets = summateShipsOf(3, nearbyEnemyPlanets, targetPlanet);
-    
-    var values = { canTakeRightNow           : this.ships + effDef > 0 ? 1 : -1,
-                   distance                  : distance,
+    var values = { 
                    distanceThreeMyPlanets    : distanceThreeMyPlanets,
                    shipsThreeMyPlanets       : shipsThreeMyPlanets,
                    distanceThreeEnemyPlanets : distanceThreeEnemyPlanets,
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
-                   effDef                    : effDef,
-                   isEnemy                   : targetPlanet.isEnemy() ? 1 : -1,
-                   isEffectivelyEnemy        : targetPlanet.isEffectivelyEnemy(distance) ? 1 : -1,
-                   isEffectivelyNotMine      : targetPlanet.isEffectivelyNotMine(distance) ? 1 : -1,
-                   isFriendly                : targetPlanet.isMine() ? 1 : -1,
-                   isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
-                   isSelf                    : this.isSamePlanet(targetPlanet) ? 1 : -1,
-                   shipsDocked               : this.isSamePlanet(targetPlanet) ? 0 : targetPlanet.ships,
-                   growth                    : targetPlanet.growth };
+                   isEnemy                   : this.isEnemy() ? 1 : -1,
+                   isFriendly                : this.isMine() ? 1 : -1,
+                   isNeutral                 : this.isNeutral() ? 1 : -1,
+                   shipsDocked               : this.ships,
+                   growth                    : this.growth };
     
-    return [network.compute("attackConsideration", values), targetPlanet, values]
+    return [network.compute("attackConsideration", values), this, values]
                            
 }
 

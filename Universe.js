@@ -33,24 +33,42 @@ var decisionConsiderationSort = function(a, b){
     return b.decisionConsiderationOrder() - a.decisionConsiderationOrder();
 }
 
+var SendCommand = function(fromPlanet, toPlanet, shipNumber) {
+    this.fromPlanet = fromPlanet;
+    this.toPlanet = toPlanet;
+    this.shipNumber = shipNumber;
+}
 
-Universe.prototype.evaluateNextCommand = function() {
+SendCommand.prototype.execute = function() {
+    this.fromPlanet.sendShips(this.shipNumber, this.toPlanet);
+}
+
+SendCommand.prototype.pretend = function() {
+    
+}
+
+Universe.prototype.evaluateNextCommand = function(mayPly, universePlanets, fromPlanets, toPlanets) {
     var evaluateBoard = function(planets) {
     
     }
     
     var strategies = {
-        sendNothing : function() {
+        sendNothing : function(fromPlanet, toPlanet) {
             return [];
         },
-        sendNeededToTake : function(fromPlanet, toPlanets) {
+        sendNeededToTake : function(fromPlanet, toPlanet) {
             var moves = []
-            while(sendable > 0 && numCount < up To){
+            while(sendable > 0 && numCount < upTo){
                 numCount++
             }
         },
-        sendAll : function() {
-            return from, to, this.ships
+        sendAll : function(fromPlanets, toPlanets) {
+            var commands = []
+            for(var planetNum in fromPlanets) {
+                var fromPlanet = fromPlanets[planetNum];
+                commands.push(new SendCommand(fromPlanet, toPlanets[0], fromPlanet.getShips()))
+            }
+            return commands;
         },
         sendGrowth : function(upTo) {
             var actions = []
@@ -60,55 +78,62 @@ Universe.prototype.evaluateNextCommand = function() {
         }
     
     }
+
+    var orderedStrategies = [
+        // strategies.sendNothing,
+        // strategies.sendNeededToTake,
+        strategies.sendAll(fromPlanets, toPlanets)
+    ]
     
-    var keys = _.keys(strategies);
+    return [1, orderedStrategies[0]]
     
-    var iterator = 0;
-    var nextStrategy() {
-        var strategy = strategies[keys[iterator % keys.length]]
-        iterator++;
-        return strategy;
-    }
+    // var iterator = 0;
+    // var nextStrategy() {
+        // var strategy = orderedStrategies[iterator % orderedStrategies.length]
+        // iterator++;
+        // return strategy;
+    // }
     
-    var commandScores = [];
+    // var commandScores = [];
     
-    return function(maxPly, universePlanets, fromPlanet, toPlanets) {
-        // can skip if equal (like growth and sendAll)
-        var strategy = nextStrategy();
-        var myCommand = strategy(fromPlanet, toPlanets);
-        var enemyCommand = 
-        var score = evaluateCommands(maxPly - 1, universePlanets, afterFromPlanet, afterToPlanets);
-        allCommands.push([score, command]);
-    }
-}();
+    // return function(maxPly, universePlanets, fromPlanets, toPlanets) {
+    //     // can skip if equal (like growth and sendAll)
+    //     var strategy = nextStrategy();
+    //     var myCommand = strategy(fromPlanet, toPlanets);
+    //     var enemyCommand = 
+    //     var score = evaluateCommands(maxPly - 1, universePlanets, afterFromPlanet, afterToPlanets);
+    //     allCommands.push([score, command]);
+    // }
+};
 
 
 Universe.prototype.run = function() {
-    var myPlanetsForDecision = this.myPlanets.slice(0); //copy array
-    myPlanetsForDecision.sort(decisionConsiderationSort)
-
-    for(var planetNum in myPlanetsForDecision) {
+    var planetEvaluations = [];
+    for(var consideredPlanetNum in this.planets) {
         checkTime();
-        var myPlanet = myPlanetsForDecision[planetNum];
-        
-        var planetEvaluations = [];
-        for(var consideredPlanetNum in this.planets) {
-            checkTime();
-            var otherPlanet = this.planets[consideredPlanetNum];
-            planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, this.myPlanets, this.enemyPlanets));
-        }
-                
-        planetEvaluations.sort(tupleSort);
-        
-        var i = 0; //replace with do while time < time threshold
-        var best = [];
-        while (i < 10) {
-            i++;
+        var otherPlanet = this.planets[consideredPlanetNum];
+        planetEvaluations.push(otherPlanet.consider(this.myPlanets, this.enemyPlanets));
+    }
             
-            best = evaluateNextCommand(3, planetEvaluations[0, 3]);
-        }
+    planetEvaluations.sort(tupleSort);
+    
+    var sortedPlanets = _.map(planetEvaluations, function(tuple) { return tuple[1]; })
+    
+    var i = 0; //replace with do while time < time threshold
+    var bestScore;
+    var bestCommands;
+
+    do {
+        i++;
         
-        best.each.execute;
+        var command = this.evaluateNextCommand(3, this.planets, this.myPlanets, sortedPlanets);
+        if(!bestScore || command[0] > bestScore) {
+            bestScore = command[0];
+            bestCommands = command[1];
+        }
+    } while (i < 10);
+    for(var commandNum in bestCommands){
+        bestCommands[commandNum].execute();
     }
 }
 
