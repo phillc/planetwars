@@ -2,8 +2,7 @@ var vows = require('vows'),
     assert = require('assert'),
     sys = require('sys');
 
-var Planet = require('../Planet').Planet,
-    Fleet = require('../Fleet').Fleet;
+var Planet = require('../Planet').Planet;
 
 vows.describe('Planet effectiveDefensiveValue()').addBatch({
     'when the growth rate is 3 and 2 ships are already there,' : {
