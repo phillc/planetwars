@@ -242,8 +242,8 @@ vows.describe('Planet considerSendingTo()').addBatch({
     },
     'when given another planet' : {
         topic : function() {
-            var fromPlanet = new Planet(42, 0, 0, null, 32, 4);
-            var toPlanet = new Planet(43, 5, 3, null, 32, 4);
+            var fromPlanet = new Planet(42, 0, 0, 1, 32, 4);
+            var toPlanet = new Planet(43, 5, 3, 2, 32, 4);
             
             closeFriendly = new Planet(44, 13, 15, null, 13, 4);
             assert.equal(toPlanet.distanceFrom(closeFriendly), 15)
@@ -272,7 +272,6 @@ vows.describe('Planet considerSendingTo()').addBatch({
             assert.equal(toPlanet.distanceFrom(farEnemy), 40)
             
             var enemyPlanets = [closestEnemy, closerEnemy, closeEnemy, farEnemy];
-            
             return fromPlanet.considerSendingTo(toPlanet, friendlyPlanets, enemyPlanets);
         },
         'the values computed' : {
@@ -312,11 +311,11 @@ vows.describe('Planet considerSendingTo()').addBatch({
 
 vows.describe('Planet isEffectivelyEnemy()').addBatch({
     'should be true for an unthreatened enemy planet' : function() {
-        var planet = new Planet(null, null, null, 2, null, null);
+        var planet = new Planet(null, null, null, 2, 1, 1);
         assert.isTrue(planet.isEffectivelyEnemy());
     },
     'should be false for an unthreatened friendly planet' : function() {
-        var planet = new Planet(null, null, null, 1, null, null);
+        var planet = new Planet(null, null, null, 1, 1, 1);
         assert.isFalse(planet.isEffectivelyEnemy());
     }
 }).export(module);
