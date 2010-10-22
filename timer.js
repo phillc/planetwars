@@ -17,7 +17,7 @@ exports.setStartTime = function(){
 }
 
 exports.checkTime = function(){
-    if(timeDiff() > 750) {
+    if(timeDiff() > 700) {
         sys.debug("********* TIMED OUT ***********")
         throw TIME_ERROR;
     };

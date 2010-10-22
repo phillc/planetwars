@@ -7,6 +7,7 @@ var networks = {
     attackConsideration : {
         inputs : [ "isEnemy",
                    "isEffectivelyEnemy",
+                   "isEffectivelyNotMine",
                    "isFriendly",
                    "isNeutral",
                    "canTakeRightNow",

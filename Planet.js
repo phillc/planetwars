@@ -1,5 +1,4 @@
 var sys = require('sys'),
-    Fleet = require('./Fleet').Fleet;
     network = require('./network');
 
 var ENEMY = 2,
@@ -13,8 +12,8 @@ var Planet = function(id, x, y, owner, ships, growth) {
     this.owner  = parseInt(owner);
     this.ships  = parseInt(ships);
     this.growth = parseInt(growth);
-    this.enemyIncomingFleets    = [];
-    this.myIncomingFleets = [];
+    this.enemyIncomingFleets = [0];
+    this.myIncomingFleets = [0];
 }
 
 Planet.prototype.getShips = function() {
@@ -27,6 +26,10 @@ Planet.prototype.isSamePlanet = function(otherPlanet) {
 
 Planet.prototype.getEnemyIncomingFleets = function() {
     return this.enemyIncomingFleets;
+}
+
+Planet.prototype.getMyIncomingFleets = function() {
+    return this.myIncomingFleets;
 }
 
 Planet.prototype.getCoordinates = function() {
@@ -60,21 +63,8 @@ Planet.prototype.defenseValue = function(turn) {
         ships += this.growth;
     }
     
-    var enemyShips = 0;
-    for(var fleetNum in this.enemyIncomingFleets) {
-        var fleet = this.enemyIncomingFleets[fleetNum];
-        if(fleet.getRemaining() === turn) {
-            enemyShips += fleet.ships;
-        }
-    }
-    
-    var myShips = 0;
-    for(var fleetNum in this.myIncomingFleets) {
-        var fleet = this.myIncomingFleets[fleetNum];
-        if(fleet.getRemaining() === turn) {
-            myShips += fleet.ships;
-        }
-    }
+    var enemyShips = this.enemyIncomingFleets[turn] || 0;
+    var myShips = this.myIncomingFleets[turn] || 0;
     
     if (enemyShips > myShips) {
         var shipDiff = enemyShips - myShips; 
@@ -102,9 +92,7 @@ Planet.prototype.defenseValue = function(turn) {
 }
 
 Planet.prototype.effectiveDefensiveValue = function(turns) {
-    var numTurns = turns ? turns : 0
-    
-    var defVal = this.defenseValue(numTurns);
+    var defVal = this.defenseValue(turns || 0);
     var ships = defVal[0];
     var owner = defVal[1];
 
@@ -114,11 +102,23 @@ Planet.prototype.effectiveDefensiveValue = function(turns) {
     return (-1 * ships) - 1;
 }
 
+Planet.prototype.isEffectivelyEnemy = function(turns) {
+    var defVal = this.defenseValue(turns || 0);
+    var owner = defVal[1];
+
+    return owner === ENEMY;
+}
+
+Planet.prototype.isEffectivelyNotMine = function(turns) {
+    var defVal = this.defenseValue(turns || 0);
+    var owner = defVal[1];
+
+    return owner !== MINE;
+}
+
+
 Planet.prototype.expendableShipsWithoutReinforce = function() {
-    var expendableShips;
-    var incEnemyFleets = this.enemyIncomingFleets.slice(0);
-    incEnemyFleets.sort(function(a, b){a.remaining - b.remaining});
-    farthestDistance = incEnemyFleets[0] ? incEnemyFleets[0].remaining : 0;
+    var farthestDistance = this.enemyIncomingFleets.length - 1;
     return Math.min(this.ships, this.effectiveDefensiveValue(farthestDistance));
 }
 
@@ -145,33 +145,31 @@ Planet.prototype.distanceFrom = function() {
 
 Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);
-    var fleet = new Fleet({ owner       : 1, 
-                            ships       : shipsNum,
-                            source      : this.id,
-                            dest        : toPlanet.id,
-                            totalLength : dist,
-                            remaining   : dist });
-                            
-    toPlanet.addMyIncomingFleet(fleet);
+    toPlanet.addMyIncomingFleet(dist, shipsNum);
     
-    process.stdout.write('' + Math.floor(this.id) + ' ' +
-            Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
+    if(!this.isSamePlanet(toPlanet)){
+        process.stdout.write('' + Math.floor(this.id) + ' ' +
+                Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
+    }
 }
 
-Planet.prototype.addEnemyIncomingFleet = function(fleet) {
-    this.enemyIncomingFleets.push(fleet);
+Planet.prototype.addEnemyIncomingFleet = function(turn, ships) {
+    if(!this.enemyIncomingFleets[turn]) {
+        this.enemyIncomingFleets[turn] = 0;
+    }
+    this.enemyIncomingFleets[turn] += ships;
 }
 
-Planet.prototype.addMyIncomingFleet = function(fleet) {
-    this.myIncomingFleets.push(fleet);
+Planet.prototype.addMyIncomingFleet = function(turn, ships) {
+    if(!this.myIncomingFleets[turn]) {
+        this.myIncomingFleets[turn] = 0;
+    }
+    this.myIncomingFleets[turn] += ships;
 }
 
 Planet.prototype.decisionConsiderationOrder = function(){
     return network.compute("decisionConsideration", { ships  : this.ships,
                                                       growth : this.growth });    
-    // #total growth of each player, #of planet of each player
-    // what sending ships to a planet would do to its link, as in closest x friendly planets
-    // turns remaining
 }
 
 var summateDistanceOf = function(numberOf, planets, fromPlanet) {
@@ -192,7 +190,6 @@ var summateShipsOf = function(numberOf, planets, fromPlanet) {
     return ships;
 }
 
-
 Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlanets) {
     var distance = this.distanceFrom(targetPlanet);
     var effDef = targetPlanet.effectiveDefensiveValue(distance);
@@ -206,8 +203,7 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
     var shipsThreeMyPlanets = summateShipsOf(3, nearbyMyPlanets, targetPlanet);
     var shipsThreeEnemyPlanets = summateShipsOf(3, nearbyEnemyPlanets, targetPlanet);
     
-    var values = { 
-                   canTakeRightNow           : this.ships + effDef > 0 ? 1 : -1,
+    var values = { canTakeRightNow           : this.ships + effDef > 0 ? 1 : -1,
                    distance                  : distance,
                    distanceThreeMyPlanets    : distanceThreeMyPlanets,
                    shipsThreeMyPlanets       : shipsThreeMyPlanets,
@@ -215,7 +211,8 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
                    effDef                    : effDef,
                    isEnemy                   : targetPlanet.isEnemy() ? 1 : -1,
-                   isEffectivelyEnemy        : targetPlanet.isEnemy() ? 1 : -1, // is effectively enemy? (in x turns, where x is distance (to help sniping))
+                   isEffectivelyEnemy        : targetPlanet.isEffectivelyEnemy(distance) ? 1 : -1,
+                   isEffectivelyNotMine      : targetPlanet.isEffectivelyNotMine(distance) ? 1 : -1,
                    isFriendly                : targetPlanet.isMine() ? 1 : -1,
                    isNeutral                 : targetPlanet.isNeutral() ? 1 : -1,
                    isSelf                    : this.isSamePlanet(targetPlanet) ? 1 : -1,
