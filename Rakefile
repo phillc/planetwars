@@ -80,6 +80,7 @@ task :run do
   run_times.times do
     Rake::Task["mutate"].execute
     Rake::Task["matchup"].execute
+    Rake::Task["tcp"].execute
   end
 end
 
