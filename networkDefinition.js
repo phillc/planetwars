@@ -20,8 +20,8 @@ var networks = {
     boardValue : {
         inputs : [ "totalShips",
                    "totalGrowth",
-                   "totalShipsDocked",
-                   "totalShipsMoving"
+                   // "totalShipsDocked",
+                   // "totalShipsMoving"
                   ],
         hiddenLayer : 12
     }

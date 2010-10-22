@@ -47,63 +47,52 @@ SendCommand.prototype.pretend = function() {
     
 }
 
-Universe.prototype.evaluateNextCommand = function(mayPly, universePlanets, fromPlanets, toPlanets) {
-    var evaluateBoard = function(planets) {
-    
-    }
-    
-    var strategies = {
-        sendNothing : function(fromPlanet, toPlanet) {
-            return [];
-        },
-        sendNeededToTake : function(fromPlanet, toPlanet) {
-            var moves = []
-            while(sendable > 0 && numCount < upTo){
-                numCount++
-            }
-        },
-        sendAll : function(fromPlanets, toPlanets) {
-            var commands = []
-            for(var planetNum in fromPlanets) {
-                var fromPlanet = fromPlanets[planetNum];
-                commands.push(new SendCommand(fromPlanet, toPlanets[0], fromPlanet.getShips()))
-            }
-            return commands;
-        },
-        sendGrowth : function(upTo) {
-            var actions = []
-            actions.push [from, to, this.growth]
-
-            return actions;
+var strategies = {
+    sendNothing : function(fromPlanet, toPlanet) {
+        return [];
+    },
+    sendNeededToTake : function(fromPlanet, toPlanet) {
+        var moves = []
+        while(sendable > 0 && numCount < upTo){
+            numCount++
         }
-    
+    },
+    sendAll : function(fromPlanets, toPlanets) {
+        var commands = []
+        for(var planetNum in fromPlanets) {
+            var fromPlanet = fromPlanets[planetNum];
+            commands.push(new SendCommand(fromPlanet, toPlanets[0], fromPlanet.getShips()))
+        }
+        return commands;
+    },
+    sendGrowth : function(upTo) {
+        var actions = []
+        actions.push [from, to, this.growth]
+
+        return actions;
     }
 
-    var orderedStrategies = [
-        // strategies.sendNothing,
-        // strategies.sendNeededToTake,
-        strategies.sendAll(fromPlanets, toPlanets)
-    ]
-    
-    return [1, orderedStrategies[0]]
-    
-    // var iterator = 0;
-    // var nextStrategy() {
-        // var strategy = orderedStrategies[iterator % orderedStrategies.length]
-        // iterator++;
-        // return strategy;
-    // }
-    
-    // var commandScores = [];
-    
-    // return function(maxPly, universePlanets, fromPlanets, toPlanets) {
-    //     // can skip if equal (like growth and sendAll)
-    //     var strategy = nextStrategy();
-    //     var myCommand = strategy(fromPlanet, toPlanets);
-    //     var enemyCommand = 
-    //     var score = evaluateCommands(maxPly - 1, universePlanets, afterFromPlanet, afterToPlanets);
-    //     allCommands.push([score, command]);
-    // }
+}
+
+var orderedStrategies = [
+    // strategies.sendNothing,
+    // strategies.sendNeededToTake,
+    strategies.sendAll(fromPlanets, toPlanets)
+]
+var orderedStrategiesLength = orderedStrategies.length;
+
+Universe.prototype.evaluateNextCommand = function(node, depth, alpha, beta) {
+    var newAlpha;
+    if(depth === 0) {
+        return evaluateBoard();
+    }
+    for(var strategyNum = 0 ; strategyNum < orderedStrategiesLength ; strategyNum++) {
+        newAlpha = Max(alpha, -evaluateNextCommand(orderedStrategies[strategyNum], depth - 1, -beta, -alpha))
+        if(beta <= newAlpha) {
+            break;
+        }
+    }
+    return newAlpha;
 };
 
 
@@ -123,15 +112,11 @@ Universe.prototype.run = function() {
     var bestScore;
     var bestCommands;
 
-    do {
-        i++;
-        
-        var command = this.evaluateNextCommand(3, this.planets, this.myPlanets, sortedPlanets);
-        if(!bestScore || command[0] > bestScore) {
-            bestScore = command[0];
-            bestCommands = command[1];
-        }
-    } while (i < 10);
+    var currentStateOfBoard = [network.compute("boardValue", values), []]
+    var maxDepth = 4;
+    var bestState = evaluateCommands(currentStateOfBoard, maxDepth, -Infinity, Infinity)
+    bestCommands = bestSate[1];
+    
     for(var commandNum in bestCommands){
         bestCommands[commandNum].execute();
     }
