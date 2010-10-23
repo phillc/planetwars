@@ -5,15 +5,14 @@
 var Universe = function(planets) {
     var myPlanets = [];
     var enemyPlanets = [];
-    for (var i = 0; i < planets.length; i++) {
-        var planet = planets[i];
+    planets.forEach(function(planet) {
         if(planet.isMine()) {
             myPlanets.push(planet);
         }
         if(planet.isEnemy()) {
             enemyPlanets.push(planet);
         }
-    }
+    })
     
     this.planets           = planets,
     this.myPlanets         = myPlanets,
@@ -36,19 +35,17 @@ var decisionConsiderationSort = function(a, b){
 Universe.prototype.run = function() {
     var myPlanetsForDecision = this.myPlanets.slice(0); //copy array
     myPlanetsForDecision.sort(decisionConsiderationSort)
-
-    for(var planetNum in myPlanetsForDecision) {
+    
+    myPlanetsForDecision.forEach(function(myPlanet) {
         checkTime();
-        var myPlanet = myPlanetsForDecision[planetNum];
         var sendableShips = myPlanet.expendableShipsWithoutReinforce();
     
         if(sendableShips > 0) {
             var planetEvaluations = [];
-            for(var consideredPlanetNum in this.planets) {
+            this.planets.forEach(function(otherPlanet) {
                 checkTime();
-                var otherPlanet = this.planets[consideredPlanetNum];
                 planetEvaluations.push(myPlanet.considerSendingTo(otherPlanet, this.myPlanets, this.enemyPlanets));
-            }
+            }, this);
 
             planetEvaluations.sort(tupleSort);
         
@@ -78,7 +75,7 @@ Universe.prototype.run = function() {
                 }
             }
         }
-    }
+    }, this);
 }
 
 exports.Universe = Universe;
