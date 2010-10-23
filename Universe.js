@@ -1,19 +1,18 @@
- var sys = require('sys'),
+var sys = require('sys'),
     timer = require('./timer'),
     checkTime = timer.checkTime;
 
 var Universe = function(planets) {
     var myPlanets = [];
     var enemyPlanets = [];
-    for (var i = 0; i < planets.length; i++) {
-        var planet = planets[i];
+    planets.forEach(function(planet) {
         if(planet.isMine()) {
             myPlanets.push(planet);
         }
         if(planet.isEnemy()) {
             enemyPlanets.push(planet);
         }
-    }
+    })
     
     this.planets           = planets,
     this.myPlanets         = myPlanets,
