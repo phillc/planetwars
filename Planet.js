@@ -172,22 +172,12 @@ Planet.prototype.decisionConsiderationOrder = function(){
                                                       growth : this.growth });    
 }
 
-var summateDistanceOf = function(numberOf, planets, fromPlanet) {
-    var planetsLength = planets.length;
-    var distance = 0;
-    for(var i=0 ; (i < numberOf) && (i < planetsLength) ; i++) {
-        distance += fromPlanet.distanceFrom(planets[i]);
-    }
-    return distance;
-}
-
-var summateShipsOf = function(numberOf, planets, fromPlanet) {
-    var planetsLength = planets.length;
-    var ships = 0;
-    for(var i=0 ; (i < numberOf) && (i < planetsLength) ; i++) {
-        ships += planets[i].ships;
-    }
-    return ships;
+Planet.prototype.summateCallsOf = function(planets, fnName, args) {
+    var total = 0;
+    planets.forEach(function(planet){
+        total += planet[fnName].apply(planet, args);
+    }, this);
+    return total;
 }
 
 Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlanets) {
@@ -197,11 +187,11 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
     var nearbyMyPlanets = targetPlanet.nearbyPlanetsOutOf(myPlanets);
     var nearbyEnemyPlanets = targetPlanet.nearbyPlanetsOutOf(enemyPlanets);
     
-    var distanceThreeMyPlanets = summateDistanceOf(3, nearbyMyPlanets, targetPlanet);
-    var distanceThreeEnemyPlanets = summateDistanceOf(3, nearbyEnemyPlanets, targetPlanet);
+    var distanceThreeMyPlanets = targetPlanet.summateCallsOf(nearbyMyPlanets.slice(0, 3), "distanceFrom", [targetPlanet]);
+    var distanceThreeEnemyPlanets = targetPlanet.summateCallsOf(nearbyEnemyPlanets.slice(0, 3), "distanceFrom", [targetPlanet]);
     
-    var shipsThreeMyPlanets = summateShipsOf(3, nearbyMyPlanets, targetPlanet);
-    var shipsThreeEnemyPlanets = summateShipsOf(3, nearbyEnemyPlanets, targetPlanet);
+    var shipsThreeMyPlanets = targetPlanet.summateCallsOf(nearbyMyPlanets.slice(0, 3), "getShips");
+    var shipsThreeEnemyPlanets = targetPlanet.summateCallsOf(nearbyEnemyPlanets.slice(0, 3), "getShips");
     
     var values = { canTakeRightNow           : this.ships + effDef > 0 ? 1 : -1,
                    distance                  : distance,
@@ -237,9 +227,7 @@ Planet.prototype.toString = function() {
                    this.ships + " ships,",
                    this.growth + " growth,",
                    "@(" + this.getCoordinates() + ")",
-                   "with incoming fleets of:"].join(" ") ];
-    str.push(this.myIncomingFleets.join("\n"))
-    str.push(this.enemyIncomingFleets.join("\n"))
+                   ].join(" ") ];
     return str.join("\n");
 }
 
