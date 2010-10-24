@@ -73,7 +73,7 @@ var strategies = {
 
 }
 
-Universe.prototype.runEvaluations = function(tickAfter, depth, alpha, beta) {
+Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
     var newAlpha;
     if(depth === 0) {
         return { score: this.evaluateBoard() };
@@ -84,7 +84,7 @@ Universe.prototype.runEvaluations = function(tickAfter, depth, alpha, beta) {
         return { score: this.evaluateBoard() };
     }
     strats.forEach(function(strategy){
-        var eval = runEvaluations(!tickAfter, tickAfter ? depth - 1 : depth, -beta, -alpha)
+        var eval = runEvaluations(player === "me" ? "enemy" : "me", depth - 1, -beta, -alpha)
         if (eval.score > alpha) {
             newAlpha = eval;
         }
@@ -107,17 +107,8 @@ Universe.prototype.strategies = function() {
     
     var sortedPlanets = _.map(planetEvaluations, function(tuple) { return tuple[1]; })
     
-    var i = 0; //replace with do while time < time threshold
-    var bestScore;
-    var bestCommands;
-
-    var maxDepth = 4;
-    return var bestState = evaluateCommands()
-    
     var orderedStrategies = [
-        // strategies.sendNothing,
-        // strategies.sendNeededToTake,
-        strategies.sendAll(fromPlanets, toPlanets)
+        strategies.sendAll(fromPlanets, sortedPlanets)
     ]
     return orderedStrategies;
 }
