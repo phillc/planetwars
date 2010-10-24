@@ -57,18 +57,35 @@ Universe.prototype.run = function() {
                 var neededToMatch = -values.effDef;
 
                 var shipsToSend = 0;
-                if(values.isEffectivelyNotMine === 1 && sendableShips > neededToMatch) {
-                    shipsToSend = neededToMatch;
-                    myPlanet.sendShips(shipsToSend , targetPlanet);
-                    sendableShips -= shipsToSend;
-                    // sys.debug([ "==================================================",
-                    //             "sendableShips " + sendableShips,
-                    //             "sending " + shipsToSend + " ships",
-                    //             "needing " + neededToMatch + " to match",
-                    //             ].join("\n"));
-                } else if(values.isEffectivelyNotMine === 1){
-                    sendableShips = 0;
+                if(values.isEffectivelyNotMine === 1) {
+                    if (sendableShips > neededToMatch) {
+                        shipsToSend = neededToMatch;
+                        myPlanet.sendShips(shipsToSend , targetPlanet);
+                        sendableShips -= shipsToSend;
+                        // sys.debug([ "==================================================",
+                        //             "sendableShips " + sendableShips,
+                        //             "sending " + shipsToSend + " ships",
+                        //             "needing " + neededToMatch + " to match",
+                        //             ].join("\n"));
+                    } else {
+                        //send all to a closer friendly planet, if total trip wont be more than x%
+                        var nearbyPlanets = targetPlanet.nearbyPlanetsOutOf(this.myPlanets);
+                        nearbyPlanetsLength = nearbyPlanets.length;
+                        for (var nearbyPlanetNum = 0; nearbyPlanetNum < nearbyPlanetsLength ; nearbyPlanetNum++) {
+                            checkTime();
+                            var nearbyPlanet = nearbyPlanets[nearbyPlanetNum];
+                            if (nearbyPlanet.isSamePlanet(myPlanet)) {
+                                break;
+                            } else if ((myPlanet.distanceFrom(nearbyPlanet) + nearbyPlanet.distanceFrom(targetPlanet)) < myPlanet.distanceFrom(targetPlanet) * 1.33) {
+                                shipsToSend = sendableShips;
+                                myPlanet.sendShips(shipsToSend , nearbyPlanet);
+                                break;
+                            }
+                        }
+                        sendableShips = 0;
+                    }
                 } else {
+                    // friendly, so send all
                     shipsToSend = sendableShips;
                     myPlanet.sendShips(shipsToSend , targetPlanet);
                     sendableShips = 0;
