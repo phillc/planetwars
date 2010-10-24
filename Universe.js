@@ -73,29 +73,29 @@ var strategies = {
 
 }
 
-var orderedStrategies = [
-    // strategies.sendNothing,
-    // strategies.sendNeededToTake,
-    strategies.sendAll(fromPlanets, toPlanets)
-]
-var orderedStrategiesLength = orderedStrategies.length;
-
-Universe.prototype.evaluateNextCommand = function(node, depth, alpha, beta) {
+Universe.prototype.runEvaluations = function(tickAfter, depth, alpha, beta) {
     var newAlpha;
     if(depth === 0) {
-        return evaluateBoard();
+        return { score: this.evaluateBoard() };
     }
-    for(var strategyNum = 0 ; strategyNum < orderedStrategiesLength ; strategyNum++) {
-        newAlpha = Max(alpha, -evaluateNextCommand(orderedStrategies[strategyNum], depth - 1, -beta, -alpha))
+
+    var strats = this.strategies();
+    if(strats.length === 0) {
+        return { score: this.evaluateBoard() };
+    }
+    strats.forEach(function(strategy){
+        var eval = runEvaluations(!tickAfter, tickAfter ? depth - 1 : depth, -beta, -alpha)
+        if (eval.score > alpha) {
+            newAlpha = eval;
+        }
         if(beta <= newAlpha) {
             break;
         }
-    }
-    return newAlpha;
+    }, this);
+    return { score: newAlpha, commands: newCommands };
 };
 
-
-Universe.prototype.run = function() {
+Universe.prototype.strategies = function() {
     var planetEvaluations = [];
     for(var consideredPlanetNum in this.planets) {
         checkTime();
@@ -111,14 +111,39 @@ Universe.prototype.run = function() {
     var bestScore;
     var bestCommands;
 
-    var currentStateOfBoard = [network.compute("boardValue", values), []]
     var maxDepth = 4;
-    var bestState = evaluateCommands(currentStateOfBoard, maxDepth, -Infinity, Infinity)
-    bestCommands = bestSate[1];
+    return var bestState = evaluateCommands()
     
-    for(var commandNum in bestCommands){
-        bestCommands[commandNum].execute();
+    var orderedStrategies = [
+        // strategies.sendNothing,
+        // strategies.sendNeededToTake,
+        strategies.sendAll(fromPlanets, toPlanets)
+    ]
+    return orderedStrategies;
+}
+
+Universe.prototype.evaluateBoard = function(player) {
+    var values = {
+        totalShips  : this.summatePlanets("getShips", player),
+        totalGrowth : this.summatePlanets("getGrowth", player)
     }
+    network.compute("boardValue", values)
+}
+
+
+
+Universe.prototype.summatePlanets = function(fn, player) {
+    var planets;
+    if (player === "me") {
+        planets = this.myPlanets;
+    } else if (player === "enemy") {
+        planets = this.enemyPlanets;
+    }
+    
+    var sumCall = function(total, planet) {
+        return total + planet[fn].call();
+    }
+    return _.reduce(planets, sumCall, 0);
 }
 
 exports.Universe = Universe;

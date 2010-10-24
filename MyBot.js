@@ -8,7 +8,10 @@ var PlanetWars = require('./PlanetWars'),
 
 function DoTurn(universe) {
     try {
-        universe.run();
+        bestCommands = universe.runEvaluations(false, 1, -Infinity, Infinity)[1];
+        bestCommands.forEach(function(command){
+            command.execute();
+        }, this)
     } catch(err) {
         if(!isTimeException(err)) {
             sys.debug(err);
