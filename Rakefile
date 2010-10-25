@@ -26,7 +26,7 @@ end
 
 desc "Play one game. Set ENV vars MAP and BOT."
 task :play do
-  map = ENV['MAP'] || 7
+  map = ENV['MAP'] || 22
   bot = ENV['BOT'] || 'Prospector'
   print_results *play_game(map, bot)
   puts

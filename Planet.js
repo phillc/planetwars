@@ -20,6 +20,10 @@ Planet.prototype.getShips = function() {
     return this.ships;
 }
 
+Planet.prototype.getGrowth = function() {
+    return this.growth;
+}
+
 Planet.prototype.isSamePlanet = function(otherPlanet) {
     return this.id === otherPlanet.id;
 }
@@ -52,73 +56,86 @@ Planet.prototype.isMine = function() {
     return this.owner === MINE;
 }
 
-Planet.prototype.defenseValue = function(turn) {
-    if(turn === 0) {
-        return [this.ships, this.owner];
-    }
-    var prevTurn = this.defenseValue(turn - 1);
-    var ships = prevTurn[0];
-    var owner = prevTurn[1];
-    if(owner !== NEUTRAL) {
-        ships += this.growth;
+Planet.prototype.clone = function() {
+    var clone = new Planet(this.id, this.x, this.y, this.owner, this.ships, this.growth);
+    clone.enemyIncomingFleets = this.enemyIncomingFleets.slice(0);
+    clone.myIncomingFleets = this.myIncomingFleets.slice(0);
+    return clone;
+}
+
+Planet.prototype.tick = function() {
+    if(this.owner !== NEUTRAL) {
+        this.ships += this.growth;
     }
     
-    var enemyShips = this.enemyIncomingFleets[turn] || 0;
-    var myShips = this.myIncomingFleets[turn] || 0;
+    var enemyShips = this.enemyIncomingFleets.shift() || 0;
+    var myShips = this.myIncomingFleets.shift() || 0;
     
     if (enemyShips > myShips) {
         var shipDiff = enemyShips - myShips; 
-        if (owner === ENEMY) {
-            ships += shipDiff;
+        if (this.owner === ENEMY) {
+            this.ships += shipDiff;
         } else {
-            ships -= shipDiff;
-            if (ships < 0) {
-                return [-ships, ENEMY];
+            this.ships -= shipDiff;
+            if (this.ships < 0) {
+                this.ships = -this.ships;
+                this.owner = ENEMY;
             }
         }
     } else if (myShips > enemyShips) {
         var shipDiff = myShips - enemyShips;
-        if (owner === MINE) {
-            ships += shipDiff;
+        if (this.owner === MINE) {
+            this.ships += shipDiff;
         } else {
-            ships -= shipDiff;
-            if (ships < 0) {
-                return [-ships, MINE];
+            this.ships -= shipDiff;
+            if (this.ships < 0) {
+                this.ships = -this.ships;
+                this.owner = MINE;
             }
         }
     }
     
-    return [ships, owner];
+}
+
+Planet.prototype.nextTurn = function() {
+    if (this.nextTurnCache) {
+        return this.nextTurnCache;
+    } else {
+        var clone = this.clone();
+        clone.tick();
+        this.nextTurnCache = clone;
+        return clone;
+    }
+}
+
+Planet.prototype.futureState = function(turns) {
+    if(turns === 0) {
+        return this;
+    }
+    return this.nextTurn().futureState(turns - 1);
 }
 
 Planet.prototype.effectiveDefensiveValue = function(turns) {
-    var defVal = this.defenseValue(turns || 0);
-    var ships = defVal[0];
-    var owner = defVal[1];
-
-    if (owner === MINE) {
-        return ships;
+    var futurePlanet = this.futureState(turns || 0);
+    if (futurePlanet.isMine()) {
+        return futurePlanet.getShips();
     }
-    return (-1 * ships) - 1;
+    return (-1 * futurePlanet.getShips()) - 1;
 }
 
 Planet.prototype.isEffectivelyEnemy = function(turns) {
-    var defVal = this.defenseValue(turns || 0);
-    var owner = defVal[1];
-
-    return owner === ENEMY;
+    var futurePlanet = this.futureState(turns || 0);
+    return futurePlanet.isEnemy();
 }
 
 Planet.prototype.isEffectivelyNotMine = function(turns) {
-    var defVal = this.defenseValue(turns || 0);
-    var owner = defVal[1];
-
-    return owner !== MINE;
+    var futurePlanet = this.futureState(turns || 0);
+    return !futurePlanet.isMine();
 }
 
 
 Planet.prototype.expendableShipsWithoutReinforce = function() {
-    var farthestDistance = this.enemyIncomingFleets.length - 1;
+    var farthestDistance = this.enemyIncomingFleets.length;
     return Math.min(this.ships, this.effectiveDefensiveValue(farthestDistance));
 }
 
@@ -154,17 +171,19 @@ Planet.prototype.sendShips = function(shipsNum, toPlanet) {
 }
 
 Planet.prototype.addEnemyIncomingFleet = function(turn, ships) {
-    if(!this.enemyIncomingFleets[turn]) {
-        this.enemyIncomingFleets[turn] = 0;
+    var arrPosition = turn - 1;
+    if(!this.enemyIncomingFleets[arrPosition]) {
+        this.enemyIncomingFleets[arrPosition] = 0;
     }
-    this.enemyIncomingFleets[turn] += ships;
+    this.enemyIncomingFleets[arrPosition] += ships;
 }
 
 Planet.prototype.addMyIncomingFleet = function(turn, ships) {
-    if(!this.myIncomingFleets[turn]) {
-        this.myIncomingFleets[turn] = 0;
+    var arrPosition = turn - 1;
+    if(!this.myIncomingFleets[arrPosition]) {
+        this.myIncomingFleets[arrPosition] = 0;
     }
-    this.myIncomingFleets[turn] += ships;
+    this.myIncomingFleets[arrPosition] += ships;
 }
 
 Planet.prototype.summateCallsOf = function(planets, fnName, args) {
