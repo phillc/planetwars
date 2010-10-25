@@ -26,7 +26,7 @@ end
 
 desc "Play one game. Set ENV vars MAP and BOT."
 task :play do
-  map = ENV['MAP'] || 7
+  map = ENV['MAP'] || 22
   bot = ENV['BOT'] || 'Prospector'
   print_results *play_game(map, bot)
   puts
@@ -60,7 +60,7 @@ task :help do
 end
 
 task :one do
-  puts `java -jar tools/PlayGame-1.2.jar maps/map22.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
+  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
   # puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js"`
 end
 
