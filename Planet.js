@@ -133,10 +133,18 @@ Planet.prototype.isEffectivelyNotMine = function(turns) {
     return !futurePlanet.isMine();
 }
 
+Planet.prototype.checkExpendableShips = function(turns) {
+    if (!this.isMine()) {
+         return 0;
+    } else if(turns === 0) {
+        return this.ships;
+    }
+    return Math.min(this.ships, this.nextTurn().checkExpendableShips(turns - 1));
+}
 
 Planet.prototype.expendableShipsWithoutReinforce = function() {
     var farthestDistance = this.enemyIncomingFleets.length;
-    return Math.min(this.ships, this.effectiveDefensiveValue(farthestDistance));
+    return this.checkExpendableShips(farthestDistance);
 }
 
 

@@ -219,6 +219,14 @@ vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
         var planet = new Planet(null, null, null, 1, 2, 5);
         planet.addEnemyIncomingFleet(16, 26);
         assert.equal(planet.expendableShipsWithoutReinforce(), 2);
+    },
+    'when an enemy fleet would set my planet to 0 ships, and another enemy fleet is incoming later' : {
+        'should take into account the zero boundary' : function() {
+            var planet = new Planet(null, null, null, 1, 10, 5);
+            planet.addEnemyIncomingFleet(3, 25);
+            planet.addEnemyIncomingFleet(5, 5);
+            assert.equal(planet.expendableShipsWithoutReinforce(), 0);
+        }
     }
 }).export(module);
 
