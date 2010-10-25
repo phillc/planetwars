@@ -20,6 +20,10 @@ Planet.prototype.getShips = function() {
     return this.ships;
 }
 
+Planet.prototype.getGrowth = function() {
+    return this.growth;
+}
+
 Planet.prototype.isSamePlanet = function(otherPlanet) {
     return this.id === otherPlanet.id;
 }

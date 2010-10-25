@@ -60,7 +60,7 @@ task :help do
 end
 
 task :one do
-  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
+  puts `java -jar tools/PlayGame-1.2.jar maps/map22.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
   # puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js"`
 end
 

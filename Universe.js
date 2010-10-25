@@ -39,6 +39,11 @@ Universe.prototype.run = function() {
     myPlanetsForDecision.forEach(function(myPlanet) {
         checkTime();
         var sendableShips = myPlanet.expendableShipsWithoutReinforce();
+        if (this.myPlanets.length === 1 && this.enemyPlanets.length === 1) {
+            var myStartingPlanet = this.myPlanets[0];
+            var enemyStartingPlanet = this.enemyPlanets[0];
+            sendableShips = Math.min(sendableShips, myStartingPlanet.getShips() + (myStartingPlanet.getGrowth() * myStartingPlanet.distanceFrom(enemyStartingPlanet) - enemyStartingPlanet.getShips()));
+        }
     
         if(sendableShips > 0) {
             var planetEvaluations = [];
