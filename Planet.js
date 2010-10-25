@@ -206,18 +206,39 @@ Planet.prototype.considerSendingTo = function(targetPlanet, myPlanets, enemyPlan
     var nearbyMyPlanets = targetPlanet.nearbyPlanetsOutOf(myPlanets);
     var nearbyEnemyPlanets = targetPlanet.nearbyPlanetsOutOf(enemyPlanets);
     
-    var distanceThreeMyPlanets = targetPlanet.summateCallsOf(nearbyMyPlanets.slice(0, 3), "distanceFrom", [targetPlanet]);
-    var distanceThreeEnemyPlanets = targetPlanet.summateCallsOf(nearbyEnemyPlanets.slice(0, 3), "distanceFrom", [targetPlanet]);
     
-    var shipsThreeMyPlanets = targetPlanet.summateCallsOf(nearbyMyPlanets.slice(0, 3), "getShips");
-    var shipsThreeEnemyPlanets = targetPlanet.summateCallsOf(nearbyEnemyPlanets.slice(0, 3), "getShips");
+    var oneNearbyMyPlanets = nearbyMyPlanets.slice(0, 1);
+    var oneNearbyEnemyPlanets = nearbyEnemyPlanets.slice(0, 1);
+    var distanceOneMyPlanets = targetPlanet.summateCallsOf(oneNearbyMyPlanets, "distanceFrom", [targetPlanet]);
+    var distanceOneEnemyPlanets = targetPlanet.summateCallsOf(oneNearbyEnemyPlanets, "distanceFrom", [targetPlanet]);
+    var shipsOneMyPlanets = targetPlanet.summateCallsOf(oneNearbyMyPlanets, "getShips");
+    var shipsOneEnemyPlanets = targetPlanet.summateCallsOf(oneNearbyEnemyPlanets, "getShips");
+    var growthOneMyPlanets = targetPlanet.summateCallsOf(oneNearbyMyPlanets, "getGrowth");
+    var growthOneEnemyPlanets = targetPlanet.summateCallsOf(oneNearbyEnemyPlanets, "getGrowth");
+    
+    var threeNearbyMyPlanets = nearbyMyPlanets.slice(0, 3);
+    var threeNearbyEnemyPlanets = nearbyEnemyPlanets.slice(0, 3);
+    var distanceThreeMyPlanets = targetPlanet.summateCallsOf(threeNearbyMyPlanets, "distanceFrom", [targetPlanet]);
+    var distanceThreeEnemyPlanets = targetPlanet.summateCallsOf(threeNearbyEnemyPlanets, "distanceFrom", [targetPlanet]);
+    var shipsThreeMyPlanets = targetPlanet.summateCallsOf(threeNearbyMyPlanets, "getShips");
+    var shipsThreeEnemyPlanets = targetPlanet.summateCallsOf(threeNearbyEnemyPlanets, "getShips");
+    var growthThreeMyPlanets = targetPlanet.summateCallsOf(threeNearbyMyPlanets, "getGrowth");
+    var growthThreeEnemyPlanets = targetPlanet.summateCallsOf(threeNearbyEnemyPlanets, "getGrowth");
     
     var values = { canTakeRightNow           : this.ships + effDef > 0 ? 1 : -1,
                    distance                  : distance,
+                   distanceOneMyPlanets      : distanceOneMyPlanets,
+                   distanceOneEnemyPlanets   : distanceOneEnemyPlanets,
+                   shipsOneMyPlanets         : shipsOneMyPlanets,
+                   shipsOneEnemyPlanets      : shipsOneEnemyPlanets,
+                   growthOneMyPlanets        : growthOneMyPlanets,
+                   growthOneEnemyPlanets     : growthOneEnemyPlanets,
                    distanceThreeMyPlanets    : distanceThreeMyPlanets,
-                   shipsThreeMyPlanets       : shipsThreeMyPlanets,
                    distanceThreeEnemyPlanets : distanceThreeEnemyPlanets,
+                   shipsThreeMyPlanets       : shipsThreeMyPlanets,
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
+                   growthThreeMyPlanets      : growthThreeMyPlanets,
+                   growthThreeEnemyPlanets   : growthThreeEnemyPlanets,
                    effDef                    : effDef,
                    isEnemy                   : targetPlanet.isEnemy() ? 1 : -1,
                    isEffectivelyEnemy        : targetPlanet.isEffectivelyEnemy(distance) ? 1 : -1,
