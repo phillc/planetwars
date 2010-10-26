@@ -43,7 +43,6 @@ var SendCommand = function(fromPlanet, toPlanet, shipNumber) {
 }
 
 SendCommand.prototype.execute = function(universeContext) {
-    sys.debug(universeContext)
     universeContext.planets[this.fromPlanet].sendShips(this.shipNumber, universeContext.planets[this.toPlanet])
 }
 
@@ -85,13 +84,13 @@ Universe.prototype.applyCommands = function(commands) {
 Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
     var newAlpha = alpha;
     if(depth === 0) {
-        return { score: this.evaluateBoard(player) };
+        return [this.evaluateBoard(player)];
     }
 
     var commandSet = this.commands();
     var commandSetLength = commandSet.length;
     if(commandSetLength === 0) {
-        return { score: this.evaluateBoard(player), commands : [] };
+        return [this.evaluateBoard(player)];
     }
     for (var commandNum = 0; commandNum < commandSetLength; commandNum++) {
         var commands = commandSet[commandNum];
@@ -101,15 +100,15 @@ Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
             clonedUniverse.tick();
         }
         
-        var eval = clonedUniverse.runEvaluations(player === "me" ? "enemy" : "me", depth - 1, {score : -beta.score}, {score : -alpha.score})
-        if (eval.score > alpha.score) {
-            newAlpha = {score: eval.score, commands : commands};
+        var eval = clonedUniverse.runEvaluations(player === "me" ? "enemy" : "me", depth - 1, [-beta[0]], [-alpha[0]])
+        if (eval[0] > alpha[0]) {
+            newAlpha = [eval[0], commands];
         }
         if(beta <= newAlpha) {
             break;
         }
     }
-    return newAlpha;
+    return [newAlpha[0], newAlpha[1] || []];
 };
 
 Universe.prototype.commands = function() {
@@ -135,7 +134,6 @@ Universe.prototype.evaluateBoard = function(player) {
         totalShips  : this.summatePlanets("getShips", player),
         totalGrowth : this.summatePlanets("getGrowth", player)
     }
-    sys.debug(values.totalShips)
     return network.compute("boardValue", values)
 }
 
