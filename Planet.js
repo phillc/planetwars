@@ -5,7 +5,8 @@ var ENEMY = 2,
     MINE = 1,
     NEUTRAL = 0
 
-var Planet = function(id, x, y, owner, ships, growth) {
+var Planet = function(id, x, y, owner, ships, growth, realPlanet) {
+    this.realPlanet = realPlanet;
     this.id     = parseInt(id);
     this.x      = parseFloat(x);
     this.y      = parseFloat(y);
@@ -18,6 +19,10 @@ var Planet = function(id, x, y, owner, ships, growth) {
 
 Planet.prototype.getShips = function() {
     return this.ships;
+}
+
+Planet.prototype.getId = function() {
+    return this.id;
 }
 
 Planet.prototype.getGrowth = function() {
@@ -57,7 +62,7 @@ Planet.prototype.isMine = function() {
 }
 
 Planet.prototype.clone = function() {
-    var clone = new Planet(this.id, this.x, this.y, this.owner, this.ships, this.growth);
+    var clone = new Planet(this.id, this.x, this.y, this.owner, this.ships, this.growth, false);
     clone.enemyIncomingFleets = this.enemyIncomingFleets.slice(0);
     clone.myIncomingFleets = this.myIncomingFleets.slice(0);
     return clone;
@@ -172,7 +177,7 @@ Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);
     toPlanet.addMyIncomingFleet(dist, shipsNum);
     
-    if(!this.isSamePlanet(toPlanet)){
+    if(this.realPlanet && !this.isSamePlanet(toPlanet)){
         // sys.debug('' + Math.floor(this.id) + ' ' + Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
         process.stdout.write('' + Math.floor(this.id) + ' ' + Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
     }

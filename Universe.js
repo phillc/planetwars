@@ -1,8 +1,12 @@
+require('./underscore');
 var sys = require('sys'),
     timer = require('./timer'),
-    checkTime = timer.checkTime;
+    checkTime = timer.checkTime,
+    network = require('./network');
+    
 
-var Universe = function(planets) {
+var Universe = function(planets, realUniverse) {
+    this.realUniverse = realUniverse;
     var myPlanets = [];
     var enemyPlanets = [];
     planets.forEach(function(planet) {
@@ -33,18 +37,15 @@ var decisionConsiderationSort = function(a, b){
 }
 
 var SendCommand = function(fromPlanet, toPlanet, shipNumber) {
-    this.fromPlanet = fromPlanet;
-    this.toPlanet = toPlanet;
+    this.fromPlanet = fromPlanet.getId();
+    this.toPlanet = toPlanet.getId();
     this.shipNumber = shipNumber;
 }
 
-SendCommand.prototype.execute = function() {
-    this.fromPlanet.sendShips(this.shipNumber, this.toPlanet);
+SendCommand.prototype.execute = function(universeContext) {
+    universeContext.planets[this.fromPlanet].sendShips(this.shipNumber, universeContext.planets[this.toPlanet])
 }
 
-SendCommand.prototype.pretend = function() {
-    
-}
 
 var strategies = {
     sendNothing : function(fromPlanet, toPlanet) {
@@ -56,12 +57,11 @@ var strategies = {
             numCount++
         }
     },
-    sendAll : function(fromPlanets, toPlanets) {
+    sendAll : function(universe) {
         var commands = []
-        for(var planetNum in fromPlanets) {
-            var fromPlanet = fromPlanets[planetNum];
-            commands.push(new SendCommand(fromPlanet, toPlanets[0], fromPlanet.getShips()))
-        }
+        universe.myPlanets.forEach(function(myPlanet){
+            commands.push(new SendCommand(myPlanet, universe.enemyPlanets[0], myPlanet.getShips()))
+        })
         return commands;
     },
     sendGrowth : function(upTo) {
@@ -73,44 +73,60 @@ var strategies = {
 
 }
 
+Universe.prototype.applyCommands = function(commands) {
+    commands.forEach(function(command){
+        command.execute(this);
+    }, this);
+}
+
 Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
-    var newAlpha;
+    var newAlpha = alpha;
     if(depth === 0) {
-        return { score: this.evaluateBoard() };
+        return { score: this.evaluateBoard(player), commands : [] };
     }
 
-    var strats = this.strategies();
-    if(strats.length === 0) {
-        return { score: this.evaluateBoard() };
+    var commandSet = this.commands();
+    var commandSetLength = commandSet.length;
+    if(commandSetLength === 0) {
+        return { score: this.evaluateBoard(player), commands : [] };
     }
-    strats.forEach(function(strategy){
-        var eval = runEvaluations(player === "me" ? "enemy" : "me", depth - 1, -beta, -alpha)
+    for (var commandNum = 0; commandNum < commandSetLength; commandNum++) {
+        var commands = commandSet[commandNum];
+        var clonedUniverse = this.clone();
+        clonedUniverse.applyCommands(commands);
+        if (player === "enemy") {
+            clonedUniverse.tick()
+        }
+        
+        var eval = clonedUniverse.runEvaluations(player === "me" ? "enemy" : "me", depth - 1, {score : -beta.score}, {score : -alpha.score})
         if (eval.score > alpha) {
-            newAlpha = eval;
+            sys.debug("****")
+            sys.debug(commands)
+            newAlpha = {score: eval.score, commands : commands};
         }
         if(beta <= newAlpha) {
             break;
         }
-    }, this);
-    return { score: newAlpha, commands: newCommands };
+    }
+    return {score : newAlpha, commands : []};
 };
 
-Universe.prototype.strategies = function() {
-    var planetEvaluations = [];
-    for(var consideredPlanetNum in this.planets) {
-        checkTime();
-        var otherPlanet = this.planets[consideredPlanetNum];
-        planetEvaluations.push(otherPlanet.consider(this.myPlanets, this.enemyPlanets));
-    }
-            
-    planetEvaluations.sort(tupleSort);
-    
-    var sortedPlanets = _.map(planetEvaluations, function(tuple) { return tuple[1]; })
-    
-    var orderedStrategies = [
-        strategies.sendAll(fromPlanets, sortedPlanets)
+Universe.prototype.commands = function() {
+    // var planetEvaluations = [];
+    // for(var consideredPlanetNum in this.planets) {
+    //     checkTime();
+    //     var otherPlanet = this.planets[consideredPlanetNum];
+    //     planetEvaluations.push(otherPlanet.consider(this.myPlanets, this.enemyPlanets));
+    // }
+    //         
+    // planetEvaluations.sort(tupleSort);
+    // 
+    // var sortedPlanets = _.map(planetEvaluations, function(tuple) { return tuple[1]; })
+    // 
+    var commands = [
+        strategies.sendAll(this)
     ]
-    return orderedStrategies;
+    return commands;
 }
 
 Universe.prototype.evaluateBoard = function(player) {
@@ -121,8 +137,6 @@ Universe.prototype.evaluateBoard = function(player) {
     network.compute("boardValue", values)
 }
 
-
-
 Universe.prototype.summatePlanets = function(fn, player) {
     var planets;
     if (player === "me") {
@@ -130,11 +144,18 @@ Universe.prototype.summatePlanets = function(fn, player) {
     } else if (player === "enemy") {
         planets = this.enemyPlanets;
     }
-    
     var sumCall = function(total, planet) {
         return total + planet[fn].call();
     }
     return _.reduce(planets, sumCall, 0);
+}
+
+Universe.prototype.clone = function() {
+    var clonedPlanets = []
+    this.planets.forEach(function(planet){
+        clonedPlanets.push(planet.clone());
+    })
+    return new Universe(clonedPlanets, false);
 }
 
 exports.Universe = Universe;

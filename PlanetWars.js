@@ -23,7 +23,7 @@ function parseInput(turnInput, turnFn) {
         switch (cmd) {
         case 'P':
             planets.push(new Planet(planets.length, toks[1], toks[2], toks[3],
-                    toks[4], toks[5]));
+                    toks[4], toks[5], true));
             break;
         case 'F':
             if(parseInt(toks[1]) === 1) {
@@ -37,7 +37,7 @@ function parseInput(turnInput, turnFn) {
         }
     }
     
-    universe = new Universe(planets);
+    universe = new Universe(planets, true);
     turnFn(universe);
     process.stdout.write('go\n');
 }
