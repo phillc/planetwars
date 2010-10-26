@@ -43,6 +43,7 @@ var SendCommand = function(fromPlanet, toPlanet, shipNumber) {
 }
 
 SendCommand.prototype.execute = function(universeContext) {
+    sys.debug(universeContext)
     universeContext.planets[this.fromPlanet].sendShips(this.shipNumber, universeContext.planets[this.toPlanet])
 }
 
@@ -59,9 +60,11 @@ var strategies = {
     },
     sendAll : function(universe) {
         var commands = []
-        universe.myPlanets.forEach(function(myPlanet){
-            commands.push(new SendCommand(myPlanet, universe.enemyPlanets[0], myPlanet.getShips()))
-        })
+        if (universe.enemyPlanets.length > 0){
+            universe.myPlanets.forEach(function(myPlanet){
+                commands.push(new SendCommand(myPlanet, universe.enemyPlanets[0], myPlanet.getShips()))
+            })
+        }
         return commands;
     },
     sendGrowth : function(upTo) {
@@ -82,7 +85,7 @@ Universe.prototype.applyCommands = function(commands) {
 Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
     var newAlpha = alpha;
     if(depth === 0) {
-        return { score: this.evaluateBoard(player), commands : [] };
+        return { score: this.evaluateBoard(player) };
     }
 
     var commandSet = this.commands();
@@ -95,11 +98,11 @@ Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
         var clonedUniverse = this.clone();
         clonedUniverse.applyCommands(commands);
         if (player === "enemy") {
-            clonedUniverse.tick()
+            clonedUniverse.tick();
         }
         
         var eval = clonedUniverse.runEvaluations(player === "me" ? "enemy" : "me", depth - 1, {score : -beta.score}, {score : -alpha.score})
-        if (eval.score > alpha) {
+        if (eval.score > alpha.score) {
             sys.debug("****")
             sys.debug(commands)
             newAlpha = {score: eval.score, commands : commands};
@@ -108,7 +111,7 @@ Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
             break;
         }
     }
-    return {score : newAlpha, commands : []};
+    return newAlpha;
 };
 
 Universe.prototype.commands = function() {
@@ -134,7 +137,7 @@ Universe.prototype.evaluateBoard = function(player) {
         totalShips  : this.summatePlanets("getShips", player),
         totalGrowth : this.summatePlanets("getGrowth", player)
     }
-    network.compute("boardValue", values)
+    return network.compute("boardValue", values)
 }
 
 Universe.prototype.summatePlanets = function(fn, player) {

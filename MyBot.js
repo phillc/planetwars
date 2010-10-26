@@ -10,8 +10,8 @@ function DoTurn(universe) {
     try {
         bestCommands = universe.runEvaluations("me", 1, {score : -Infinity}, {score : Infinity}).commands;
         bestCommands.forEach(function(command){
-            command.execute();
-        }, this)
+            command.execute(universe);
+        })
     } catch(err) {
         if(!isTimeException(err)) {
             sys.debug(err);
