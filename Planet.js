@@ -133,10 +133,18 @@ Planet.prototype.isEffectivelyNotMine = function(turns) {
     return !futurePlanet.isMine();
 }
 
+Planet.prototype.checkExpendableShips = function(turns) {
+    if (!this.isMine()) {
+         return 0;
+    } else if(turns === 0) {
+        return this.ships;
+    }
+    return Math.min(this.ships, this.nextTurn().checkExpendableShips(turns - 1));
+}
 
 Planet.prototype.expendableShipsWithoutReinforce = function() {
     var farthestDistance = this.enemyIncomingFleets.length;
-    return Math.min(this.ships, this.effectiveDefensiveValue(farthestDistance));
+    return this.checkExpendableShips(farthestDistance);
 }
 
 
@@ -198,23 +206,40 @@ Planet.prototype.consider = function(myPlanets, enemyPlanets) {
     var nearbyMyPlanets = this.nearbyPlanetsOutOf(myPlanets);
     var nearbyEnemyPlanets = this.nearbyPlanetsOutOf(enemyPlanets);
     
-    var distanceThreeMyPlanets = targetPlanet.summateCallsOf(nearbyMyPlanets.slice(0, 3), "distanceFrom", [targetPlanet]);
-    var distanceThreeEnemyPlanets = targetPlanet.summateCallsOf(nearbyEnemyPlanets.slice(0, 3), "distanceFrom", [targetPlanet]);
+    var oneNearbyMyPlanets = nearbyMyPlanets.slice(0, 1);
+    var oneNearbyEnemyPlanets = nearbyEnemyPlanets.slice(0, 1);
+    var distanceOneMyPlanets = this.summateCallsOf(oneNearbyMyPlanets, "distanceFrom", [this]);
+    var distanceOneEnemyPlanets = this.summateCallsOf(oneNearbyEnemyPlanets, "distanceFrom", [this]);
+    var shipsOneMyPlanets = this.summateCallsOf(oneNearbyMyPlanets, "getShips");
+    var shipsOneEnemyPlanets = this.summateCallsOf(oneNearbyEnemyPlanets, "getShips");
+    var growthOneMyPlanets = this.summateCallsOf(oneNearbyMyPlanets, "getGrowth");
+    var growthOneEnemyPlanets = this.summateCallsOf(oneNearbyEnemyPlanets, "getGrowth");
     
-    var shipsThreeMyPlanets = targetPlanet.summateCallsOf(nearbyMyPlanets.slice(0, 3), "getShips");
-    var shipsThreeEnemyPlanets = targetPlanet.summateCallsOf(nearbyEnemyPlanets.slice(0, 3), "getShips");
+    var threeNearbyMyPlanets = nearbyMyPlanets.slice(0, 3);
+    var threeNearbyEnemyPlanets = nearbyEnemyPlanets.slice(0, 3);
+    var distanceThreeMyPlanets = this.summateCallsOf(threeNearbyMyPlanets, "distanceFrom", [this]);
+    var distanceThreeEnemyPlanets = this.summateCallsOf(threeNearbyEnemyPlanets, "distanceFrom", [this]);
+    var shipsThreeMyPlanets = this.summateCallsOf(threeNearbyMyPlanets, "getShips");
+    var shipsThreeEnemyPlanets = this.summateCallsOf(threeNearbyEnemyPlanets, "getShips");
+    var growthThreeMyPlanets = this.summateCallsOf(threeNearbyMyPlanets, "getGrowth");
+    var growthThreeEnemyPlanets = this.summateCallsOf(threeNearbyEnemyPlanets, "getGrowth");
     
     var values = { 
+                   distanceOneMyPlanets      : distanceOneMyPlanets,
+                   distanceOneEnemyPlanets   : distanceOneEnemyPlanets,
+                   shipsOneMyPlanets         : shipsOneMyPlanets,
+                   shipsOneEnemyPlanets      : shipsOneEnemyPlanets,
+                   growthOneMyPlanets        : growthOneMyPlanets,
+                   growthOneEnemyPlanets     : growthOneEnemyPlanets,
                    distanceThreeMyPlanets    : distanceThreeMyPlanets,
-                   shipsThreeMyPlanets       : shipsThreeMyPlanets,
                    distanceThreeEnemyPlanets : distanceThreeEnemyPlanets,
+                   shipsThreeMyPlanets       : shipsThreeMyPlanets,
                    shipsThreeEnemyPlanets    : shipsThreeEnemyPlanets,
                    isEnemy                   : this.isEnemy() ? 1 : -1,
                    isFriendly                : this.isMine() ? 1 : -1,
                    isNeutral                 : this.isNeutral() ? 1 : -1,
                    shipsDocked               : this.ships,
                    growth                    : this.growth };
-    
     return [network.compute("attackConsideration", values), this, values]
                            
 }
