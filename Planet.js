@@ -175,7 +175,12 @@ Planet.prototype.distanceFrom = function() {
 
 Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);
-    toPlanet.addMyIncomingFleet(dist, shipsNum);
+    
+    if (this.owner === MINE) {
+        toPlanet.addMyIncomingFleet(dist, shipsNum);
+    } else {
+        toPlanet.addEnemyIncomingFleet(dist, shipsNum);
+    }
     
     if(this.realPlanet && !this.isSamePlanet(toPlanet)){
         // sys.debug('' + Math.floor(this.id) + ' ' + Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');

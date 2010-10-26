@@ -4,6 +4,9 @@ var sys = require('sys'),
     checkTime = timer.checkTime,
     network = require('./network');
     
+var ME = "me",
+    ENEMY = "enemy"
+    
 
 var Universe = function(planets, realUniverse) {
     this.realUniverse = realUniverse;
@@ -48,7 +51,7 @@ SendCommand.prototype.execute = function(universeContext) {
 
 
 var strategies = {
-    sendNothing : function(fromPlanet, toPlanet) {
+    sendNothing : function(universe) {
         return [];
     },
     sendNeededToTake : function(fromPlanet, toPlanet) {
@@ -83,6 +86,7 @@ Universe.prototype.applyCommands = function(commands) {
 
 Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
     var newAlpha = alpha;
+    sys.debug("player " + player + ", depth " + depth + ", alpha " + alpha + ", beta " + beta)
     if(depth === 0) {
         return [this.evaluateBoard(player)];
     }
@@ -96,15 +100,18 @@ Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
         var commands = commandSet[commandNum];
         var clonedUniverse = this.clone();
         clonedUniverse.applyCommands(commands);
-        if (player === "enemy") {
+        if (player === ENEMY) {
             clonedUniverse.tick();
         }
         
-        var eval = clonedUniverse.runEvaluations(player === "me" ? "enemy" : "me", depth - 1, [-beta[0]], [-alpha[0]])
-        if (eval[0] > alpha[0]) {
-            newAlpha = [eval[0], commands];
+        sys.debug("-beta is: " + (-beta[0]))
+        var eval = clonedUniverse.runEvaluations((player === ME ? ENEMY : ME), depth - 1, [-beta[0]], [-alpha[0]])
+        sys.debug("-----  " + (-eval[0]) + " > " + (newAlpha[0]) + " is:" + (-eval[0] > newAlpha[0]))
+        
+        if (-eval[0] > newAlpha[0]) {
+            newAlpha = [-eval[0], commands];
         }
-        if(beta <= newAlpha) {
+        if(beta[0] <= newAlpha[0]) {
             break;
         }
     }
@@ -124,6 +131,7 @@ Universe.prototype.commands = function() {
     // var sortedPlanets = _.map(planetEvaluations, function(tuple) { return tuple[1]; })
     // 
     var commands = [
+        strategies.sendNothing(this),
         strategies.sendAll(this)
     ]
     return commands;
@@ -156,6 +164,12 @@ Universe.prototype.clone = function() {
         clonedPlanets.push(planet.clone());
     })
     return new Universe(clonedPlanets, false);
+}
+
+Universe.prototype.tick = function() {
+    this.planets.forEach(function(planet){
+        planet.tick();
+    })
 }
 
 exports.Universe = Universe;
