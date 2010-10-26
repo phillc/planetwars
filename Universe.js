@@ -103,8 +103,6 @@ Universe.prototype.runEvaluations = function(player, depth, alpha, beta) {
         
         var eval = clonedUniverse.runEvaluations(player === "me" ? "enemy" : "me", depth - 1, {score : -beta.score}, {score : -alpha.score})
         if (eval.score > alpha.score) {
-            sys.debug("****")
-            sys.debug(commands)
             newAlpha = {score: eval.score, commands : commands};
         }
         if(beta <= newAlpha) {
@@ -137,6 +135,7 @@ Universe.prototype.evaluateBoard = function(player) {
         totalShips  : this.summatePlanets("getShips", player),
         totalGrowth : this.summatePlanets("getGrowth", player)
     }
+    sys.debug(values.totalShips)
     return network.compute("boardValue", values)
 }
 
@@ -148,7 +147,7 @@ Universe.prototype.summatePlanets = function(fn, player) {
         planets = this.enemyPlanets;
     }
     var sumCall = function(total, planet) {
-        return total + planet[fn].call();
+        return total + planet[fn].call(planet);
     }
     return _.reduce(planets, sumCall, 0);
 }

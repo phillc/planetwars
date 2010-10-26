@@ -31,7 +31,7 @@ var networks = {
                    // "totalShipsDocked",
                    // "totalShipsMoving"
                   ],
-        hiddenLayer : 5
+        hiddenLayer : 4
     }
 }
 exports.networks = networks;
