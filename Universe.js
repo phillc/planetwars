@@ -2,7 +2,8 @@
     timer = require('./timer'),
     checkTime = timer.checkTime;
 
-var Universe = function(planets) {
+var Universe = function(planets, options) {
+    this.real = options.real;
     var myPlanets = [];
     var enemyPlanets = [];
     planets.forEach(function(planet) {

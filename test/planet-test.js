@@ -8,7 +8,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
     'when the growth rate is 3 and 2 ships are already there,' : {
         'and it is mine' : {
             topic: function(){
-                return new Planet(null, null, null, 1, 2, 3);
+                return new Planet({ owner : 1,
+                                    ships : 2,
+                                    growth : 3 });
             },
             'right now should be equal to the number of ships' : function(planet){
                 assert.equal(planet.effectiveDefensiveValue(), 2);
@@ -19,7 +21,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
         },
         'and it is the enemys' : {
             topic: function(){
-                return new Planet(null, null, null, 2, 2, 3);
+                return new Planet({ owner : 2,
+                                    ships : 2,
+                                    growth : 3 });
             },
             'right now should be equal to the - number of ships - 1' : function(planet){
                 assert.equal(planet.effectiveDefensiveValue(), -3);
@@ -31,22 +35,30 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
     },
     'when there would be zero ships on it' : {
         'and it is mine' : function() {
-            var planet = new Planet(null, null, null, 1, 0, 3);
+            var planet = new Planet({ owner : 1,
+                                ships : 0,
+                                growth : 3 });
             assert.equal(planet.effectiveDefensiveValue(), 0)
         },
         'and it is neutral' : function() {
-            var planet = new Planet(null, null, null, 0, 0, 3);
+            var planet = new Planet({ owner : 0,
+                                ships : 0,
+                                growth : 3 });
             assert.equal(planet.effectiveDefensiveValue(), -1)
         },
         'and it it the enemys' : function() {
-            var planet = new Planet(null, null, null, 2, 0, 3);
+            var planet = new Planet({ owner : 2,
+                                ships : 0,
+                                growth : 3 });
             assert.equal(planet.effectiveDefensiveValue(), -1)
         }
     },
     'when the growth rate is 3, 2 ships are already there, and a fleet of 5 enemy ships are 4 turns away' : {
         'and is mine' : {
             topic : function(){
-                planet = new Planet(null, null, null, 1, 2, 3);
+                var planet = new Planet({ owner : 1,
+                                    ships : 2,
+                                    growth : 3 });
                 planet.addEnemyIncomingFleet(4, 5);
                 return planet;
             },
@@ -62,7 +74,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
         },
         'and is the enemys' : {
             topic : function(){
-                planet = new Planet(null, null, null, 2, 2, 3);
+                var planet = new Planet({ owner : 2,
+                                    ships : 2,
+                                    growth : 3 });
                 planet.addEnemyIncomingFleet(4, 5);
                 return planet;
             },
@@ -79,7 +93,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
     },
     'when the growth rate is 3, 2 ships are already there, and 9 ships are reinforcing in 3 turns' : {
         topic : function(){
-            planet = new Planet(null, null, null, 1, 2, 3);
+            var planet = new Planet({ owner : 1,
+                                ships : 2,
+                                growth : 3 });
             planet.addMyIncomingFleet(3, 9);
             return planet;
         },
@@ -92,7 +108,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
     },
     'when the growth rate is 5, 15 ships are already there, 20 enemy ships are 4 turns away, and 10 ships are reinforcing in 3 turns' : {
         topic : function() {
-            planet = new Planet(null, null, null, 1, 15, 5);
+            var planet = new Planet({ owner : 1,
+                                ships : 15,
+                                growth : 5 });
             planet.addMyIncomingFleet(3, 10);
             planet.addEnemyIncomingFleet(4, 20);
             return planet;
@@ -109,7 +127,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
     },
     'when the planet is neutral' : {
         'and the growth rate is 3, and 2 ships are already there' : {
-            topic: new Planet(null, null, null, 0, 2, 3),
+            topic : new Planet({ owner : 0,
+                                ships : 2,
+                                growth : 3 }),
             'right now should be equal to negative the number of ships - 1' : function(planet) {
                 assert.equal(planet.effectiveDefensiveValue(), -3);
             },
@@ -120,7 +140,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
     },
     'when the planet switches ownership' : {
         'should work with friendly planets' : function() {
-            var planet = new Planet(null, null, null, 1, 15, 5);
+            var planet = new Planet({ owner : 1,
+                                ships : 15,
+                                growth : 5 });
             
             planet.addEnemyIncomingFleet(1, 25);
             planet.addMyIncomingFleet(4, 25);
@@ -133,7 +155,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
             assert.equal(planet.effectiveDefensiveValue(5), 10);
         },
         'should work with neutral planets' : function() {
-            var planet = new Planet(null, null, null, 0, 15, 5);
+            var planet = new Planet({ owner : 0,
+                                ships : 15,
+                                growth : 5 });
             
             planet.addEnemyIncomingFleet(1, 25);
             planet.addMyIncomingFleet(4, 35);
@@ -146,7 +170,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
             assert.equal(planet.effectiveDefensiveValue(5), 15);
         },
         'should work with enemy planets' : function() {
-            var planet = new Planet(null, null, null, 2, 15, 5);
+            var planet = new Planet({ owner : 2,
+                                      ships : 15,
+                                      growth : 5 });
             
             planet.addMyIncomingFleet(1, 25);
             planet.addEnemyIncomingFleet(4, 25);
@@ -159,7 +185,10 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
             assert.equal(planet.effectiveDefensiveValue(5), -11);
         },
         'should work with an enemy planet at the zero boundary' : function() {
-            var planet = new Planet(null, null, null, 2, 15, 5);
+            var planet = new Planet({ owner : 2,
+                                      ships : 15,
+                                      growth : 5 });
+            
             
             planet.addMyIncomingFleet(1, 20);
             
@@ -167,7 +196,9 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
             assert.equal(planet.effectiveDefensiveValue(2), -6);
         },
         'should work with a neutral planet at the zero boundary' : function() {
-            var planet = new Planet(null, null, null, 0, 15, 5);
+            var planet = new Planet({ owner : 0,
+                                      ships : 15,
+                                      growth : 5 });
             
             planet.addMyIncomingFleet(1, 15);
             planet.addMyIncomingFleet(3, 1);
@@ -183,8 +214,8 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
 vows.describe('Planet distanceFrom()').addBatch({
     'planet at (14.2884238258,0.622568806433) to planet at (23.6079911509,11.6215535875)' : {
         topic: function(){
-            var planet1 = new Planet(null, 14.2884238258, 0.622568806433, null, null, null);
-            var planet2 = new Planet(null, 23.6079911509, 11.6215535875, null, null, null);
+            var planet1 = new Planet({ x : 14.2884238258, y : 0.622568806433 });
+            var planet2 = new Planet({ x: 23.6079911509, y : 11.6215535875});
             return planet1.distanceFrom(planet2);
         },
         'should be calculated using euclidean distance' : function(distance){
@@ -196,18 +227,24 @@ vows.describe('Planet distanceFrom()').addBatch({
 vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
     'when the growth rate is 4 and 16 ships are already there,' : {
         'should be the number of ships' : function() {
-            var planet = new Planet(null, null, null, 1, 16, 4);
+            var planet = new Planet({ owner : 1,
+                                      ships : 16,
+                                      growth : 4 });
             assert.equal(planet.expendableShipsWithoutReinforce(), 16);
         },
         'and there are 20 enemy ships 3 turns away' : {
             'should be the number of ships + (turns away * growth) - enemy ships' : function() {
-                var planet = new Planet(null, null, null, 1, 16, 4);
+                var planet = new Planet({ owner : 1,
+                                          ships : 16,
+                                          growth : 4 });
                 planet.addEnemyIncomingFleet(3, 20);
                 assert.equal(planet.expendableShipsWithoutReinforce(), 8);
             },
             'and there are 5 friendly ships 2 turns away' : {
                 'should be the number of ships + (turns away * growth) - enemy ships + friendly ships' : function() {
-                    var planet = new Planet(null, null, null, 1, 16, 4);
+                    var planet = new Planet({ owner : 1,
+                                              ships : 16,
+                                              growth : 4 });
                     planet.addEnemyIncomingFleet(3, 20);
                     planet.addMyIncomingFleet(2, 5);
                     assert.equal(planet.expendableShipsWithoutReinforce(), 13);
@@ -216,13 +253,17 @@ vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
         }
     },
     'should not be greater than the current number of ships' : function() {
-        var planet = new Planet(null, null, null, 1, 2, 5);
+        var planet = new Planet({ owner : 1,
+                                  ships : 2,
+                                  growth : 5 });
         planet.addEnemyIncomingFleet(16, 26);
         assert.equal(planet.expendableShipsWithoutReinforce(), 2);
     },
     'when an enemy fleet would set my planet to 0 ships, and another enemy fleet is incoming later' : {
         'should take into account the zero boundary' : function() {
-            var planet = new Planet(null, null, null, 1, 10, 5);
+            var planet = new Planet({ owner : 1,
+                                      ships : 10,
+                                      growth : 5 });
             planet.addEnemyIncomingFleet(3, 25);
             planet.addEnemyIncomingFleet(5, 5);
             assert.equal(planet.expendableShipsWithoutReinforce(), 0);
@@ -234,6 +275,12 @@ vows.describe('Planet considerSendingTo()').addBatch({
     'when given the same planet' : {
         topic : function() {
             var planet = new Planet(42, 3, 5, null, 32, 4);
+            var planet = new Planet({ id : 42,
+                                      x : 3,
+                                      y : 5,
+                                      ships : 32,
+                                      growth : 4 });
+            
             return planet.considerSendingTo(planet, [], []);
         },
         'the values computed' : {
@@ -250,33 +297,33 @@ vows.describe('Planet considerSendingTo()').addBatch({
     },
     'when given another planet' : {
         topic : function() {
-            var fromPlanet = new Planet(42, 0, 0, 1, 32, 4);
-            var toPlanet = new Planet(43, 5, 3, 2, 32, 4);
+            var fromPlanet = new Planet({id:42, x:0, y:0, owner:1, ships:32, growth:4});
+            var toPlanet = new Planet({id:43, x:5, y:3, owner:2, ships:32, growth:4});
             
-            closeFriendly = new Planet(44, 13, 15, null, 13, 4);
+            closeFriendly = new Planet({id:44, x:13, y:15, ships:13, growth:4});
             assert.equal(toPlanet.distanceFrom(closeFriendly), 15)
             
-            closerFriendly = new Planet(45, 9, 11, null, 12, 3);
+            closerFriendly = new Planet({id:45, x:9, y:11, ships:12, growth:3});
             assert.equal(toPlanet.distanceFrom(closerFriendly), 9)
             
-            closestFriendly = new Planet(47, 5, 7, null, 122, 5);
+            closestFriendly = new Planet({id:47, x:5, y:7, ships:122, growth:5});
             assert.equal(toPlanet.distanceFrom(closestFriendly), 4)
             
-            farFriendly = new Planet(48, 32, 32, null, 100, 5);
+            farFriendly = new Planet({id:48, x:32, y:32, ships:100, growth:5});
             assert.equal(toPlanet.distanceFrom(farFriendly), 40)
             
             var friendlyPlanets = [closestFriendly, closerFriendly, closeFriendly, farFriendly];
             
-            closeEnemy = new Planet(46, 14, 12, null, 3, 2);
+            closeEnemy = new Planet({id:46, x:14, y:12, ships:3, growth:2});
             assert.equal(toPlanet.distanceFrom(closeEnemy), 13)
             
-            closerEnemy = new Planet(49, 10, 8, null, 5, 2);
+            closerEnemy = new Planet({id:49, x:10, y:8, ships:5, growth:2});
             assert.equal(toPlanet.distanceFrom(closerEnemy), 8)
             
-            closestEnemy = new Planet(50, 6, 4, null, 13, 2);
+            closestEnemy = new Planet({id:50, x:6, y:4, ships:13, growth:2});
             assert.equal(toPlanet.distanceFrom(closestEnemy), 2)
             
-            farEnemy = new Planet(51, 32, 32, null, 32, 2);
+            farEnemy = new Planet({id:51, x:32, y:32, ships:32, growth:2});
             assert.equal(toPlanet.distanceFrom(farEnemy), 40)
             
             var enemyPlanets = [closestEnemy, closerEnemy, closeEnemy, farEnemy];
@@ -319,23 +366,28 @@ vows.describe('Planet considerSendingTo()').addBatch({
 
 vows.describe('Planet isEffectivelyEnemy()').addBatch({
     'should be true for an unthreatened enemy planet' : function() {
-        var planet = new Planet(null, null, null, 2, 1, 1);
+        var planet = new Planet({ owner : 2,
+                                  ships : 1,
+                                  growth : 1 });
         assert.isTrue(planet.isEffectivelyEnemy());
     },
     'should be false for an unthreatened friendly planet' : function() {
-        var planet = new Planet(null, null, null, 1, 1, 1);
+        var planet = new Planet({ owner : 1,
+                                  ships : 1,
+                                  growth : 1 });
         assert.isFalse(planet.isEffectivelyEnemy());
     }
 }).export(module);
 
 vows.describe('Planet isSamePlanet()').addBatch({
     'should be true when given the same planet' : function() {
-        var planet = new Planet(1, null, null, null, null, null);
+        var planet = new Planet({ id : 2 });
+        
         assert.isTrue(planet.isSamePlanet(planet));
     },
     'should be false when given a different planet' : function() {
-        var planet1 = new Planet(1, null, null, null, null, null);
-        var planet2 = new Planet(2, null, null, null, null, null);
+        var planet1 = new Planet({ id : 1 });
+        var planet2 = new Planet({ id : 2 });
         assert.isFalse(planet1.isSamePlanet(planet2));
     }
 }).export(module);

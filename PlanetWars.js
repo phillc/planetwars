@@ -15,6 +15,7 @@ function parseInput(turnInput, turnFn) {
     var toks;
     var cmd;
     var universe;
+
     for (i = 0; i < linesLength; i++) {
         line = lines[i];
         noCommentLine = line.split('#')[0];
@@ -22,8 +23,14 @@ function parseInput(turnInput, turnFn) {
         cmd = toks[0];
         switch (cmd) {
         case 'P':
-            planets.push(new Planet(planets.length, toks[1], toks[2], toks[3],
-                    toks[4], toks[5]));
+            var planetOptions = { id : planets.length,
+                                  x : parseFloat(toks[1]),
+                                  y : parseFloat(toks[2]),
+                                  owner : parseInt(toks[3]),
+                                  ships : parseInt(toks[4]),
+                                  growth : parseInt(toks[5]),
+                                  real : true }
+            planets.push(new Planet(planetOptions));
             break;
         case 'F':
             if(parseInt(toks[1]) === 1) {
@@ -37,7 +44,7 @@ function parseInput(turnInput, turnFn) {
         }
     }
     
-    universe = new Universe(planets);
+    universe = new Universe(planets, { real : true });
     turnFn(universe);
     process.stdout.write('go\n');
 }
