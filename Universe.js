@@ -74,8 +74,6 @@ var strategies = {
                     commands.push(new SendCommand(enemyPlanet, universe.myPlanets[0], enemyPlanet.getShips()))
                 })
             }
-        } else {
-            throw "WHAT THE FUCK??"
         }
         return commands;
     },
@@ -101,7 +99,6 @@ Universe.prototype.runEvaluations = function() {
 Universe.prototype.runMyEvaluation = function(depth, alpha, beta) {
     if(depth === 0) {
         this.tick();
-        // sys.debug("this.evaluateBoard() " + this.evaluateBoard())
         return [this.evaluateBoard()];
     }
 
@@ -113,20 +110,15 @@ Universe.prototype.runMyEvaluation = function(depth, alpha, beta) {
         var commands = commandSet[commandNum];
         var clonedUniverse = this.clone();
         clonedUniverse.applyCommands(commands);
-        // sys.debug("after command, would have " + clonedUniverse.myPlanets[0].getShips());
         
         var eval = clonedUniverse.runEnemyEvaluation(depth, bestAlpha, beta)
         
-        // sys.debug("my bestAlpha " + bestAlpha[0])
         if (eval[0] > bestAlpha[0]) {
             bestAlpha = [eval[0], commands];
-            // sys.debug("my reassign alpha " + bestAlpha[0])
         }
-        // if(beta[0] > bestAlpha[0]) {
-        //     // sys.debug("my prune")
-        //     break;
-        // }
-        // sys.debug("my not prune")
+        if(beta[0] < bestAlpha[0]) {
+            break;
+        }
     }
     return bestAlpha;
 };
@@ -143,16 +135,12 @@ Universe.prototype.runEnemyEvaluation = function(depth, alpha, beta) {
         
         var eval = clonedUniverse.runMyEvaluation(depth - 1, alpha, bestBeta)
         
-        // sys.debug("enemy bestBeta " + bestBeta[0])
         if (eval[0] < bestBeta[0]) {
             bestBeta = [eval[0], commands];
-            // sys.debug("enemy reassign bestBeta " + bestBeta[0])
         }
-        // if(bestBeta[0] < alpha[0]) {
-        //     // sys.debug("enemy prune")
-        //     break;
-        // }
-        // sys.debug("enemy not prune")
+        if(bestBeta[0] < alpha[0]) {
+            break;
+        }
     }
     return bestBeta;
 };
@@ -170,8 +158,8 @@ Universe.prototype.commands = function(player) {
     // var sortedPlanets = _.map(planetEvaluations, function(tuple) { return tuple[1]; })
     // 
     var commands = [
-        strategies.sendNothing(this, player),
         strategies.sendAll(this, player),
+        strategies.sendNothing(this, player),
     ]
     return commands;
 }
@@ -179,26 +167,39 @@ Universe.prototype.commands = function(player) {
 Universe.prototype.evaluateBoard = function() {
     var myValues = {
         totalShips  : this.summatePlanets("getShips", ME),
-        totalGrowth : this.summatePlanets("getGrowth", ME)
+        totalGrowth : this.summatePlanets("getGrowth", ME),
     }
     var enemyValues = {
         totalShips  : this.summatePlanets("getShips", ENEMY),
-        totalGrowth : this.summatePlanets("getGrowth", ENEMY)
+        totalGrowth : this.summatePlanets("getGrowth", ENEMY),
     }
     return network.compute("boardValue", myValues) - network.compute("boardValue", enemyValues);
 }
 
 Universe.prototype.summatePlanets = function(fn, player) {
     var planets;
-    if (player === "me") {
+    if (player === ME) {
         planets = this.myPlanets;
-    } else if (player === "enemy") {
+    } else if (player === ENEMY) {
         planets = this.enemyPlanets;
     }
     var sumCall = function(total, planet) {
         return total + planet[fn].call(planet);
     }
     return _.reduce(planets, sumCall, 0);
+}
+
+Universe.prototype.countPlanets = function(fn, player) {
+    var planets;
+    if (player === ME) {
+        planets = this.myPlanets;
+    } else if (player === ENEMY) {
+        planets = this.enemyPlanets;
+    }
+    var countCall = function(total, planet) {
+        return total + (planet[fn].call(planet) ? 1 : 0);
+    }
+    return _.reduce(planets, countCall, 0);
 }
 
 Universe.prototype.clone = function() {

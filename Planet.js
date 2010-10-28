@@ -184,7 +184,6 @@ Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     }
     
     if(this.realPlanet && !this.isSamePlanet(toPlanet)){
-        // sys.debug('' + Math.floor(this.id) + ' ' + Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
         process.stdout.write('' + Math.floor(this.id) + ' ' + Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
     }
 }

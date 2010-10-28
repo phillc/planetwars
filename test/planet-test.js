@@ -230,24 +230,7 @@ vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
     }
 }).export(module);
 
-vows.describe('Planet considerSendingTo()').addBatch({
-    'when given the same planet' : {
-        topic : function() {
-            var planet = new Planet(42, 3, 5, null, 32, 4);
-            return planet.considerSendingTo(planet, [], []);
-        },
-        'the values computed' : {
-            topic : function(tuple) {
-                return tuple[2];
-            },
-            'should know it is its self' : function(values) {
-                assert.equal(values.isSelf, 1);
-            },
-            'should not consider the ships that are already on the planet' : function(values) {
-                assert.equal(values.shipsDocked, 0)
-            }
-        }
-    },
+vows.describe('Planet consider()').addBatch({
     'when given another planet' : {
         topic : function() {
             var fromPlanet = new Planet(42, 0, 0, 1, 32, 4);
@@ -280,14 +263,11 @@ vows.describe('Planet considerSendingTo()').addBatch({
             assert.equal(toPlanet.distanceFrom(farEnemy), 40)
             
             var enemyPlanets = [closestEnemy, closerEnemy, closeEnemy, farEnemy];
-            return fromPlanet.considerSendingTo(toPlanet, friendlyPlanets, enemyPlanets);
+            return fromPlanet.consider(friendlyPlanets, enemyPlanets);
         },
         'the values computed' : {
             topic : function(tuple) {
                 return tuple[2]
-            },
-            'should know it is not self' : function(values) {
-                assert.equal(values.isSelf, -1);
             },
             'should consider the ships that are already on the planet' : function(values) {
                 assert.equal(values.shipsDocked, 32)
@@ -304,15 +284,6 @@ vows.describe('Planet considerSendingTo()').addBatch({
             'should return ships of 3 closest enemy' : function(values) {
                 assert.equal(values.shipsThreeEnemyPlanets, 21);
             },
-            'cannot take the planet now' : function(values) {
-                assert.equal(values.canTakeRightNow, -1);
-            },
-            'should return the distance between the two' : function(values) {
-                assert.equal(values.distance, 6)
-            },
-            'enemys planet is effectivelyEnemy' : function(values) {
-                assert.equal(values.isEffectivelyEnemy, 1)
-            }
         }
     }
 }).export(module);
