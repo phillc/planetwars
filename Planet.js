@@ -175,6 +175,7 @@ Planet.prototype.distanceFrom = function() {
 
 Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);
+    this.ships -= shipsNum;
     
     if (this.owner === MINE) {
         toPlanet.addMyIncomingFleet(dist, shipsNum);

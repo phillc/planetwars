@@ -8,8 +8,8 @@ var PlanetWars = require('./PlanetWars'),
 
 function DoTurn(universe) {
     try {
-        var evaluation = universe.runEvaluations("me", 5, [-Infinity], [Infinity]);
-        sys.debug("evaluation: " + evaluation[0])
+        var evaluation = universe.runEvaluations();
+        sys.debug("turn evaluation: " + evaluation[0])
         var bestCommands = evaluation[1];
         bestCommands.forEach(function(command){
             command.execute(universe);
