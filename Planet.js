@@ -5,16 +5,16 @@ var ENEMY = 2,
     MINE = 1,
     NEUTRAL = 0
 
-var Planet = function(id, x, y, owner, ships, growth, realPlanet) {
-    this.realPlanet = realPlanet;
-    this.id     = parseInt(id);
-    this.x      = parseFloat(x);
-    this.y      = parseFloat(y);
-    this.owner  = parseInt(owner);
-    this.ships  = parseInt(ships);
-    this.growth = parseInt(growth);
+var Planet = function(options) {
+    this.id     = options.id;
+    this.x      = options.x;
+    this.y      = options.y;
+    this.owner  = options.owner;
+    this.ships  = options.ships;
+    this.growth = options.growth;
     this.enemyIncomingFleets = [0];
     this.myIncomingFleets = [0];
+    this.real = options.real;
 }
 
 Planet.prototype.getShips = function() {
@@ -62,7 +62,13 @@ Planet.prototype.isMine = function() {
 }
 
 Planet.prototype.clone = function() {
-    var clone = new Planet(this.id, this.x, this.y, this.owner, this.ships, this.growth, false);
+    var clone = new Planet({ id : this.id,
+                             x : this.x,
+                             y : this.y,
+                             owner : this.owner,
+                             ships : this.ships,
+                             growth : this.growth,
+                             real : false });
     clone.enemyIncomingFleets = this.enemyIncomingFleets.slice(0);
     clone.myIncomingFleets = this.myIncomingFleets.slice(0);
     return clone;

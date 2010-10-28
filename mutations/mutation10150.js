@@ -343,31 +343,5 @@ exports.weights = {
       -0.252786909565882,
       0.194043272283355
     ]
-  },
-  "boardValue": {
-    "input_weights" : [
-        {
-          "totalShips": .1,
-          "totalGrowth": .1
-        },
-        {
-          "totalShips": .1,
-          "totalGrowth": .1
-        },
-        {
-          "totalShips": .1,
-          "totalGrowth": .1
-        },
-        {
-          "totalShips": .1,
-          "totalGrowth": .1
-        }
-    ],
-    "hidden_weights": [
-      0.108507143062475,
-      0.0611547881247275,
-      0.126393454782941,
-      0.094043272283355
-    ]
   }
 }

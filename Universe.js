@@ -8,8 +8,9 @@ var ME = "me",
     ENEMY = "enemy"
     
 
-var Universe = function(planets, realUniverse) {
-    this.realUniverse = realUniverse;
+var Universe = function(planets, options) {
+    options = options ? options : {}
+    this.real = options.real;
     var myPlanets = [];
     var enemyPlanets = [];
     planets.forEach(function(planet) {
