@@ -65,7 +65,7 @@ task :one do
 end
 
 task :profile do
-  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node --prof MyBot.js"`
+  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 5000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node --prof MyBot.js"`
 end
 
 desc "mutate existing networks"

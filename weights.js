@@ -348,19 +348,23 @@ exports.weights = {
     "input_weights" : [
         {
           "totalShips": .1,
-          "totalGrowth": .1
+          "totalGrowth": .1,
+          "countWouldOwn": .1
         },
         {
           "totalShips": .1,
-          "totalGrowth": .1
+          "totalGrowth": .1,
+          "countWouldOwn": .1
         },
         {
           "totalShips": .1,
-          "totalGrowth": .1
+          "totalGrowth": .1,
+          "countWouldOwn": .1
         },
         {
           "totalShips": .1,
-          "totalGrowth": .1
+          "totalGrowth": .1,
+          "countWouldOwn": .1
         }
     ],
     "hidden_weights": [

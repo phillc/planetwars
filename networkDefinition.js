@@ -28,6 +28,7 @@ var networks = {
     boardValue : {
         inputs : [ "totalShips",
                    "totalGrowth",
+                   "countWouldOwn",
                    // "totalShipsDocked",
                    // "totalShipsMoving"
                   ],

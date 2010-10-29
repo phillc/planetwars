@@ -105,7 +105,6 @@ Planet.prototype.tick = function() {
             }
         }
     }
-    
 }
 
 Planet.prototype.nextTurn = function() {
@@ -142,6 +141,14 @@ Planet.prototype.isEffectivelyEnemy = function(turns) {
 Planet.prototype.isEffectivelyNotMine = function(turns) {
     var futurePlanet = this.futureState(turns || 0);
     return !futurePlanet.isMine();
+}
+
+Planet.prototype.wouldBeMine = function() {
+    return this.futureState(Math.max(this.enemyIncomingFleets.length, this.myIncomingFleets.length)).isMine();
+}
+
+Planet.prototype.wouldBeEnemy = function() {
+    return this.futureState(Math.max(this.enemyIncomingFleets.length, this.myIncomingFleets.length)).isEnemy();
 }
 
 Planet.prototype.checkExpendableShips = function(turns) {
@@ -189,7 +196,7 @@ Planet.prototype.sendShips = function(shipsNum, toPlanet) {
         toPlanet.addEnemyIncomingFleet(dist, shipsNum);
     }
     
-    if(this.realPlanet && !this.isSamePlanet(toPlanet)){
+    if(this.real && !this.isSamePlanet(toPlanet)){
         process.stdout.write('' + Math.floor(this.id) + ' ' + Math.floor(toPlanet.id) + ' ' + Math.floor(shipsNum) + '\n');
     }
 }

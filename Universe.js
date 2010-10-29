@@ -5,7 +5,8 @@ var sys = require('sys'),
     network = require('./network');
     
 var ME = "me",
-    ENEMY = "enemy"
+    ENEMY = "enemy",
+    ALL = "all"
     
 
 var Universe = function(planets, options) {
@@ -62,17 +63,29 @@ var strategies = {
         }
     },
     sendAll : function(universe, player) {
+        
+        var planetEvaluations = [];
+        for(var consideredPlanetNum in universe.planets) {
+            checkTime();
+            var otherPlanet = universe.planets[consideredPlanetNum];
+            planetEvaluations.push(otherPlanet.consider(universe.myPlanets, universe.enemyPlanets));
+        }
+                
+        planetEvaluations.sort(tupleSort);
+        
+        var sortedPlanets = _.map(planetEvaluations, function(tuple) { return tuple[1]; })
+        
         var commands = []
         if (player === ME) {
-            if (universe.enemyPlanets.length > 0){
+            if (sortedPlanets.length > 0){
                 universe.myPlanets.forEach(function(myPlanet){
-                    commands.push(new SendCommand(myPlanet, universe.enemyPlanets[0], myPlanet.getShips()))
+                    commands.push(new SendCommand(myPlanet, sortedPlanets[0], myPlanet.getShips()))
                 })
             }
         } else if (player === ENEMY) {
-            if (universe.myPlanets.length > 0){
+            if (sortedPlanets.length > 0){
                 universe.enemyPlanets.forEach(function(enemyPlanet){
-                    commands.push(new SendCommand(enemyPlanet, universe.myPlanets[0], enemyPlanet.getShips()))
+                    commands.push(new SendCommand(enemyPlanet, sortedPlanets[0], enemyPlanet.getShips()))
                 })
             }
         }
@@ -112,14 +125,17 @@ Universe.prototype.runMyEvaluation = function(depth, alpha, beta) {
         var clonedUniverse = this.clone();
         clonedUniverse.applyCommands(commands);
         
+        sys.debug("in the eval:")
         var eval = clonedUniverse.runEnemyEvaluation(depth, bestAlpha, beta)
+        sys.debug("got back " + eval[0])
+        
         
         if (eval[0] > bestAlpha[0]) {
             bestAlpha = [eval[0], commands];
         }
-        if(beta[0] < bestAlpha[0]) {
-            break;
-        }
+        // if(beta[0] < bestAlpha[0]) {
+        //     break;
+        // }
     }
     return bestAlpha;
 };
@@ -139,41 +155,35 @@ Universe.prototype.runEnemyEvaluation = function(depth, alpha, beta) {
         if (eval[0] < bestBeta[0]) {
             bestBeta = [eval[0], commands];
         }
-        if(bestBeta[0] < alpha[0]) {
-            break;
-        }
+        // if(bestBeta[0] < alpha[0]) {
+        //     break;
+        // }
     }
     return bestBeta;
 };
 
 Universe.prototype.commands = function(player) {
-    // var planetEvaluations = [];
-    // for(var consideredPlanetNum in this.planets) {
-    //     checkTime();
-    //     var otherPlanet = this.planets[consideredPlanetNum];
-    //     planetEvaluations.push(otherPlanet.consider(this.myPlanets, this.enemyPlanets));
-    // }
-    //         
-    // planetEvaluations.sort(tupleSort);
-    // 
-    // var sortedPlanets = _.map(planetEvaluations, function(tuple) { return tuple[1]; })
-    // 
     var commands = [
-        strategies.sendAll(this, player),
         strategies.sendNothing(this, player),
+        strategies.sendAll(this, player),
     ]
     return commands;
 }
 
 Universe.prototype.evaluateBoard = function() {
     var myValues = {
-        totalShips  : this.summatePlanets("getShips", ME),
-        totalGrowth : this.summatePlanets("getGrowth", ME),
+        // totalShips  : this.summatePlanets("getShips", ME),
+        // totalGrowth : this.summatePlanets("getGrowth", ME),
+        countWouldOwn : this.countPlanets("wouldBeMine", ALL) * 2
     }
+    sys.debug("I would own " + this.countPlanets("wouldBeMine", ALL))
     var enemyValues = {
-        totalShips  : this.summatePlanets("getShips", ENEMY),
-        totalGrowth : this.summatePlanets("getGrowth", ENEMY),
+        // totalShips  : this.summatePlanets("getShips", ENEMY),
+        // totalGrowth : this.summatePlanets("getGrowth", ENEMY),
+        countWouldOwn : this.countPlanets("wouldBeEnemy", ALL)
+        
     }
+    sys.debug("Enemy would own " + this.countPlanets("wouldBeEnemy", ALL))
     return network.compute("boardValue", myValues) - network.compute("boardValue", enemyValues);
 }
 
@@ -183,6 +193,8 @@ Universe.prototype.summatePlanets = function(fn, player) {
         planets = this.myPlanets;
     } else if (player === ENEMY) {
         planets = this.enemyPlanets;
+    } else if (player === ALL) {
+        planets = this.planets;
     }
     var sumCall = function(total, planet) {
         return total + planet[fn].call(planet);
@@ -196,6 +208,8 @@ Universe.prototype.countPlanets = function(fn, player) {
         planets = this.myPlanets;
     } else if (player === ENEMY) {
         planets = this.enemyPlanets;
+    } else if (player === ALL) {
+        planets = this.planets;
     }
     var countCall = function(total, planet) {
         return total + (planet[fn].call(planet) ? 1 : 0);
