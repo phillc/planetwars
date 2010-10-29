@@ -9,12 +9,12 @@ var Planet = require('../Planet').Planet,
 vows.describe('Universe').addBatch({
     'getPlanetsByOwner' : {
         topic : function() {
-            var planets = [ new Planet({owner : players.me}),
-                            new Planet({owner : players.opponent}),
-                            new Planet({owner : players.opponent}),
-                            new Planet({owner : players.neutral}),
-                            new Planet({owner : players.neutral}),
-                            new Planet({owner : players.opponent}) ];
+            var planets = [ Planet({owner : players.me}),
+                            Planet({owner : players.opponent}),
+                            Planet({owner : players.opponent}),
+                            Planet({owner : players.neutral}),
+                            Planet({owner : players.neutral}),
+                            Planet({owner : players.opponent}) ];
             return new Universe(planets);
         },
         'should split up my planets' : function(universe) {
