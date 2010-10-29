@@ -77,7 +77,7 @@ function parseInput(turnInput, turnFn) {
         cmd = toks[0];
         switch (cmd) {
         case 'P':
-            planets.push(Planet({ id     : planets.length,
+            planets.push(new Planet({ id     : planets.length,
                                   x      : toks[1],
                                   y      : toks[2],
                                   owner  : toks[3],
@@ -119,10 +119,3 @@ exports.play = function play(turnFn) {
         sys.exit();
     });
 };
-
-exports.distance = function distance(a, b) {
-    var dx = a.x - b.x;
-    var dy = a.y - b.y;
-    return Math.ceil(Math.sqrt(dx*dx+dy*dy));
-};
-

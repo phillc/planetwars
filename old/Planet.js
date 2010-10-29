@@ -5,17 +5,7 @@ var ENEMY = 2,
     MINE = 1,
     NEUTRAL = 0
 
-Planet.prototype.getShips = function() {
-    return this.ships;
-}
 
-Planet.prototype.getId = function() {
-    return this.id;
-}
-
-Planet.prototype.getGrowth = function() {
-    return this.growth;
-}
 
 Planet.prototype.isSamePlanet = function(otherPlanet) {
     return this.id === otherPlanet.id;
@@ -153,26 +143,6 @@ Planet.prototype.expendableShipsWithoutReinforce = function() {
     return this.checkExpendableShips(farthestDistance);
 }
 
-
-Planet.prototype.distanceFrom = function() {
-    var planetDistances = [];
-    var distance = function(a, b){
-        var x1 = a.x;
-        var y1 = a.y;
-        var x2 = b.x;
-        var y2 = b.y
-        return Math.ceil(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1,2)));
-    }
-    return function(otherPlanet) {
-        if (planetDistances[this.id] === undefined){
-            planetDistances[this.id] = [];
-        }
-        if(planetDistances[this.id][otherPlanet.id] === undefined) {
-            planetDistances[this.id][otherPlanet.id] = distance(this, otherPlanet);
-        }
-        return planetDistances[this.id][otherPlanet.id];
-    }
-}();
 
 Planet.prototype.sendShips = function(shipsNum, toPlanet) {
     var dist = this.distanceFrom(toPlanet);

@@ -211,19 +211,6 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
 }).export(module);
 
 
-vows.describe('Planet distanceFrom()').addBatch({
-    'planet at (14.2884238258,0.622568806433) to planet at (23.6079911509,11.6215535875)' : {
-        topic: function(){
-            var planet1 = new Planet({ x : 14.2884238258, y : 0.622568806433 });
-            var planet2 = new Planet({ x: 23.6079911509, y : 11.6215535875});
-            return planet1.distanceFrom(planet2);
-        },
-        'should be calculated using euclidean distance' : function(distance){
-            assert.equal(distance, 15);
-        }
-    }
-}).export(module);
-
 vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
     'when the growth rate is 4 and 16 ships are already there,' : {
         'should be the number of ships' : function() {
