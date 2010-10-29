@@ -46,5 +46,8 @@ Planet.prototype.distanceFrom = function() {
     }
 }();
 
+Planet.prototype.isOwnedBy = function(player) {
+    return this.owner === player;
+}
 
 exports.Planet = Planet;

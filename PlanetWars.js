@@ -78,11 +78,11 @@ function parseInput(turnInput, turnFn) {
         switch (cmd) {
         case 'P':
             planets.push(new Planet({ id     : planets.length,
-                                  x      : toks[1],
-                                  y      : toks[2],
-                                  owner  : toks[3],
-                                  ships  : toks[4],
-                                  growth : toks[5] }));
+                                      x      : toks[1],
+                                      y      : toks[2],
+                                      owner  : toks[3],
+                                      ships  : toks[4],
+                                      growth : toks[5] }));
             break;
         case 'F':
             fleets.push(Fleet(fleets.length, toks[1], toks[2], toks[3],
