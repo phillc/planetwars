@@ -1,10 +1,7 @@
 var sys = require('sys'),
     Planet = require('./Planet').Planet,
     players = require('./players'),
-    Universe = require('./Universe');
-
-
-
+    Universe = require('./Universe').Universe;
 
 function parseInput(turnInput, turnFn) {
     var lines = turnInput.split('\n');
@@ -40,7 +37,7 @@ function parseInput(turnInput, turnFn) {
             throw "Unknown command token: " + line;
         }
     }
-    universe = Universe(planets);
+    universe = new Universe(planets);
     turnFn(universe);
     process.stdout.write('go\n');
 }

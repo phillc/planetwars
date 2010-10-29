@@ -1,6 +1,6 @@
 var planetWars = require('./PlanetWars');
 
-function doTurn(pw) {
+function doTurn(universe) {
     // (1) If we currently have a fleet in flight, just do nothing.
     if ( pw.myFleets.length >= 1 ) {
         return;
