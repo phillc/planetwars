@@ -31,11 +31,11 @@ function doTurn(pw) {
     plen = myPlanets.length;
     for (pi = 0; pi < plen; pi++) {
         p = myPlanets[pi];
-        score = p.ships;
+        score = p.getShips();
         if (score > sourceScore ) {
             sourceScore = score;
-            source = p.id;
-            sourceShips = p.ships;
+            source = p.getId();
+            sourceShips = p.getShips();
         }
     }
 
@@ -46,10 +46,10 @@ function doTurn(pw) {
     plen = notMyPlanets.length;
     for (pi = 0; pi < plen; pi++) {
         p = notMyPlanets[pi];
-        score = 1.0 / (1 + p.ships);
+        score = 1.0 / (1 + p.getShips());
         if (score > destScore) {
             destScore = score;
-            dest = p.id;
+            dest = p.getId();
         }
     }
 

@@ -5,18 +5,6 @@ var ENEMY = 2,
     MINE = 1,
     NEUTRAL = 0
 
-var Planet = function(options) {
-    this.id     = options.id;
-    this.x      = options.x;
-    this.y      = options.y;
-    this.owner  = options.owner;
-    this.ships  = options.ships;
-    this.growth = options.growth;
-    this.enemyIncomingFleets = [0];
-    this.myIncomingFleets = [0];
-    this.real = options.real;
-}
-
 Planet.prototype.getShips = function() {
     return this.ships;
 }

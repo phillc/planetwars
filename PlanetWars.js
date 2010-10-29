@@ -1,15 +1,5 @@
-var sys = require('sys');
-
-function Planet(id, x, y, owner, ships, growth) {
-    return {
-        id : id,
-        x : x,
-        y : y,
-        owner : owner,
-        ships : ships,
-        growth : growth
-    };
-}
+var sys = require('sys'),
+    Planet = require('./Planet').Planet;
 
 function Fleet(id, owner, ships, source, dest, totalLength, remaining) {
     return {
@@ -34,7 +24,7 @@ function Universe(planets, fleets) {
     var owner;
     for (i = 0; i < planetsLength; i++) {
         planet = planets[i];
-        owner = planet.owner;
+        owner = planet.getOwner();
         planetsByOwner[owner < 0 || owner > 1 ? 2 : owner].push(planet);
     }
 
@@ -87,8 +77,12 @@ function parseInput(turnInput, turnFn) {
         cmd = toks[0];
         switch (cmd) {
         case 'P':
-            planets.push(Planet(planets.length, toks[1], toks[2], toks[3],
-                    toks[4], toks[5]));
+            planets.push(Planet({ id     : planets.length,
+                                  x      : toks[1],
+                                  y      : toks[2],
+                                  owner  : toks[3],
+                                  ships  : toks[4],
+                                  growth : toks[5] }));
             break;
         case 'F':
             fleets.push(Fleet(fleets.length, toks[1], toks[2], toks[3],
