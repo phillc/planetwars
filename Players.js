@@ -2,6 +2,10 @@ var Player = function(options) {
     this.name = options.name;
 }
 
+Player.prototype.toString = function() {
+    return this.name;
+}
+
 var me = new Player({ name : "ME" });
 var opponent = new Player({ name : "OPPONENT" })
 var neutral = new Player({ name : "NEUTRAL" })

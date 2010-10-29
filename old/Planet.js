@@ -23,10 +23,6 @@ Planet.prototype.getCoordinates = function() {
     return [this.x, this.y];
 }
 
-Planet.prototype.isNeutral = function() {
-    return this.owner === NEUTRAL;
-}
-
 Planet.prototype.isEnemy = function() {
     return this.owner === ENEMY;
 }

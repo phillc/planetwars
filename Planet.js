@@ -1,4 +1,5 @@
-var sys = require('sys');
+var sys = require('sys'),
+    players = require('./Players');
 
 var Planet = function(options) {
     this.id     = options.id;
@@ -7,8 +8,7 @@ var Planet = function(options) {
     this.owner  = options.owner;
     this.ships  = options.ships;
     this.growth = options.growth;
-    this.enemyIncomingFleets = [0];
-    this.myIncomingFleets = [0];
+    this.incomingForces = [];
     // this.real = options.real;
 }
 
@@ -48,6 +48,19 @@ Planet.prototype.distanceFrom = function() {
 
 Planet.prototype.isOwnedBy = function(player) {
     return this.owner === player;
+}
+
+Planet.prototype.isNeutral = function() {
+    return this.owner === players.neutral;
+}
+
+Planet.prototype.addIncomingForce = function(player, ships, turns) {
+    this.incomingForces[turns] = this.incomingForces[turns] || {};
+    this.incomingForces[turns][player] = (this.incomingForces[turns][player] || 0) + ships;
+}
+
+Planet.prototype.getIncomingForces = function(player, turns) {
+    return (this.incomingForces[turns] && this.incomingForces[turns][player]) || 0;
 }
 
 exports.Planet = Planet;

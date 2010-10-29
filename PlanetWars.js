@@ -1,63 +1,10 @@
 var sys = require('sys'),
-    Planet = require('./Planet').Planet;
+    Planet = require('./Planet').Planet,
+    players = require('./players'),
+    Universe = require('./Universe');
 
-function Fleet(id, owner, ships, source, dest, totalLength, remaining) {
-    return {
-        id : id,
-        owner : owner,
-        ships : ships,
-        source : source,
-        dest : dest,
-        totalLength : totalLength,
-        remaining : remaining
-    };
-}
 
-function Universe(planets, fleets) {
-    var i;
-    var planetsLength = planets.length;
-    var myPlanets = [];
-    var enemyPlanets = [];
-    var neutralPlanets = [];
-    var planet;
-    var planetsByOwner = [ neutralPlanets, myPlanets, enemyPlanets ];
-    var owner;
-    for (i = 0; i < planetsLength; i++) {
-        planet = planets[i];
-        owner = planet.getOwner();
-        planetsByOwner[owner < 0 || owner > 1 ? 2 : owner].push(planet);
-    }
 
-    var myFleets = [];
-    var enemyFleets = [];
-    var fleetsLength = fleets.length;
-    var fleetsByOwner = [ myFleets, enemyFleets ];
-    var fleet;
-    for (i = 0; i < fleetsLength; i++) {
-        fleet = fleets[i];
-        owner = fleet.owner;
-        fleetsByOwner[owner == 1 ? 0 : 1].push(fleet);
-    }
-
-    return {
-        planets : planets,
-        neutralPlanets : neutralPlanets,
-        myPlanets : myPlanets,
-        enemyPlanets : enemyPlanets,
-        notMyPlanets : neutralPlanets.concat(enemyPlanets),
-        notEnemyPlanets : neutralPlanets.concat(myPlanets),
-        notNeutralPlanets : myPlanets.concat(enemyPlanets),
-
-        fleets : fleets,
-        myFleets : myFleets,
-        enemyFleets : enemyFleets,
-
-        issueOrder : function issueOrder(source, dest, ships) {
-            process.stdout.write('' + Math.floor(source) + ' ' +
-                    Math.floor(dest) + ' ' + Math.floor(ships) + '\n');
-        }
-    };
-}
 
 function parseInput(turnInput, turnFn) {
     var lines = turnInput.split('\n');
@@ -66,7 +13,6 @@ function parseInput(turnInput, turnFn) {
     var line;
     var noCommentLine;
     var planets = [];
-    var fleets = [];
     var toks;
     var cmd;
     var universe;
@@ -78,15 +24,14 @@ function parseInput(turnInput, turnFn) {
         switch (cmd) {
         case 'P':
             planets.push(new Planet({ id     : planets.length,
-                                      x      : toks[1],
-                                      y      : toks[2],
-                                      owner  : toks[3],
-                                      ships  : toks[4],
-                                      growth : toks[5] }));
+                                      x      : parseFloat(toks[1]),
+                                      y      : parseFloat(toks[2]),
+                                      owner  : players.byId[parseInt(toks[3])],
+                                      ships  : parseInt(toks[4]),
+                                      growth : parseInt(toks[5]) }));
             break;
         case 'F':
-            fleets.push(Fleet(fleets.length, toks[1], toks[2], toks[3],
-                    toks[4], toks[5], toks[6]));
+            planets[toks[4]].addIncomingForce(players.byId[parseInt(toks[1])], parseInt(toks[2]), parseInt(toks[6]));
             break;
         case '':
             // Empty line.
@@ -95,7 +40,7 @@ function parseInput(turnInput, turnFn) {
             throw "Unknown command token: " + line;
         }
     }
-    universe = Universe(planets, fleets);
+    universe = Universe(planets);
     turnFn(universe);
     process.stdout.write('go\n');
 }

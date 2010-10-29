@@ -33,22 +33,54 @@ vows.describe('Planet').addBatch({
     },
     'isOwnedBy' : {
         'should return true if the planet is owned by me and I give it me' : function() {
-            assert.isTrue(new Planet({owner : players.me}).isOwnedBy(players.me))
+            assert.isTrue(new Planet({owner : players.me}).isOwnedBy(players.me));
         },
         'should return false if the planet is owned by me and I give it the opponent' : function() {
-            assert.isFalse(new Planet({owner : players.me}).isOwnedBy(players.opponent))
+            assert.isFalse(new Planet({owner : players.me}).isOwnedBy(players.opponent));
         },
         'should return false if the planet is neutral and I give it me' : function() {
-            assert.isFalse(new Planet({owner : players.neutral}).isOwnedBy(players.me))
+            assert.isFalse(new Planet({owner : players.neutral}).isOwnedBy(players.me));
         },
         'should return true if the planet is owned by the opponent and I give it the opponent' : function() {
-            assert.isTrue(new Planet({owner : players.opponent}).isOwnedBy(players.opponent))
+            assert.isTrue(new Planet({owner : players.opponent}).isOwnedBy(players.opponent));
         },
     },
-    'addIncomingFleet' : {
-        'should add a friendly fleet if it is for a planet of the same player' : function() {
-            
+    'isNeutral' : {
+        'should return true if the planet is owned by the neutral player' : function() {
+            assert.isTrue(new Planet({owner : players.neutral}).isNeutral());
+        },
+        'should return false if the planet is owned by me' : function() {
+            assert.isFalse(new Planet({owner : players.me}).isNeutral());
         }
-        
+    },
+    'addIncomingForce' : {
+        'should add a force if it is for a planet of the same player' : function() {
+            var planet = new Planet({owner : players.enemy});
+            planet.addIncomingForce(players.enemy, 50, 5);
+            assert.equal(planet.getIncomingForces(players.enemy, 5), 50);
+        },
+        'should add a force if it is for a planet of the opposing player' : function() {
+            var planet = new Planet({owner : players.enemy});
+            planet.addIncomingForce(players.me, 50, 5);
+            assert.equal(planet.getIncomingForces(players.me, 5), 50);
+        },
+        'should add a force for all players' : function() {
+            var planet = new Planet({owner : players.opponent});
+            planet.addIncomingForce(players.me, 45, 5);
+            planet.addIncomingForce(players.opponent, 45, 5);
+            assert.equal(planet.getIncomingForces(players.me, 5), 45);
+            assert.equal(planet.getIncomingForces(players.opponent, 5), 45);
+        },
+        'should add several forces for the same player' : function() {
+            var planet = new Planet({owner : players.enemy})
+            planet.addIncomingForce(players.me, 100, 5);
+            planet.addIncomingForce(players.me, 100, 5);
+            planet.addIncomingForce(players.me, 400, 3);
+            assert.equal(planet.getIncomingForces(players.me, 5), 200);
+            assert.equal(planet.getIncomingForces(players.me, 3), 400);
+            assert.equal(planet.getIncomingForces(players.opponent, 5), 0);
+            assert.equal(planet.getIncomingForces(players.opponent, 3), 0);
+            assert.equal(planet.getIncomingForces(players.opponent, 2), 0);
+        }
     },
 }).export(module);
