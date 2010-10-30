@@ -1,33 +1,3 @@
-var sys = require("sys");
-require("./underscore");
-
-var networks = require("./networkDefinition").networks;
-
-var weights;
-if(process.argv.length > 2) {
-    weights = require("./" + process.argv[2]).weights
-} else {
-    weights = require("./weights").weights;
-}
-    
-var activation = function() {
-    var exp = Math.exp;
-    var sinh = function(x) { return (exp(x)-exp(-x))/2 };
-    var cosh = function(x) { return (exp(x)+exp(-x))/2 };
-    var tanh = function(x) { return sinh(x)/cosh(x) };
-    
-    return function(t) { 
-        if(t > 20) {
-            return 1;
-        }
-        if(t < -20) {
-            return -1;
-        }
-        return tanh(t)
-    };
-}();
-exports.activation = activation;
-
 var compute = function(networkName, values) {
     var network = networks[networkName];
     var keys = _.keys(values);
