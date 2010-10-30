@@ -15,7 +15,7 @@ vows.describe('Universe').addBatch({
                             Planet({owner : players.neutral}),
                             Planet({owner : players.neutral}),
                             Planet({owner : players.opponent}) ];
-            return new Universe(planets);
+            return Universe(planets);
         },
         'should split up my planets' : function(universe) {
             assert.equal(universe.getPlanetsByOwner(players.me).length, 1);
