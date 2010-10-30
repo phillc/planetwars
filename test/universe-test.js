@@ -7,7 +7,7 @@ var Planet = require('../Planet').Planet,
     players = require('../players');
 
 vows.describe('Universe').addBatch({
-    'getPlanetsByOwner' : {
+    'planets' : {
         topic : function() {
             var planets = [ Planet({owner : players.me}),
                             Planet({owner : players.opponent}),
@@ -17,14 +17,21 @@ vows.describe('Universe').addBatch({
                             Planet({owner : players.opponent}) ];
             return Universe(planets);
         },
-        'should split up my planets' : function(universe) {
-            assert.equal(universe.getPlanetsByOwner(players.me).length, 1);
+        'getPlanetsByOwner' : {
+            'should split up my planets' : function(universe) {
+                assert.equal(universe.getPlanetsByOwner(players.me).length, 1);
+            },
+            'should split up neutral planets' : function(universe) {
+                assert.equal(universe.getPlanetsByOwner(players.neutral).length, 2);
+            },
+            'should split up opponent planets' : function(universe) {
+                assert.equal(universe.getPlanetsByOwner(players.opponent).length, 3);
+            }
         },
-        'should split up neutral planets' : function(universe) {
-            assert.equal(universe.getPlanetsByOwner(players.neutral).length, 2);
-        },
-        'should split up opponent planets' : function(universe) {
-            assert.equal(universe.getPlanetsByOwner(players.opponent).length, 3);
+        'getNotMyPlanets' : {
+            'should return neutral and opponent planets' : function(universe) {
+                assert.equal(universe.getNotMyPlanets().length, 5)
+            }
         }
     }
 }).export(module);

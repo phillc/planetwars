@@ -1,44 +1,28 @@
 var planetWars = require('./PlanetWars');
 
 function doTurn(universe) {
-    // (1) If we currently have a fleet in flight, just do nothing.
-    if ( pw.myFleets.length >= 1 ) {
-        return;
-    }
-
-    // (2) Find my strongest planet.
-    var source = -1;
-    var score;
-    var sourceScore = -999999.0;
-    var sourceShips = 0;
-    var myPlanets = pw.myPlanets;
-    var p, pi, plen;
-    var dest, destScore, notMyPlanets;
-    var numShips;
-    plen = myPlanets.length;
-    for (pi = 0; pi < plen; pi++) {
-        p = myPlanets[pi];
-        score = p.getShips();
-        if (score > sourceScore ) {
-            sourceScore = score;
-            source = p.getId();
-            sourceShips = p.getShips();
-        }
-    }
-
-    // (3) Find the weakest enemy or neutral planet.
-    dest = -1;
-    destScore = -999999.0;
-    notMyPlanets = pw.notMyPlanets;
-    plen = notMyPlanets.length;
-    for (pi = 0; pi < plen; pi++) {
-        p = notMyPlanets[pi];
-        score = 1.0 / (1 + p.getShips());
-        if (score > destScore) {
-            destScore = score;
-            dest = p.getId();
-        }
-    }
+    // look at future of my planets
+    
+    // see if any of them will be taken.
+    
+    // see how many I have available to send
+    
+    // determine if any of them can be saved.
+    
+    // save the savable ones using ships from closest planets
+    
+    // if planets are not savable, consider sending those ships elsewhere (make them available for next stage)
+    
+    // do something with the available ships
+    
+    
+    
+    
+    
+    
+    
+    
+    var targetPlanet = universe.weakestNotMinePlanet();
 
     // (4) Send half the ships from my strongest planet to the weakest
     // planet that I do not own.

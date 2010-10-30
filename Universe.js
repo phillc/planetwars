@@ -3,12 +3,13 @@ var sys = require('sys'),
     
 function Universe(planets) {
     var planets,
-        planetsByOwnerCache;
+        getPlanetsByOwnerCache,
+        getNotMyPlanetsCache;
         
     return {
         getPlanetsByOwner : function(owner) {
-            if (planetsByOwnerCache) {
-                return planetsByOwnerCache[owner];
+            if (getPlanetsByOwnerCache) {
+                return getPlanetsByOwnerCache[owner];
             }
 
             var planetsByOwner = {};
@@ -17,8 +18,27 @@ function Universe(planets) {
                 planetsByOwner[owner] = planetsByOwner[owner] || [];
                 planetsByOwner[owner].push(planet);
             });
-            planetsByOwnerCache = planetsByOwner;
-            return planetsByOwnerCache[owner] || [];
+            getPlanetsByOwnerCache = planetsByOwner;
+            return getPlanetsByOwnerCache[owner] || [];
+        },
+        getNotMyPlanets : function() {
+            return getNotMyPlanetsCache || this.getPlanetsByOwner(players.neutral).concat(this.getPlanetsByOwner(players.opponent))
+        },
+        weakestNotMinePlanet : function() {
+            // from starter bot
+            // (3) Find the weakest enemy or neutral planet.
+            dest = -1;
+            destScore = -999999.0;
+            notMyPlanets = pw.notMyPlanets;
+            plen = notMyPlanets.length;
+            for (pi = 0; pi < plen; pi++) {
+                p = notMyPlanets[pi];
+                score = 1.0 / (1 + p.getShips());
+                if (score > destScore) {
+                    destScore = score;
+                    dest = p.getId();
+                }
+            }
         }
     }
 }
