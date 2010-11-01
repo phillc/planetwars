@@ -131,6 +131,16 @@ vows.describe('Planet').addBatch({
                 }
             }
         },
+        'when an enemy fleet would set my planet to 0 ships, and another enemy fleet is incoming later' : {
+            'should take into account the zero boundary' : function() {
+                var planet = Planet({ owner : players.me,
+                                      ships : 10,
+                                      growth : 5 });
+                planet.addIncomingForce(players.opponent, 25, 3);
+                planet.addIncomingForce(players.opponent, 5, 5);
+                assert.equal(planet.shipBalance(), 0);
+            }
+        }
     },
     'farthestForce' : {
         'should use the farthest friendly force' : function() {
@@ -193,5 +203,17 @@ vows.describe('Planet').addBatch({
                 }
             }
         },
+    },
+    'isSamePlanet' : {
+        'should be true when given the same planet' : function() {
+            var planet = new Planet({ id : 2 });
+        
+            assert.isTrue(planet.isSamePlanet(planet));
+        },
+        'should be false when given a different planet' : function() {
+            var planet1 = new Planet({ id : 1 });
+            var planet2 = new Planet({ id : 2 });
+            assert.isFalse(planet1.isSamePlanet(planet2));
+        }
     }
 }).export(module);

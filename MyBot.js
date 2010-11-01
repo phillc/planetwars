@@ -1,10 +1,19 @@
-var planetWars = require('./PlanetWars');
+var planetWars = require('./PlanetWars'),
+    players = require('./Players');
+
 
 function doTurn(universe) {
-    // look at future of my planets
+    var myPlanets = universe.getPlanetsByOwner(players.me);
+    var myPlanetsLength = myPlanets.length;
+    var myEndangeredPlanets = [];
     
+    for (var myPlanetNum = 0 ; myPlanetNum < myPlanetsLength ; myPlanetNum++) {
+        var myPlanet = myPlanets[myPlanetNum];
+        if (myPlanet.shipBalance() < 0) {
+            myEndangeredPlanets.push(myPlanet);
+        }
+    }
     
-    // see if any of them will be taken.
     
     // see how many I have available to send
     

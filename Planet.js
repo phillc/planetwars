@@ -1,8 +1,8 @@
 var sys = require('sys'),
     players = require('./Players');
 
-var planetDistances = [];
-var distance = function(a, b){
+var planetDistancesCache = [];
+var distance = function(a, b) {
     var dx = a.getX() - b.getX();
     var dy = a.getY() - b.getY();
     return Math.ceil(Math.sqrt(dx*dx+dy*dy));
@@ -38,15 +38,18 @@ var Planet = function(options) {
         getY : function() {
             return y;
         },
+        isSamePlanet : function(otherPlanet) {
+            return id == otherPlanet.getId();
+        },
         distanceFrom : function() {
             return function(otherPlanet) {
-                if (planetDistances[id] === undefined){
-                    planetDistances[id] = [];
+                if (planetDistancesCache[id] === undefined){
+                    planetDistancesCache[id] = [];
                 }
-                if(planetDistances[id][otherPlanet.getId()] === undefined) {
-                    planetDistances[id][otherPlanet.getId] = distance(this, otherPlanet);
+                if(planetDistancesCache[id][otherPlanet.getId()] === undefined) {
+                    planetDistancesCache[id][otherPlanet.getId] = distance(this, otherPlanet);
                 }
-                return planetDistances[id][otherPlanet.getId];
+                return planetDistancesCache[id][otherPlanet.getId];
             }
         }(),
         isOwnedBy : function(player) {

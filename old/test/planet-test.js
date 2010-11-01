@@ -184,27 +184,6 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
 }).export(module);
 
 
-vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
-
-    'should not be greater than the current number of ships' : function() {
-        var planet = new Planet({ owner : 1,
-                                  ships : 2,
-                                  growth : 5 });
-        planet.addEnemyIncomingFleet(16, 26);
-        assert.equal(planet.expendableShipsWithoutReinforce(), 2);
-    },
-    'when an enemy fleet would set my planet to 0 ships, and another enemy fleet is incoming later' : {
-        'should take into account the zero boundary' : function() {
-            var planet = new Planet({ owner : 1,
-                                      ships : 10,
-                                      growth : 5 });
-            planet.addEnemyIncomingFleet(3, 25);
-            planet.addEnemyIncomingFleet(5, 5);
-            assert.equal(planet.expendableShipsWithoutReinforce(), 0);
-        }
-    }
-}).export(module);
-
 vows.describe('Planet consider()').addBatch({
     'when given another planet' : {
         topic : function() {
@@ -275,18 +254,5 @@ vows.describe('Planet isEffectivelyEnemy()').addBatch({
                                   ships : 1,
                                   growth : 1 });
         assert.isFalse(planet.isEffectivelyEnemy());
-    }
-}).export(module);
-
-vows.describe('Planet isSamePlanet()').addBatch({
-    'should be true when given the same planet' : function() {
-        var planet = new Planet({ id : 2 });
-        
-        assert.isTrue(planet.isSamePlanet(planet));
-    },
-    'should be false when given a different planet' : function() {
-        var planet1 = new Planet({ id : 1 });
-        var planet2 = new Planet({ id : 2 });
-        assert.isFalse(planet1.isSamePlanet(planet2));
     }
 }).export(module);
