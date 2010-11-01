@@ -83,4 +83,115 @@ vows.describe('Planet').addBatch({
             assert.equal(planet.getIncomingForces(players.opponent, 2), 0);
         }
     },
+    'shipBalance' : {
+        'when the growth rate is 4 and 16 ships are already there,' : {
+            'and there are no incoming ships' : {
+                'should be the number of ships' : function() {
+                    var planet = Planet({ owner : players.me,
+                                          ships : 16,
+                                          growth : 4 });
+                    assert.equal(planet.shipBalance(), 16);
+                },
+            },
+            'and there are an insignificant amount coming in the future' : {
+                'should be the number of ships' : function() {
+                    var planet = Planet({ owner : players.me,
+                                          ships : 16,
+                                          growth : 4 });
+                    planet.addIncomingForce(players.opponent, 2, 5)
+                    assert.equal(planet.shipBalance(), 16);
+                }
+            },
+            'and there is an enemy force coming that can be countered just by growth' : {
+                'should be the number of ships' : function() {
+                    var planet = Planet({ owner : players.me,
+                                          ships : 10,
+                                          growth : 5 });
+                    planet.addIncomingForce(players.opponent, 15, 4)
+                    assert.equal(planet.shipBalance(), 10);
+                }
+            },
+            'and there are 20 enemy ships 3 turns away' : {
+                'should be the number of ships + (turns away * growth) - enemy ships' : function() {
+                    var planet = Planet({ owner : players.me,
+                                          ships : 16,
+                                          growth : 4 });
+                    planet.addIncomingForce(players.opponent, 20, 3);
+                    assert.equal(planet.shipBalance(), 8);
+                },
+                'and there are 5 friendly ships 3 turns away' : {
+                    'should be the number of ships + (turns away * growth) - enemy ships + friendly ships' : function() {
+                        var planet = Planet({ owner : players.me,
+                                              ships : 16,
+                                              growth : 4 });
+                        planet.addIncomingForce(players.opponent, 20, 3);
+                        planet.addIncomingForce(players.me, 5, 3);
+                        assert.equal(planet.shipBalance(), 13);
+                    }
+                }
+            }
+        },
+    },
+    'farthestForce' : {
+        'should use the farthest friendly force' : function() {
+            var planet = Planet({ owner : players.me });
+            planet.addIncomingForce(players.me, 1, 3);
+            planet.addIncomingForce(players.me, 1, 10);
+            planet.addIncomingForce(players.me, 1, 4);
+            assert.equal(planet.farthestForce(), 10)
+        },
+        'should use the farthest enemy force' : function() {
+            var planet = Planet({ owner : players.opponent });
+            planet.addIncomingForce(players.me, 1, 10);
+            planet.addIncomingForce(players.me, 1, 11);
+            planet.addIncomingForce(players.me, 1, 9);
+            assert.equal(planet.farthestForce(), 11)
+        },
+        'should use the farthest of the friendly or enemy force' : function() {
+            var planet = Planet({ owner : players.me });
+            planet.addIncomingForce(players.me, 1, 3);
+            planet.addIncomingForce(players.opponent, 1, 3);
+            planet.addIncomingForce(players.me, 1, 10);
+            planet.addIncomingForce(players.opponent, 1, 17);
+            planet.addIncomingForce(players.me, 1, 4);
+            assert.equal(planet.farthestForce(), 17)
+        }
+    },
+    'futureState' : {
+        'when the growth rate is 3 and 2 ships are already there,' : {
+            'and it is mine' : {
+                topic: function(){
+                    return Planet({ owner : players.me,
+                                    ships : 2,
+                                    growth : 3 });
+                },
+                'in 3 turns should be the number of ships + turns * growth rate' : function(planet) {
+                    assert.equal(planet.futureState(3).owner, players.me);
+                    assert.equal(planet.futureState(3).ships, 11);
+                }
+            },
+            'and it is the enemys' : {
+                topic: function(){
+                    return Planet({ owner : players.opponent,
+                                    ships : 2,
+                                    growth : 3 });
+                },
+                'in 3 turns should be the number of ships + turns * growth rate' : function(planet) {
+                    assert.equal(planet.futureState(3).owner, players.opponent);
+                    assert.equal(planet.futureState(3).ships, 11);
+                }
+            },
+            'and it is neutral' : {
+                topic: function(){
+                    return Planet({ owner : players.neutral,
+                                    ships : 2,
+                                    growth : 3 });
+                },
+                'in 3 turns should be the number of ships' : function(planet) {
+                    assert.equal(planet.futureState(3).owner, players.neutral);
+                    assert.equal(planet.futureState(3).ships, 2);
+                }
+            }
+        },
+    }
 }).export(module);

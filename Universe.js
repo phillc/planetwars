@@ -2,8 +2,9 @@ var sys = require('sys'),
     players = require('./Players');
     
 function Universe(planets) {
-    var planets,
-        getPlanetsByOwnerCache,
+    var planets;
+    
+    var getPlanetsByOwnerCache,
         getNotMyPlanetsCache;
         
     return {
@@ -29,7 +30,7 @@ function Universe(planets) {
             // (3) Find the weakest enemy or neutral planet.
             dest = -1;
             destScore = -999999.0;
-            notMyPlanets = pw.notMyPlanets;
+            notMyPlanets = this.getNotMyPlanets();
             plen = notMyPlanets.length;
             for (pi = 0; pi < plen; pi++) {
                 p = notMyPlanets[pi];

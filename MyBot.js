@@ -3,6 +3,7 @@ var planetWars = require('./PlanetWars');
 function doTurn(universe) {
     // look at future of my planets
     
+    
     // see if any of them will be taken.
     
     // see how many I have available to send
@@ -11,7 +12,7 @@ function doTurn(universe) {
     
     // save the savable ones using ships from closest planets
     
-    // if planets are not savable, consider sending those ships elsewhere (make them available for next stage)
+    // if planets are not savable, consider sending those ships elsewhere (make them available for next stage), or consider that planet as an attackable planet
     
     // do something with the available ships
     

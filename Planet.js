@@ -9,14 +9,16 @@ var distance = function(a, b){
 }
 
 var Planet = function(options) {
-    var id     = options.id;
-    var x      = options.x;
-    var y      = options.y;
-    var owner  = options.owner;
-    var ships  = options.ships;
-    var growth = options.growth;
-    var incomingForces = [];
-
+    var id     = options.id,
+        x      = options.x,
+        y      = options.y,
+        owner  = options.owner,
+        ships  = options.ships,
+        growth = options.growth,
+        incomingForces = [];
+        
+    var futureStateCache = [];
+    
     return {
         getShips : function() {
             return ships;
@@ -59,6 +61,75 @@ var Planet = function(options) {
         },
         getIncomingForces : function(player, turns) {
             return (incomingForces[turns] && incomingForces[turns][player]) || 0;
+        },
+        farthestForce : function() {
+            return incomingForces.length - 1;
+        },
+        futureState : function(turns) {
+            if (turns === 0) {
+                return { ships : ships, owner : owner };
+            }
+            if (futureStateCache[turns]) {
+                return futureStateCache[turns];
+            }
+            
+            var prevTurn = this.futureState(turns - 1);
+            var thisTurn = this.createNextTurn(prevTurn, turns);
+            futureStateCache[turns] = thisTurn;
+            return thisTurn;
+        },
+        shipBalance : function() {
+            var balance = ships;
+            var farthestAction = this.farthestForce();
+            
+            for(var i = 1 ; i <= farthestAction ; i++) {
+                var future = this.futureState(i);
+                if (future.owner === owner) {
+                    balance = Math.min(balance, future.ships);
+                } else {
+                    balance = -futureState.ships;
+                }
+            }
+            return balance;
+        },
+        changesOwnerAt : function() {
+            
+        },
+        createNextTurn : function(prevTurnPlanet, turnNumber) {
+            var nextTurnShips = prevTurnPlanet.ships,
+                nextTurnOwner = prevTurnPlanet.owner;
+
+            if (nextTurnOwner !== players.neutral) {
+                nextTurnShips += growth;
+            }
+
+            var opponentShips = this.getIncomingForces(players.opponent, turnNumber);
+            var myShips = this.getIncomingForces(players.me, turnNumber);
+
+            if (opponentShips > myShips) {
+                var shipDiff = opponentShips - myShips; 
+                if (nextTurnOwner === players.opponent) {
+                    nextTurnShips += shipDiff;
+                } else {
+                    nextTurnShips -= shipDiff;
+                    if (nextTurnShips < 0) {
+                        nextTurnShips = -nextTurnShips;
+                        nextTurnOwner = player.opponent;
+                    }
+                }
+            } else if (myShips > opponentShips) {
+                var shipDiff = myShips - opponentShips;
+                if (nextTurnOwner === players.me) {
+                    nextTurnShips += shipDiff;
+                } else {
+                    nextTurnShips -= shipDiff;
+                    if (nextTurnShips < 0) {
+                        nextTurnShips = -nextTurnShips;
+                        nextTurnOwner = players.me;
+                    }
+                }
+            }
+            return { ships : nextTurnShips, owner : nextTurnOwner }
         }
     }
 }

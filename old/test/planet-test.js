@@ -5,34 +5,7 @@ var vows = require('vows'),
 var Planet = require('../Planet').Planet;
 
 vows.describe('Planet effectiveDefensiveValue()').addBatch({
-    'when the growth rate is 3 and 2 ships are already there,' : {
-        'and it is mine' : {
-            topic: function(){
-                return new Planet({ owner : 1,
-                                    ships : 2,
-                                    growth : 3 });
-            },
-            'right now should be equal to the number of ships' : function(planet){
-                assert.equal(planet.effectiveDefensiveValue(), 2);
-            },
-            'in 3 turns should be the number of ships + turns * growth rate' : function(planet) {
-                assert.equal(planet.effectiveDefensiveValue(3), 11);
-            }
-        },
-        'and it is the enemys' : {
-            topic: function(){
-                return new Planet({ owner : 2,
-                                    ships : 2,
-                                    growth : 3 });
-            },
-            'right now should be equal to the - number of ships - 1' : function(planet){
-                assert.equal(planet.effectiveDefensiveValue(), -3);
-            },
-            'in 3 turns should be the -1 * number of ships - turns * growth rate - 1' : function(planet) {
-                assert.equal(planet.effectiveDefensiveValue(3), -12);
-            }
-        }
-    },
+
     'when there would be zero ships on it' : {
         'and it is mine' : function() {
             var planet = new Planet({ owner : 1,
@@ -212,33 +185,7 @@ vows.describe('Planet effectiveDefensiveValue()').addBatch({
 
 
 vows.describe('Planet expendableShipsWithoutReinforce()').addBatch({
-    'when the growth rate is 4 and 16 ships are already there,' : {
-        'should be the number of ships' : function() {
-            var planet = new Planet({ owner : 1,
-                                      ships : 16,
-                                      growth : 4 });
-            assert.equal(planet.expendableShipsWithoutReinforce(), 16);
-        },
-        'and there are 20 enemy ships 3 turns away' : {
-            'should be the number of ships + (turns away * growth) - enemy ships' : function() {
-                var planet = new Planet({ owner : 1,
-                                          ships : 16,
-                                          growth : 4 });
-                planet.addEnemyIncomingFleet(3, 20);
-                assert.equal(planet.expendableShipsWithoutReinforce(), 8);
-            },
-            'and there are 5 friendly ships 2 turns away' : {
-                'should be the number of ships + (turns away * growth) - enemy ships + friendly ships' : function() {
-                    var planet = new Planet({ owner : 1,
-                                              ships : 16,
-                                              growth : 4 });
-                    planet.addEnemyIncomingFleet(3, 20);
-                    planet.addMyIncomingFleet(2, 5);
-                    assert.equal(planet.expendableShipsWithoutReinforce(), 13);
-                }
-            }
-        }
-    },
+
     'should not be greater than the current number of ships' : function() {
         var planet = new Planet({ owner : 1,
                                   ships : 2,
