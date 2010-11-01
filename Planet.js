@@ -90,7 +90,7 @@ var Planet = function(options) {
                 if (future.owner === owner) {
                     balance = Math.min(balance, future.ships);
                 } else {
-                    balance = -futureState.ships;
+                    balance = -future.ships;
                 }
             }
             return balance;
@@ -117,7 +117,7 @@ var Planet = function(options) {
                     nextTurnShips -= shipDiff;
                     if (nextTurnShips < 0) {
                         nextTurnShips = -nextTurnShips;
-                        nextTurnOwner = player.opponent;
+                        nextTurnOwner = players.opponent;
                     }
                 }
             } else if (myShips > opponentShips) {
@@ -133,7 +133,8 @@ var Planet = function(options) {
                 }
             }
             return { ships : nextTurnShips, owner : nextTurnOwner }
-        }
+        },
+        
     }
 }
 

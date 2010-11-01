@@ -32,6 +32,15 @@ function Universe(planets) {
             planetsNotOwnedByCache[owner] = this.planetsOwnedBy(players.neutral).concat(this.planetsOwnedBy(players.enemyOf(owner)));
             return this.planetsNotOwnedBy(owner);
         },
+        planetsOwnedByWithNegativeShipBalance : function(owner) {
+            var negBalance = []
+            this.planetsOwnedBy(owner).forEach(function(planet) {
+                if (planet.shipBalance() < 0) {
+                    negBalance.push(planet);
+                }
+            });
+            return negBalance;
+        },
         closestPlanetsTo : function(planet) {
             var planetId = planet.getId();
             if (closestPlanetsToCache[planetId]) {
@@ -53,23 +62,6 @@ function Universe(planets) {
             closestPlanetsToCache[planetId] = ids;
             return this.closestPlanetsTo(planet);
         },
-        
-        weakestNotMinePlanet : function() {
-            // from starter bot
-            // (3) Find the weakest enemy or neutral planet.
-            dest = -1;
-            destScore = -999999.0;
-            notMyPlanets = this.getNotMyPlanets();
-            plen = notMyPlanets.length;
-            for (pi = 0; pi < plen; pi++) {
-                p = notMyPlanets[pi];
-                score = 1.0 / (1 + p.getShips());
-                if (score > destScore) {
-                    destScore = score;
-                    dest = p.getId();
-                }
-            }
-        }
     }
 }
 

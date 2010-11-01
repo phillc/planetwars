@@ -1,45 +1,39 @@
 var planetWars = require('./PlanetWars'),
-    players = require('./Players');
+    players = require('./Players'),
+    sys = require('sys');
 
+
+var sendShipsFromTo = function(ships, from, to) {
+    sys.debug("send " + ships + " from " + from.getId() + " to " + to.getId());
+    process.stdout.write('' + Math.floor(from.getId()) + ' ' +
+            Math.floor(to.getId()) + ' ' + Math.floor(ships) + '\n');
+}
 
 function doTurn(universe) {
-    var myPlanets = universe.getPlanetsByOwner(players.me);
+    var myPlanets = universe.planetsOwnedBy(players.me);
     var myPlanetsLength = myPlanets.length;
-    var myEndangeredPlanets = [];
+        
+    var sendToPlanets = universe.planetsOwnedByWithNegativeShipBalance(players.me).concat(universe.planetsNotOwnedBy(players.me))
     
-    for (var myPlanetNum = 0 ; myPlanetNum < myPlanetsLength ; myPlanetNum++) {
-        var myPlanet = myPlanets[myPlanetNum];
-        if (myPlanet.shipBalance() < 0) {
-            myEndangeredPlanets.push(myPlanet);
-        }
-    }
-    
-    
-    // see how many I have available to send
-    
-    // determine if any of them can be saved.
-    
-    // save the savable ones using ships from closest planets
-    
-    // if planets are not savable, consider sending those ships elsewhere (make them available for next stage), or consider that planet as an attackable planet
-    
-    // do something with the available ships
+    sendShipsFromTo(myPlanets[0].shipBalance(), myPlanets[0], sendToPlanets[0]);
     
     
     
     
     
     
+    // can i send to it a defendable amount
+    
+    // does it need to go right now?
+    
+    // 
     
     
-    var targetPlanet = universe.weakestNotMinePlanet();
-
-    // (4) Send half the ships from my strongest planet to the weakest
-    // planet that I do not own.
-    if ( source >= 0 && dest >= 0 ) {
-        numShips = Math.floor(sourceShips / 2);
-        pw.issueOrder(source, dest, numShips);
-    }
+    
+    
+    
+    
+    // prevent from consideration neutral planets that I would not regain cost sunk by 200 turns
 }
 
 // Play the game with my bot

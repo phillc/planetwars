@@ -129,6 +129,13 @@ vows.describe('Planet').addBatch({
                         assert.equal(planet.shipBalance(), 13);
                     }
                 }
+            },
+            'and it will be taken by the enemy' : function() {
+                var planet = Planet({ owner : players.opponent,
+                                      ships : 16,
+                                      growth : 4 });
+                planet.addIncomingForce(players.me, 100, 1);
+                assert.equal(planet.shipBalance(), -80);
             }
         },
         'when an enemy fleet would set my planet to 0 ships, and another enemy fleet is incoming later' : {
