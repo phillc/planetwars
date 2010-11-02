@@ -7,9 +7,13 @@ function Universe(planets) {
     var planets;
     
     var planetsOwnedByCache,
-        planetsNotOwnedByCache = [];
+        planetsNotOwnedByCache = [],
+        closestPlanetsToOwnedByCache = [];
         
     return {
+        allPlanets : function() {
+            return planets;
+        },
         planetsOwnedBy : function(owner) {
             if (planetsOwnedByCache) {
                 return planetsOwnedByCache[owner];
@@ -32,15 +36,6 @@ function Universe(planets) {
             planetsNotOwnedByCache[owner] = this.planetsOwnedBy(players.neutral).concat(this.planetsOwnedBy(players.enemyOf(owner)));
             return this.planetsNotOwnedBy(owner);
         },
-        planetsOwnedByWithNegativeShipBalance : function(owner) {
-            var negBalance = []
-            this.planetsOwnedBy(owner).forEach(function(planet) {
-                if (planet.shipBalance() < 0) {
-                    negBalance.push(planet);
-                }
-            });
-            return negBalance;
-        },
         closestPlanetsTo : function(planet) {
             var planetId = planet.getId();
             if (closestPlanetsToCache[planetId]) {
@@ -62,8 +57,17 @@ function Universe(planets) {
             closestPlanetsToCache[planetId] = ids;
             return this.closestPlanetsTo(planet);
         },
-        closestPlanetToForPlayer : function(planet, player) {
+        closestPlanetsToOwnedBy : function(planet, player) {
+            var planetId = planet.getId();
+            if(closestPlanetsToOwnedByCache[planetId] && closestPlanetsToOwnedByCache[planetId][player]) {
+                return closestPlanetsToOwnedByCache[planetId][player];
+            }
             
+            closestPlanetsToOwnedByCache[planetId] = closestPlanetsToOwnedByCache[planetId] || []
+            closestPlanetsToOwnedByCache[planetId][player] = _.filter(this.closestPlanetsTo(planet), function(closePlanet) {
+                return closePlanet.getOwner().samePlayerAs(player);
+            });
+            return this.closestPlanetsToOwnedBy(planet, player);
         }
     }
 }

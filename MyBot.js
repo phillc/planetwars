@@ -28,7 +28,13 @@ function doTurn(universe) {
     var myPlanets = universe.planetsOwnedBy(players.me);
     var myPlanetsLength = myPlanets.length;
         
-    var sendToPlanets = universe.planetsOwnedByWithNegativeShipBalance(players.me).concat(universe.planetsNotOwnedBy(players.me))
+    var allPlanets = universe.allPlanets();
+    
+    allPlanets.forEach(function(planet) {
+        costPerGrowth = planet.effectiveDefensiveValue(planet.distanceFrom())
+        []
+    });
+    
     
     var planetsThatCanSend = [];
     
