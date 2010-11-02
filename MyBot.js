@@ -15,6 +15,10 @@ var tupleSortGreaterFirst = function(tuple1, tuple2) {
     return tuple2[0] - tuple1[0];
 }
 
+var tupleSortSmallerFirst = function(tuple1, tuple2) {
+    return tuple1[0] - tuple2[0];
+}
+
 var turnNumber = 0;
 var maxTurnNumber = 200;
 
@@ -31,21 +35,32 @@ function doTurn(universe) {
     var closestEnemiesTuple = [];
     myPlanets.forEach(function(planet) {
         var closePlanets = universe.closestPlanetsTo(planet);
-        var closestEnemy = _.detect(closePlanets, function(closePlanet) {
+        var closestEnemy = _.filter(closePlanets, function(closePlanet) {
             return closePlanet.isOwnedBy(players.opponent);
         });
-        if (closestEnemy) {
-            closestEnemiesTuple.push([planet.distanceFrom(closestEnemy), planet]);
+        
+        
+        if (closestEnemy[0]) {
+            var distance = planet.distanceFrom(closestEnemy[0])
+            if(closestEnemy[1]) {
+                distance += planet.distanceFrom(closestEnemy[1])
+            }
+            closestEnemiesTuple.push([distance, planet]);
         }
     });
     
-    closestEnemiesTuple.sort(tupleSortGreaterFirst)
+    closestEnemiesTuple.sort(tupleSortSmallerFirst)
     var focalPoint = closestEnemiesTuple.shift();
     
     closestEnemiesTuple.forEach(function(aPlanet) {
-        sendShipsFromTo(aPlanet[1].shipBalance(), aPlanet[1], focalPoint[1]);
+        if (aPlanet[1].shipBalance() > 0) {
+            sendShipsFromTo(aPlanet[1].shipBalance(), aPlanet[1], focalPoint[1]);
+        }
     })
-    sendShipsFromTo(focalPoint[1].shipBalance(), focalPoint[1], sendToPlanets[0]);
+    
+    if (focalPoint[1].shipBalance() > 0) {
+        sendShipsFromTo(focalPoint[1].shipBalance(), focalPoint[1], sendToPlanets[0]);
+    }
     
     
     

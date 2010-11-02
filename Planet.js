@@ -131,6 +131,15 @@ var Planet = function(options) {
             }
             return { ships : nextTurnShips, owner : nextTurnOwner }
         },
+        effectiveDefensiveValue : function(player, turns) {
+            var futureState = this.futureState(turns);
+            
+            if (player.samePlayerAs(futureState.owner)) {
+                return futureState.ships;
+            }
+            
+            return  -futureState.ships - 1;
+        }
     }
 }
 
