@@ -349,22 +349,22 @@ exports.weights = {
         {
           "distance": .1,
           "effDef": .1,
-          "countWouldOwn": .1
+          "planetVotes": .1
         },
         {
           "distance": .1,
           "effDef": .1,
-          "countWouldOwn": .1
+          "planetVotes": .1
         },
         {
           "distance": .1,
           "effDef": .1,
-          "countWouldOwn": .1
+          "planetVotes": .1
         },
         {
           "distance": .1,
           "effDef": .1,
-          "countWouldOwn": .1
+          "planetVotes": .1
         }
     ],
     "hidden_weights": [

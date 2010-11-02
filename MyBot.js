@@ -59,19 +59,29 @@ function doTurn(universe) {
         var values = { "isEffectivelyNotMine" : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()) < 0 ? -1 : 1,
                        "isEffectivelyEnemy"   : aPlanet.effectiveDefensiveValue(players.opponent, aPlanet.farthestForce()) >= 0 ? -1 : 1,
                        "isNeutral"            : aPlanet.isNeutral(),
-                       "growth"               : aPlanet.getGrowth() }
+                       "growth"               : aPlanet.getGrowth(),
+                       "planetVotes"          : planetConsiderationsById[aPlanet.getId()] }
                        
         planetsByScore.push([network.compute("attackConsideration", values), aPlanet]);
     });
     
     planetsByScore.sort(tupleSortGreaterFirst);
     
-    myPlanets.forEach(function(myPlanet){
-        var shipBalance = myPlanet.shipBalance();
-        if (shipBalance > 0) {
-            sendShipsFromTo(shipBalance, myPlanet, planetsByScore[0][1])
-        }
-    });
+    
+    // Surplus by target? As in, if a surplus is kept because of one planet, the target planet actually has more surplus
+    
+    // var myPlanetsBySurplus = [];
+    // myPlanets.forEach(function(myPlanet) {
+    //     var surplus = 
+    //     if (surplus > 0) {
+    //         myPlanetsBySurplus.push([surplus, myPlanet]);
+    //     }
+    // });
+    
+    
+    
+    
+    
 }
 
 // Play the game with my bot

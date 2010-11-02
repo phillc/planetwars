@@ -69,6 +69,19 @@ function Universe(planets) {
             });
             return this.closestPlanetsToOwnedBy(planet, player);
         },
+        planetSurplus : function(planet) {
+            var owner = planet.getOwner();
+            var enemy = enemyOf(owner);
+            var closestEnemyPlanet = this.closestPlanetsToOwnedBy(planet, enemy)[0];
+            var distance = planet.distanceFrom(closestEnemyPlanet);
+            var nearbyFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, owner);
+            fakePlanet = planet.clone();
+            fakePlanet.addIncomingForce(enemy, closestEnemyPlanet.getShips(), distance)
+            return fakePlanet.shipBalance();
+        },
+        amountNeededToDefend : function(planet) {
+            
+        }
     };
 }
 

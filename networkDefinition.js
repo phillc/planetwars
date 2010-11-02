@@ -6,7 +6,7 @@ var networks = {
                    "isNeutral",
                    "growth",
                    ],
-        hiddenLayer : 7
+        hiddenLayer : 4
     },
     planetVote : {
         inputs : [ "distance",

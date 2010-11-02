@@ -406,4 +406,9 @@ vows.describe('Planet').addBatch({
             }
         }
     },
+    'clone' : {
+        'destructive action should not affect original' : {
+            'adding fleets' : ''
+        }
+    }
 }).export(module);

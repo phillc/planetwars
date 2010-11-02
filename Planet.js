@@ -140,6 +140,19 @@ var Planet = function(options) {
             
             return  -futureState.ships - 1;
         },
+        clone : function() {
+            var clonedPlanet =  Planet({ id : id,
+                                         x : x,
+                                         y : y,
+                                         owner : owner,
+                                         ships: ships, 
+                                         growth : growth });
+            for (var turns = 1 ; turns <= this.farthestForce() ; turns++) {
+                clonedPlanet.addIncomingForce(players.me, this.getIncomingForces(players.me, turns), turns)
+                clonedPlanet.addIncomingForce(players.opponent, this.getIncomingForces(players.opponent, turns), turns)
+            }
+            return clonedPlanet;
+        }
     };
 }
 
