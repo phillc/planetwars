@@ -33,9 +33,7 @@ var Universe = function(planets, options) {
     }
 }
 
-var tupleSort = function(tuple1, tuple2) {
-    return tuple2[0] - tuple1[0];
-}
+
 
 var decisionConsiderationSort = function(a, b){
     return b.decisionConsiderationOrder() - a.decisionConsiderationOrder();

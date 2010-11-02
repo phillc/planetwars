@@ -101,5 +101,5 @@ vows.describe('Universe').addBatch({
             assert.isTrue(universe.closestPlanetsTo(fromPlanet)[5].isSamePlanet(planet3));
             assert.equal(universe.closestPlanetsTo(fromPlanet)[5].getId(), planet3.getId());
         }
-    }
+    },
 }).export(module);

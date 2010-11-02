@@ -53,7 +53,7 @@ var Planet = function(options) {
             }
         }(),
         isOwnedBy : function(player) {
-            return owner === player;
+            return owner.samePlayerAs(player);
         },
         isNeutral : function() {
             return owner === players.neutral;
@@ -95,9 +95,6 @@ var Planet = function(options) {
             }
             return balance;
         },
-        changesOwnerAt : function() {
-            
-        },
         createNextTurn : function(prevTurnPlanet, turnNumber) {
             var nextTurnShips = prevTurnPlanet.ships,
                 nextTurnOwner = prevTurnPlanet.owner;
@@ -134,7 +131,6 @@ var Planet = function(options) {
             }
             return { ships : nextTurnShips, owner : nextTurnOwner }
         },
-        
     }
 }
 

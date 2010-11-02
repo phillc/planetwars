@@ -1,3 +1,5 @@
+require('./underscore');
+
 var planetWars = require('./PlanetWars'),
     players = require('./Players'),
     sys = require('sys');
@@ -9,15 +11,41 @@ var sendShipsFromTo = function(ships, from, to) {
             Math.floor(to.getId()) + ' ' + Math.floor(ships) + '\n');
 }
 
+var tupleSortGreaterFirst = function(tuple1, tuple2) {
+    return tuple2[0] - tuple1[0];
+}
+
+var turnNumber = 0;
+var maxTurnNumber = 200;
+
 function doTurn(universe) {
+    turnNumber += 1;
+    
     var myPlanets = universe.planetsOwnedBy(players.me);
     var myPlanetsLength = myPlanets.length;
         
     var sendToPlanets = universe.planetsOwnedByWithNegativeShipBalance(players.me).concat(universe.planetsNotOwnedBy(players.me))
     
-    sendShipsFromTo(myPlanets[0].shipBalance(), myPlanets[0], sendToPlanets[0]);
+    var planetsThatCanSend = [];
     
+    var closestEnemiesTuple = [];
+    myPlanets.forEach(function(planet) {
+        var closePlanets = universe.closestPlanetsTo(planet);
+        var closestEnemy = _.detect(closePlanets, function(closePlanet) {
+            return closePlanet.isOwnedBy(players.opponent);
+        });
+        if (closestEnemy) {
+            closestEnemiesTuple.push([planet.distanceFrom(closestEnemy), planet]);
+        }
+    });
     
+    closestEnemiesTuple.sort(tupleSortGreaterFirst)
+    var focalPoint = closestEnemiesTuple.shift();
+    
+    closestEnemiesTuple.forEach(function(aPlanet) {
+        sendShipsFromTo(aPlanet[1].shipBalance(), aPlanet[1], focalPoint[1]);
+    })
+    sendShipsFromTo(focalPoint[1].shipBalance(), focalPoint[1], sendToPlanets[0]);
     
     
     

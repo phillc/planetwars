@@ -62,6 +62,9 @@ function Universe(planets) {
             closestPlanetsToCache[planetId] = ids;
             return this.closestPlanetsTo(planet);
         },
+        closestPlanetToForPlayer : function(planet, player) {
+            
+        }
     }
 }
 
