@@ -16,7 +16,7 @@ function Universe(planets) {
         },
         planetsOwnedBy : function(owner) {
             if (planetsOwnedByCache) {
-                return planetsOwnedByCache[owner];
+                return planetsOwnedByCache[owner] || [];
             }
 
             var planetsByOwner = {};

@@ -30,16 +30,20 @@ var activation = function() {
 exports.activation = activation;
 
 var compute = function(networkName, values) {
-    var network = networks[networkName];
+    // var network = networks[networkName];
     var keys = _.keys(values);
-    var network_input_weights = weights[networkName].input_weights;
-    var network_hidden_weights = weights[networkName].hidden_weights;
+    var network_input_weights = (weights[networkName] && weights[networkName].input_weights) || [];
+    var network_hidden_weights = (weights[networkName] && weights[networkName].hidden_weights) || [];
     
     var hidden_layer_results = [];
     for(var weight_set_number in network_input_weights) {
         var input_weights = network_input_weights[weight_set_number];
         hidden_layer_results.push(_.reduce(keys, function(memo, key){
             // sys.debug("key: " + key + " values[key]: " + values[key])
+            if (typeof values[key] !== "number") {
+                sys.debug("" + key + " wasnt a number yo " + values[key])
+                throw "Not a number";
+            }
             return memo + activation(values[key] * (input_weights[key] || 0));
         }, 0));
     }

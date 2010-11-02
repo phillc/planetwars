@@ -7,7 +7,7 @@ var planetWars = require('./PlanetWars'),
 
 
 var sendShipsFromTo = function(ships, from, to) {
-    sys.debug("send " + ships + " from " + from.getId() + " to " + to.getId());
+    // sys.debug("send " + ships + " from " + from.getId() + " to " + to.getId());
     from.deductShips(ships)
     process.stdout.write('' + Math.floor(from.getId()) + ' ' +
             Math.floor(to.getId()) + ' ' + Math.floor(ships) + '\n');
@@ -47,7 +47,8 @@ function doTurn(universe) {
                            // canTakeRightNow
                            // will have more to send
                            // can cover that planet
-            planetConsiderationsById[otherPlanetId] += network.activation(network.compute("planetVote", values));
+            var voteValue = network.activation(network.compute("planetVote", values));
+            planetConsiderationsById[otherPlanetId] += voteValue;
         });
     });
     
@@ -59,9 +60,9 @@ function doTurn(universe) {
         
         var values = { "isEffectivelyNotMine" : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()) < 0 ? -1 : 1,
                        "isEffectivelyEnemy"   : aPlanet.effectiveDefensiveValue(players.opponent, aPlanet.farthestForce()) >= 0 ? -1 : 1,
-                       "isNeutral"            : aPlanet.isNeutral(),
+                       "isNeutral"            : aPlanet.isNeutral() ? 1 : -1,
                        "growth"               : aPlanet.getGrowth(),
-                       "planetVotes"          : planetConsiderationsById[aPlanet.getId()] }
+                       "planetVotes"          : planetConsiderationsById[aPlanet.getId()] || 0 }
                        
         planetsByScore.push([network.compute("attackConsideration", values), aPlanet]);
     });
@@ -97,9 +98,10 @@ function doTurn(universe) {
             
             var shipBalance = closePlanet.shipBalance();
             if (shipBalance > -effDef) {
-                sendShipsFromTo(shipBalance, closePlanet, targetPlanet);
+                sendShipsFromTo(-effDef, closePlanet, targetPlanet);
                 break;
             } else {
+                // send to myClosestPlanets[0];
                 clone.addIncomingForce(players.me, shipBalance, distance);
                 closePlanet.deductShips(shipBalance);
             }

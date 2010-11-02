@@ -80,6 +80,7 @@ task :run do
   run_times.times do
     Rake::Task["mutate"].execute
     Rake::Task["matchup"].execute
+    `git add -A`
     Rake::Task["tcp"].execute
   end
 end
@@ -247,12 +248,12 @@ module Mutations
         
         input_weights = []
         hidden_layer_number.times do |num|
-          input_weights.push(mutate_inputs(inputs, mutation_weights[network_name]["input_weights"][num]))
+          input_weights.push(mutate_inputs(inputs, (mutation_weights[network_name] && mutation_weights[network_name]["input_weights"][num]) || {} ))
         end
         
         hidden_weights = []
         hidden_layer_number.times do |num|
-          hidden_weights.push(mutate_input_value(mutation_weights[network_name]["hidden_weights"][num]))
+          hidden_weights.push(mutate_input_value(mutation_weights[network_name] && mutation_weights[network_name]["hidden_weights"][num]))
         end
         
         weights[network_name] = { :input_weights => input_weights,
