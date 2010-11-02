@@ -19,6 +19,8 @@ var Planet = function(options) {
         
     var futureStateCache = [];
     
+    var deductShips = 0;
+    
     return {
         getShips : function() {
             return ships;
@@ -93,7 +95,7 @@ var Planet = function(options) {
                     balance = -future.ships;
                 }
             }
-            return balance;
+            return balance - deductShips;
         },
         createNextTurn : function(prevTurnPlanet, turnNumber) {
             var nextTurnShips = prevTurnPlanet.ships,
@@ -152,6 +154,10 @@ var Planet = function(options) {
                 clonedPlanet.addIncomingForce(players.opponent, this.getIncomingForces(players.opponent, turns), turns)
             }
             return clonedPlanet;
+        },
+        deductShips : function(byShips) {
+            // can't I do this better?
+            deductShips += byShips;
         }
     };
 }

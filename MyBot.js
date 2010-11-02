@@ -8,6 +8,7 @@ var planetWars = require('./PlanetWars'),
 
 var sendShipsFromTo = function(ships, from, to) {
     sys.debug("send " + ships + " from " + from.getId() + " to " + to.getId());
+    from.deductShips(ships)
     process.stdout.write('' + Math.floor(from.getId()) + ' ' +
             Math.floor(to.getId()) + ' ' + Math.floor(ships) + '\n');
 }
@@ -78,10 +79,36 @@ function doTurn(universe) {
     //     }
     // });
     
-    
-    
-    
-    
+
+    planetsByScore.forEach(function(tuple) {
+        var targetPlanet = tuple[1];
+        var myClosestPlanets = universe.closestPlanetsToOwnedBy(targetPlanet, players.me);
+        var myClosestPlanetsLength = myClosestPlanets.length;
+        
+        var clone = targetPlanet.clone();
+        var commands = [];
+        for (var pNum = 0 ; pNum < myClosestPlanetsLength ; pNum++) {
+            var closePlanet = myClosestPlanets[pNum];
+            var distance = closePlanet.distanceFrom(targetPlanet);
+            var effDef = clone.effectiveDefensiveValue(players.me, distance);
+            if (effDef >= 0) {
+                break;
+            }
+            
+            var shipBalance = closePlanet.shipBalance();
+            if (shipBalance > -effDef) {
+                sendShipsFromTo(shipBalance, closePlanet, targetPlanet);
+                break;
+            } else {
+                clone.addIncomingForce(players.me, shipBalance, distance);
+                closePlanet.deductShips(shipBalance);
+            }
+        }
+        
+        
+        
+        
+    })
 }
 
 // Play the game with my bot

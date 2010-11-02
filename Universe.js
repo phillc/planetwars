@@ -81,7 +81,7 @@ function Universe(planets) {
         },
         amountNeededToDefend : function(planet) {
             
-        }
+        },
     };
 }
 
