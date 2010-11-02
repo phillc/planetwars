@@ -68,8 +68,8 @@ function Universe(planets) {
                 return closePlanet.getOwner().samePlayerAs(player);
             });
             return this.closestPlanetsToOwnedBy(planet, player);
-        }
-    }
+        },
+    };
 }
 
 

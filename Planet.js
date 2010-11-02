@@ -15,7 +15,7 @@ var Planet = function(options) {
         owner  = options.owner,
         ships  = options.ships,
         growth = options.growth,
-        incomingForces = [];
+        incomingForces = [[]];
         
     var futureStateCache = [];
     
@@ -139,8 +139,8 @@ var Planet = function(options) {
             }
             
             return  -futureState.ships - 1;
-        }
-    }
+        },
+    };
 }
 
 exports.Planet = Planet;

@@ -150,6 +150,10 @@ vows.describe('Planet').addBatch({
         }
     },
     'farthestForce' : {
+        'return 0 if nothing incoming' : function() {
+            var planet = Planet({ owner : players.me });
+            assert.equal(planet.farthestForce(), 0)
+        },
         'should use the farthest friendly force' : function() {
             var planet = Planet({ owner : players.me });
             planet.addIncomingForce(players.me, 1, 3);
@@ -390,7 +394,7 @@ vows.describe('Planet').addBatch({
                 'should work with a neutral planet at the zero boundary' : function() {
                     var planet = Planet({ owner : players.neutral,
                                           ships : 15,
-                                           growth : 5 });
+                                          growth : 5 });
 
                     planet.addIncomingForce(players.me, 15, 1);
                     planet.addIncomingForce(players.me, 1, 3);
@@ -401,5 +405,5 @@ vows.describe('Planet').addBatch({
                 }
             }
         }
-    }
+    },
 }).export(module);

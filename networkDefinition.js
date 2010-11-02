@@ -1,38 +1,17 @@
 var networks = {
     attackConsideration : {
-        inputs : [ "isEnemy",
+        inputs : [
                    "isEffectivelyEnemy",
                    "isEffectivelyNotMine",
-                   "isFriendly",
                    "isNeutral",
-                   "canTakeRightNow",
                    "growth",
-                   "effDef",
-                   "distance",
-                   "distanceOneMyPlanets",
-                   "distanceOneEnemyPlanets",
-                   "shipsOneMyPlanets",
-                   "shipsOneEnemyPlanets",
-                   "growthOneMyPlanets",
-                   "growthOneEnemyPlanets",
-                   "distanceThreeMyPlanets",
-                   "distanceThreeEnemyPlanets",
-                   "shipsThreeMyPlanets",
-                   "shipsThreeEnemyPlanets",
-                   "growthThreeMyPlanets",
-                   "growthThreeEnemyPlanets",
-                   "isSelf",
-                   "shipsDocked"],
-        hiddenLayer : 12
+                   ],
+        hiddenLayer : 7
     },
-    boardValue : {
-        inputs : [ "totalShips",
-                   "totalGrowth",
-                   "countWouldOwn",
-                   // "totalShipsDocked",
-                   // "totalShipsMoving"
-                  ],
-        hiddenLayer : 4
+    planetVote : {
+        inputs : [ "distance",
+                   "effDef" ],
+        hiddenLayer : 3
     }
 }
 exports.networks = networks;

@@ -344,26 +344,26 @@ exports.weights = {
       0.194043272283355
     ]
   },
-  "boardValue": {
+  "planetVote": {
     "input_weights" : [
         {
-          "totalShips": .1,
-          "totalGrowth": .1,
+          "distance": .1,
+          "effDef": .1,
           "countWouldOwn": .1
         },
         {
-          "totalShips": .1,
-          "totalGrowth": .1,
+          "distance": .1,
+          "effDef": .1,
           "countWouldOwn": .1
         },
         {
-          "totalShips": .1,
-          "totalGrowth": .1,
+          "distance": .1,
+          "effDef": .1,
           "countWouldOwn": .1
         },
         {
-          "totalShips": .1,
-          "totalGrowth": .1,
+          "distance": .1,
+          "effDef": .1,
           "countWouldOwn": .1
         }
     ],

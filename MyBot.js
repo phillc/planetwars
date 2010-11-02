@@ -2,7 +2,8 @@ require('./underscore');
 
 var planetWars = require('./PlanetWars'),
     players = require('./Players'),
-    sys = require('sys');
+    sys = require('sys'),
+    network = require('./network');
 
 
 var sendShipsFromTo = function(ships, from, to) {
@@ -25,64 +26,52 @@ var maxTurnNumber = 200;
 function doTurn(universe) {
     turnNumber += 1;
     
+    var allPlanets = universe.allPlanets();
     var myPlanets = universe.planetsOwnedBy(players.me);
     var myPlanetsLength = myPlanets.length;
-        
-    var allPlanets = universe.allPlanets();
     
-    allPlanets.forEach(function(planet) {
-        costPerGrowth = planet.effectiveDefensiveValue(planet.distanceFrom())
-        []
-    });
+    var planetConsiderationsById = []
     
-    
-    var planetsThatCanSend = [];
-    
-    var closestEnemiesTuple = [];
-    myPlanets.forEach(function(planet) {
-        var closePlanets = universe.closestPlanetsTo(planet);
-        var closestEnemy = _.filter(closePlanets, function(closePlanet) {
-            return closePlanet.isOwnedBy(players.opponent);
+    myPlanets.forEach(function(myPlanet) {
+        allPlanets.forEach(function(otherPlanet) {
+            var otherPlanetId = otherPlanet.getId();
+            planetConsiderationsById[otherPlanetId] = planetConsiderationsById[otherPlanetId] || 0;
+            
+            var distance = myPlanet.distanceFrom(otherPlanet);
+            var effDef = otherPlanet.effectiveDefensiveValue(players.me, distance)
+            var values = { distance : distance,
+                           effDef   :  effDef + myPlanet.getShips() > 0 ? 1 : -1 };
+                           // the voter's growth
+                           // the voter's ship count
+                           // canTakeRightNow
+                           // will have more to send
+                           // can cover that planet
+            planetConsiderationsById[otherPlanetId] += network.activation(network.compute("planetVote", values));
         });
-        
-        
-        if (closestEnemy[0]) {
-            var distance = planet.distanceFrom(closestEnemy[0])
-            if(closestEnemy[1]) {
-                distance += planet.distanceFrom(closestEnemy[1])
-            }
-            closestEnemiesTuple.push([distance, planet]);
-        }
     });
     
-    closestEnemiesTuple.sort(tupleSortSmallerFirst)
-    var focalPoint = closestEnemiesTuple.shift();
+    var planetsByScore = []
     
-    closestEnemiesTuple.forEach(function(aPlanet) {
-        if (aPlanet[1].shipBalance() > 0) {
-            sendShipsFromTo(aPlanet[1].shipBalance(), aPlanet[1], focalPoint[1]);
+    allPlanets.forEach(function(aPlanet){
+        var aPlanetId = aPlanet.getId();
+        var rating = planetConsiderationsById[aPlanet];
+        
+        var values = { "isEffectivelyNotMine" : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()) < 0 ? -1 : 1,
+                       "isEffectivelyEnemy"   : aPlanet.effectiveDefensiveValue(players.opponent, aPlanet.farthestForce()) >= 0 ? -1 : 1,
+                       "isNeutral"            : aPlanet.isNeutral(),
+                       "growth"               : aPlanet.getGrowth() }
+                       
+        planetsByScore.push([network.compute("attackConsideration", values), aPlanet]);
+    });
+    
+    planetsByScore.sort(tupleSortGreaterFirst);
+    
+    myPlanets.forEach(function(myPlanet){
+        var shipBalance = myPlanet.shipBalance();
+        if (shipBalance > 0) {
+            sendShipsFromTo(shipBalance, myPlanet, planetsByScore[0][1])
         }
-    })
-    
-    if (focalPoint[1].shipBalance() > 0) {
-        sendShipsFromTo(focalPoint[1].shipBalance(), focalPoint[1], sendToPlanets[0]);
-    }
-    
-    
-    
-    
-    // can i send to it a defendable amount
-    
-    // does it need to go right now?
-    
-    // 
-    
-    
-    
-    
-    
-    
-    // prevent from consideration neutral planets that I would not regain cost sunk by 200 turns
+    });
 }
 
 // Play the game with my bot
