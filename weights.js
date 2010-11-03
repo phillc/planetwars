@@ -2,56 +2,56 @@ exports.weights = {
   "attackConsideration": {
     "input_weights": [
       {
-        "isNeutral": 0.97530127467338,
-        "growth": -0.336909208041036,
-        "isEffectivelyNotMine": 0.338935743824776,
-        "isEffectivelyEnemy": 0.126115332815824
+        "isNeutral": -0.595695394556394,
+        "growth": 0.0278901464019902,
+        "isEffectivelyNotMine": 0.476393679506327,
+        "isEffectivelyEnemy": -0.0247993345896535
       },
       {
-        "isNeutral": -0.257807310467062,
-        "growth": 0.391090874873105,
-        "isEffectivelyNotMine": 0.328746985736847,
-        "isEffectivelyEnemy": 0.0148183778268811
+        "isNeutral": 0.641779303927318,
+        "growth": -0.902630780516202,
+        "isEffectivelyNotMine": -0.861760965842766,
+        "isEffectivelyEnemy": -0.539177374092137
       },
       {
-        "isNeutral": -0.758487171108338,
-        "growth": -0.752787450626444,
-        "isEffectivelyNotMine": -0.438277947555757,
-        "isEffectivelyEnemy": 0.186467221555042
+        "isNeutral": 0.553820568746857,
+        "growth": 0.711408789911406,
+        "isEffectivelyNotMine": -0.471970325602682,
+        "isEffectivelyEnemy": 0.0249153291369323
       },
       {
-        "isNeutral": 0.132420984164813,
-        "growth": -0.557545647865298,
-        "isEffectivelyNotMine": 0.162169460740348,
-        "isEffectivelyEnemy": 0.789115386114442
+        "isNeutral": 0.355625392395042,
+        "growth": -0.436777498680509,
+        "isEffectivelyNotMine": 0.078434256232247,
+        "isEffectivelyEnemy": 0.359053609695603
       }
     ],
     "hidden_weights": [
-      -0.167846047738427,
-      0.200627742035981,
-      0.404934099744232,
-      -0.240171828327371
+      0.488682428275724,
+      -0.057910844039728,
+      0.108425623432782,
+      -0.407661275050918
     ]
   },
   "planetVote": {
     "input_weights": [
       {
-        "effDef": 0.0838730151393191,
-        "distance": -0.0598924259819225
+        "effDef": -0.354467814259475,
+        "distance": -0.432681901238425
       },
       {
-        "effDef": -0.915920542111114,
-        "distance": 0.0275286008779051
+        "effDef": -0.860545193828508,
+        "distance": -0.824906061108906
       },
       {
-        "effDef": -0.140201138547075,
-        "distance": -0.65272054184231
+        "effDef": -0.136020923926806,
+        "distance": 0.214956526415994
       }
     ],
     "hidden_weights": [
-      -0.471148661353758,
-      -0.206357660104152,
-      -0.29618096189017
+      -0.281870069389,
+      0.945552905581914,
+      -0.460843479959139
     ]
   },
   "created_on": "Tue Nov 02 00:32:58 -0400 2010"
