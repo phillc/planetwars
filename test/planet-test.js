@@ -29,6 +29,10 @@ vows.describe('Planet').addBatch({
             var planet1 = Planet({ x : 14.2884238258, y : 0.622568806433 });
             var planet2 = Planet({ x: 23.6079911509, y : 11.6215535875});
             assert.equal(planet1.distanceFrom(planet2), 15);
+        },
+        'should return 0 if given the same planet' : function() {
+            var planet = Planet({ x : 14.2884238258, y : 0.622568806433 });
+            assert.equal(planet.distanceFrom(planet), 0);
         }
     },
     'isOwnedBy' : {

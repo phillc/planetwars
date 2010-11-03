@@ -19,9 +19,10 @@ var Planet = function(options) {
         
     var futureStateCache = [];
     
-    var deductShips = 0;
-    
     return {
+        invalidateCache : function() {
+            futureStateCache = [];
+        },
         getShips : function() {
             return ships;
         },
@@ -95,7 +96,7 @@ var Planet = function(options) {
                     balance = -future.ships;
                 }
             }
-            return balance - deductShips;
+            return balance;
         },
         createNextTurn : function(prevTurnPlanet, turnNumber) {
             var nextTurnShips = prevTurnPlanet.ships,
@@ -155,10 +156,23 @@ var Planet = function(options) {
             }
             return clonedPlanet;
         },
-        deductShips : function(byShips) {
-            // can't I do this better?
-            deductShips += byShips;
-        }
+        recordSendShipsTo : function(numShips, targetPlanet) {
+            ships -= numShips;
+            if (this.isSamePlanet(targetPlanet)) {
+                targetPlanet.addIncomingForce(owner, numShips, 0);
+            } else {
+                targetPlanet.addIncomingForce(owner, numShips, this.distanceFrom(targetPlanet));
+                this.invalidateCache();
+                targetPlanet.invalidateCache();
+            }
+        },
+        sendShipsTo : function(numShips, targetPlanet) {
+            sys.debug("Sending " + numShips + " from planet with " + ships + " ships to planet with " + targetPlanet.getShips())
+            this.recordSendShipsTo(numShips, targetPlanet);
+            process.stdout.write('' + Math.floor(id) + ' ' +
+                                 Math.floor(targetPlanet.getId()) + ' ' +
+                                 Math.floor(numShips) + '\n');
+        },
     };
 }
 

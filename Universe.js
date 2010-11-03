@@ -85,6 +85,5 @@ function Universe(planets) {
     };
 }
 
-
 exports.Universe = Universe;
 

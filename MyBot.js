@@ -6,13 +6,6 @@ var planetWars = require('./PlanetWars'),
     network = require('./network');
 
 
-var sendShipsFromTo = function(ships, from, to) {
-    // sys.debug("send " + ships + " from " + from.getId() + " to " + to.getId());
-    from.deductShips(ships)
-    process.stdout.write('' + Math.floor(from.getId()) + ' ' +
-            Math.floor(to.getId()) + ' ' + Math.floor(ships) + '\n');
-}
-
 var tupleSortGreaterFirst = function(tuple1, tuple2) {
     return tuple2[0] - tuple1[0];
 }
@@ -35,6 +28,9 @@ function doTurn(universe) {
     
     myPlanets.forEach(function(myPlanet) {
         allPlanets.forEach(function(otherPlanet) {
+            
+            // if the growth gain wont pay off by maxTurnNumber, don't even consider
+            
             var otherPlanetId = otherPlanet.getId();
             planetConsiderationsById[otherPlanetId] = planetConsiderationsById[otherPlanetId] || 0;
             
@@ -80,37 +76,50 @@ function doTurn(universe) {
     //     }
     // });
     
-
-    planetsByScore.forEach(function(tuple) {
-        var targetPlanet = tuple[1];
-        var myClosestPlanets = universe.closestPlanetsToOwnedBy(targetPlanet, players.me);
-        var myClosestPlanetsLength = myClosestPlanets.length;
-        
-        var clone = targetPlanet.clone();
-        var commands = [];
-        for (var pNum = 0 ; pNum < myClosestPlanetsLength ; pNum++) {
-            var closePlanet = myClosestPlanets[pNum];
-            var distance = closePlanet.distanceFrom(targetPlanet);
-            var effDef = clone.effectiveDefensiveValue(players.me, distance);
-            if (effDef >= 0) {
-                break;
-            }
-            
-            var shipBalance = closePlanet.shipBalance();
-            if (shipBalance > -effDef) {
-                sendShipsFromTo(-effDef, closePlanet, targetPlanet);
-                break;
-            } else {
-                // send to myClosestPlanets[0];
-                clone.addIncomingForce(players.me, shipBalance, distance);
-                closePlanet.deductShips(shipBalance);
+    
+    var planetAttackOrder = _.map(planetsByScore, function(pTuple) {
+        return pTuple[1];
+    })
+    
+    var coordinateAttacks = function(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget) {
+        // doesn't count for new ships =\
+        if (nextClosestPlanets.length > 0){
+            var nextClosestPlanet = nextClosestPlanets.shift();
+            var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
+            var simulatedTargetEffDef = simulatedTarget.effectiveDefensiveValue(players.me, nextClosestToTargetDistance);
+            if (simulatedTargetEffDef < 0) {
+                var nextClosestPlanetShipBalance = nextClosestPlanet.shipBalance();
+                if (nextClosestPlanetShipBalance > 0) {
+                    if (nextClosestPlanetShipBalance > -simulatedTargetEffDef) {
+                        nextClosestPlanet.sendShipsTo(-simulatedTargetEffDef, realTarget);
+                        return nextClosestToTargetDistance;
+                    } else if (nextClosestPlanets.length !== 0) {
+                        var simulatedFrom = nextClosestPlanet.clone();
+                        simulatedFrom.recordSendShipsTo(nextClosestPlanetShipBalance, simulatedTarget);
+                        var turnsUntilFarthestArrival = coordinateAttacks(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget);
+                        if (nextClosestToTargetDistance >= turnsUntilFarthestArrival) {
+                            nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, realTarget);
+                        } else {
+                            var planet_to_reinforce = _.detect(myClosestPlanets, function(reinforceablePlanet) {
+                                return (nextClosestPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget)) < turnsUntilFarthestArrival;
+                            });
+                            nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, planet_to_reinforce);
+                        }
+                        return turnsUntilFarthestArrival;
+                    }
+                } else {
+                    return coordinateAttacks(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget);
+                }
             }
         }
-        
-        
-        
-        
-    })
+        return Infinity;
+    }
+
+    planetAttackOrder.forEach(function(targetPlanet) {
+        var myClosestPlanets = universe.closestPlanetsToOwnedBy(targetPlanet, players.me);
+        var simulatedTarget = targetPlanet.clone();
+        coordinateAttacks(myClosestPlanets, myClosestPlanets.slice(0), simulatedTarget, targetPlanet);
+    });
 }
 
 // Play the game with my bot
