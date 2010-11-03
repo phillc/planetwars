@@ -59,11 +59,19 @@ function doTurn(universe) {
                        "isNeutral"            : aPlanet.isNeutral() ? 1 : -1,
                        "growth"               : aPlanet.getGrowth(),
                        "planetVotes"          : planetConsiderationsById[aPlanet.getId()] || 0 }
+                       // under my umbrella (some count of my ship getting there faster than enemy ship)
                        
         planetsByScore.push([network.compute("attackConsideration", values), aPlanet]);
     });
     
     planetsByScore.sort(tupleSortGreaterFirst);
+    
+    
+    // redistribute ships
+    // ships that are not sendable, but perhaps can go to front line to free up more ships
+    
+    
+    
     
     
     // Surplus by target? As in, if a surplus is kept because of one planet, the target planet actually has more surplus
@@ -79,7 +87,8 @@ function doTurn(universe) {
     
     var planetAttackOrder = _.map(planetsByScore, function(pTuple) {
         return pTuple[1];
-    })
+    });
+    
     
     var coordinateAttacks = function(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget) {
         // doesn't count for new ships =\
