@@ -89,8 +89,11 @@ task :default => :run
 
 desc "run a tcp server match"
 task :tcp do
-  executable = RUBY_PLATFORM.downcase.include?("linux") ? "tcp" : "tcpmac"
-  puts `./#{executable} 72.44.46.68 995 phillc -p 1 tcprunbot.sh`
+  run_tcp = Thread.new do
+    executable = RUBY_PLATFORM.downcase.include?("linux") ? "tcp" : "tcpmac"
+    puts `./#{executable} 72.44.46.68 995 phillc -p 1 tcprunbot.sh`
+  end
+  run_tcp.join(5 * 60)
 end
 
 desc "run a round, deleting the losing networks"

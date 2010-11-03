@@ -59,6 +59,7 @@ function doTurn(universe) {
                        "isNeutral"            : aPlanet.isNeutral() ? 1 : -1,
                        "growth"               : aPlanet.getGrowth(),
                        "planetVotes"          : planetConsiderationsById[aPlanet.getId()] || 0 }
+                       // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
                        
         planetsByScore.push([network.compute("attackConsideration", values), aPlanet]);
