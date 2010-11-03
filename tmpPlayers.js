@@ -1,6 +1,5 @@
 var sys = require('sys');
 
-
 var Player = function(options) {
     this.name = options.name;
 }

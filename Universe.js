@@ -1,5 +1,5 @@
 var sys = require('sys'),
-    players = require('./Players');
+    players = require('./players');
 
 var closestPlanetsToCache = [];
     

@@ -3,7 +3,7 @@ var vows = require('vows'),
     sys = require('sys');
 
 var Planet = require('../Planet').Planet,
-    players = require('../Players');
+    players = require('../players');
 
 vows.describe('Planet').addBatch({
     'getShips' : {
