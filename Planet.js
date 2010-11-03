@@ -168,7 +168,7 @@ var Planet = function(options) {
             }
         },
         sendShipsTo : function(numShips, targetPlanet) {
-            sys.debug("Sending " + numShips + " from planet with " + ships + " ships to planet with " + targetPlanet.getShips() + " ships and " + targetPlanet.getGrowth() + " growth at a distance of " + this.distanceFrom(targetPlanet))
+            // sys.debug("Sending " + numShips + " from planet with " + ships + " ships to planet with " + targetPlanet.getShips() + " ships and " + targetPlanet.getGrowth() + " growth at a distance of " + this.distanceFrom(targetPlanet))
             this.recordSendShipsTo(numShips, targetPlanet);
             process.stdout.write('' + Math.floor(id) + ' ' +
                                  Math.floor(targetPlanet.getId()) + ' ' +
