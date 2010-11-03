@@ -59,7 +59,7 @@ var Planet = function(options) {
             return owner.samePlayerAs(player);
         },
         isNeutral : function() {
-            return owner === players.neutral;
+            return owner.samePlayerAs(players.neutral);
         },
         addIncomingForce : function(player, ships, turns) {
             incomingForces[turns] = incomingForces[turns] || {};
@@ -102,10 +102,11 @@ var Planet = function(options) {
             var nextTurnShips = prevTurnPlanet.ships,
                 nextTurnOwner = prevTurnPlanet.owner;
 
-            if (nextTurnOwner !== players.neutral) {
+            
+            if (!nextTurnOwner.samePlayerAs(players.neutral)) {
                 nextTurnShips += growth;
             }
-
+            
             var opponentShips = this.getIncomingForces(players.opponent, turnNumber);
             var myShips = this.getIncomingForces(players.me, turnNumber);
 
@@ -150,7 +151,7 @@ var Planet = function(options) {
                                          owner : owner,
                                          ships: ships, 
                                          growth : growth });
-            for (var turns = 1 ; turns <= this.farthestForce() ; turns++) {
+            for (var turns = 0 ; turns <= this.farthestForce() ; turns++) {
                 clonedPlanet.addIncomingForce(players.me, this.getIncomingForces(players.me, turns), turns)
                 clonedPlanet.addIncomingForce(players.opponent, this.getIncomingForces(players.opponent, turns), turns)
             }
@@ -167,7 +168,7 @@ var Planet = function(options) {
             }
         },
         sendShipsTo : function(numShips, targetPlanet) {
-            sys.debug("Sending " + numShips + " from planet with " + ships + " ships to planet with " + targetPlanet.getShips())
+            sys.debug("Sending " + numShips + " from planet with " + ships + " ships to planet with " + targetPlanet.getShips() + " ships and " + targetPlanet.getGrowth() + " growth at a distance of " + this.distanceFrom(targetPlanet))
             this.recordSendShipsTo(numShips, targetPlanet);
             process.stdout.write('' + Math.floor(id) + ' ' +
                                  Math.floor(targetPlanet.getId()) + ' ' +
