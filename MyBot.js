@@ -19,6 +19,7 @@ var maxTurnNumber = 200;
 
 var coordinateAttacks = function(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget) {
     // doesn't count for new ships =\
+    // need to look at ships incoming at a trns farther than its distance (seeing double taps for small amounts right now)
     if (nextClosestPlanets.length > 0){
         var nextClosestPlanet = nextClosestPlanets.shift();
         var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
@@ -74,9 +75,6 @@ function doTurn(universe) {
             
                 var distance = myPlanet.distanceFrom(otherPlanet);
                 var effDef = otherPlanet.effectiveDefensiveValue(players.me, distance)
-                if (otherPlanet.getId() === 17) {
-                    sys.debug("returns " + distance)
-                }
             
                 var values = { distance : distance,
                                effDef   :  effDef + myPlanet.shipBalance() };
@@ -86,8 +84,10 @@ function doTurn(universe) {
                                // will have more to send
                                // can cover that planet
                                // something that would protray, could be sniped (actually, umbrella would do that)
-                var voteValue = network.activation(network.compute("planetVote", values));
-                planetConsiderationsById[otherPlanetId] += voteValue;
+                var voteValue = network.compute("planetVote", values);
+                // sys.debug(sys.inspect(values));
+                // sys.debug(sys.inspect(voteValue));
+                planetConsiderationsById[otherPlanetId] += network.activation(voteValue);
             }
         });
     });
@@ -106,8 +106,10 @@ function doTurn(universe) {
                        planetVotes          : planetConsiderationsById[aPlanet.getId()] || 0 }
                        // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
-                       
-        planetsByScore.push([network.compute("attackConsideration", values), aPlanet]);
+        var scoreTuple = [network.compute("attackConsideration", values), aPlanet];
+        // sys.debug(sys.inspect(values));
+        // sys.debug(sys.inspect(scoreTuple[0]));
+        planetsByScore.push(scoreTuple);
     });
     
     planetsByScore.sort(tupleSortGreaterFirst);

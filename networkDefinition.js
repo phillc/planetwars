@@ -5,12 +5,12 @@ var networks = {
                    "growth",
                    "planetVotes"
                    ],
-        hiddenLayer : 4
+        hiddenLayer : 6
     },
     planetVote : {
         inputs : [ "distance",
                    "effDef" ],
-        hiddenLayer : 3
+        hiddenLayer : 4
     }
 }
 exports.networks = networks;
