@@ -37,7 +37,7 @@ function doTurn(universe) {
             var distance = myPlanet.distanceFrom(otherPlanet);
             var effDef = otherPlanet.effectiveDefensiveValue(players.me, distance)
             var values = { distance : distance,
-                           effDef   :  effDef + myPlanet.getShips() > 0 ? 1 : -1 };
+                           effDef   :  effDef + myPlanet.getBalance() };
                            // the voter's growth
                            // the voter's ship count
                            // canTakeRightNow
@@ -54,10 +54,10 @@ function doTurn(universe) {
         var aPlanetId = aPlanet.getId();
         var rating = planetConsiderationsById[aPlanet];
         
-        var values = { "farthestEffDef"       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()),
-                       "isNeutral"            : aPlanet.isNeutral() ? 1 : -1,
-                       "growth"               : aPlanet.getGrowth(),
-                       "planetVotes"          : planetConsiderationsById[aPlanet.getId()] || 0 }
+        var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()),
+                       isNeutral            : aPlanet.isNeutral() ? 1 : -1,
+                       growth               : aPlanet.getGrowth(),
+                       planetVotes          : planetConsiderationsById[aPlanet.getId()] || 0 }
                        // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
                        
