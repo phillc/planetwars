@@ -1,57 +1,57 @@
 exports.weights = {
   "attackConsideration": {
     "hidden_weights": [
-      1.14248247141935,
-      0.00845144215464535,
-      3.21272625642876,
-      10.3932758760224
+      0.99480061226956,
+      -0.035212004606592,
+      0.791255606871356,
+      -0.109806654571526
     ],
     "input_weights": [
       {
-        "isNeutral": -0.466291985226424,
-        "planetVotes": -0.05,
-        "growth": 0.09879276730637,
-        "farthestEffDef": -0.1
-      },
-      {
-        "isNeutral": 0.069336634140022,
-        "planetVotes": -0.05,
-        "growth": -0.849181638568064,
+        "isNeutral": -0.0989924248862725,
+        "planetVotes": 0.0,
+        "growth": 0.0584866182089254,
         "farthestEffDef": 0.0
       },
       {
-        "isNeutral": -0.12915295768648,
-        "planetVotes": -0.3,
-        "growth": 0.66953606693516,
-        "farthestEffDef": 0.05
+        "isNeutral": 0.004205687717177,
+        "planetVotes": -0.0,
+        "growth": -0.0683955621706476,
+        "farthestEffDef": -0.05
       },
       {
-        "isNeutral": -0.0146152531536398,
-        "planetVotes": -0.15,
-        "growth": -0.097345228949072,
+        "isNeutral": -0.046835022652412,
+        "planetVotes": 0.4,
+        "growth": 0.047679320857084,
+        "farthestEffDef": 0.0
+      },
+      {
+        "isNeutral": 0.187622204587534,
+        "planetVotes": -0.1,
+        "growth": 0.31929472587016,
         "farthestEffDef": 0.15
       }
     ]
   },
-  "created_on": "Thu Nov 04 01:38:01 -0400 2010",
+  "created_on": "Wed Nov 03 23:54:01 -0400 2010",
   "planetVote": {
     "hidden_weights": [
-      -0.0859900626773175,
-      -0.705378115399272,
-      -0.019283902099152
+      -2.80857837129144,
+      -0.015927819178903,
+      -0.0321491347530254
     ],
     "input_weights": [
       {
-        "effDef": 4.08408154633396,
-        "distance": 0.109203964187922
+        "effDef": -2.85023677509184,
+        "distance": 0.76463853990924
       },
       {
-        "effDef": -1.35228254498136,
-        "distance": -0.177705155293094
+        "effDef": -0.055837511127996,
+        "distance": 6.0926095147469e-06
       },
       {
-        "effDef": -0.00373714758314215,
-        "distance": -0.375847489991492
+        "effDef": -5.36780165374788,
+        "distance": 1.49613905605486
       }
     ]
   }
