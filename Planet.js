@@ -137,12 +137,15 @@ var Planet = function(options) {
         },
         effectiveDefensiveValue : function(player, turns) {
             var futureState = this.futureState(turns);
-            
             if (player.samePlayerAs(futureState.owner)) {
                 return futureState.ships;
             }
             
             return  -futureState.ships - 1;
+        },
+        effectivelyOwnedBy : function(player) {
+            var futureState = this.futureState(this.farthestForce());
+            return player.samePlayerAs(futureState.owner);
         },
         clone : function() {
             var clonedPlanet =  Planet({ id : id,
@@ -168,7 +171,7 @@ var Planet = function(options) {
             }
         },
         sendShipsTo : function(numShips, targetPlanet) {
-            // sys.debug("Sending " + numShips + " from planet with " + ships + " ships to planet with " + targetPlanet.getShips() + " ships and " + targetPlanet.getGrowth() + " growth at a distance of " + this.distanceFrom(targetPlanet))
+            // sys.debug("Sending " + numShips + " from planet " + id + " with " + ships + " ships to planet " + targetPlanet.getId() + " with " + targetPlanet.getShips() + " ships and " + targetPlanet.getGrowth() + " growth at a distance of " + this.distanceFrom(targetPlanet))
             this.recordSendShipsTo(numShips, targetPlanet);
             if (!this.isSamePlanet(targetPlanet)){
                 process.stdout.write('' + Math.floor(id) + ' ' +

@@ -56,31 +56,39 @@ function doTurn(universe) {
     turnNumber += 1;
     
     var allPlanets = universe.allPlanets();
+    var effectivelyNotMyPlanets = _.filter(allPlanets, function(planet) {
+        return !planet.effectivelyOwnedBy(players.me);
+    })
     var myPlanets = universe.planetsOwnedBy(players.me);
     var myPlanetsLength = myPlanets.length;
     
     var planetConsiderationsById = []
     
     myPlanets.forEach(function(myPlanet) {
-        allPlanets.forEach(function(otherPlanet) {
+        effectivelyNotMyPlanets.forEach(function(otherPlanet) {
+            if (!myPlanet.isSamePlanet(otherPlanet)) {
+                // if the growth gain wont pay off by maxTurnNumber, don't even consider
             
-            // if the growth gain wont pay off by maxTurnNumber, don't even consider
+                var otherPlanetId = otherPlanet.getId();
+                planetConsiderationsById[otherPlanetId] = planetConsiderationsById[otherPlanetId] || 0;
             
-            var otherPlanetId = otherPlanet.getId();
-            planetConsiderationsById[otherPlanetId] = planetConsiderationsById[otherPlanetId] || 0;
+                var distance = myPlanet.distanceFrom(otherPlanet);
+                var effDef = otherPlanet.effectiveDefensiveValue(players.me, distance)
+                if (otherPlanet.getId() === 17) {
+                    sys.debug("returns " + distance)
+                }
             
-            var distance = myPlanet.distanceFrom(otherPlanet);
-            var effDef = otherPlanet.effectiveDefensiveValue(players.me, distance)
-            var values = { distance : distance,
-                           effDef   :  effDef + myPlanet.shipBalance() };
-                           // the voter's growth
-                           // the voter's ship count
-                           // canTakeRightNow
-                           // will have more to send
-                           // can cover that planet
-                           // something that would protray, could be sniped (actually, umbrella would do that)
-            var voteValue = network.activation(network.compute("planetVote", values));
-            planetConsiderationsById[otherPlanetId] += voteValue;
+                var values = { distance : distance,
+                               effDef   :  effDef + myPlanet.shipBalance() };
+                               // the voter's growth
+                               // the voter's ship count
+                               // canTakeRightNow
+                               // will have more to send
+                               // can cover that planet
+                               // something that would protray, could be sniped (actually, umbrella would do that)
+                var voteValue = network.activation(network.compute("planetVote", values));
+                planetConsiderationsById[otherPlanetId] += voteValue;
+            }
         });
     });
     
@@ -88,7 +96,7 @@ function doTurn(universe) {
     
     
     // not all planets... all effectively not mine planets...
-    allPlanets.forEach(function(aPlanet){
+    effectivelyNotMyPlanets.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
         var rating = planetConsiderationsById[aPlanet];
         
@@ -128,7 +136,6 @@ function doTurn(universe) {
     });
     
     // rebalace the umbrella trumps normal attack
-
     planetAttackOrder.forEach(function(targetPlanet) {
         var myClosestPlanets = universe.closestPlanetsToOwnedBy(targetPlanet, players.me);
         var simulatedTarget = targetPlanet.clone();
