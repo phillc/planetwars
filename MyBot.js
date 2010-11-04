@@ -54,8 +54,7 @@ function doTurn(universe) {
         var aPlanetId = aPlanet.getId();
         var rating = planetConsiderationsById[aPlanet];
         
-        var values = { "isEffectivelyNotMine" : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()) < 0 ? -1 : 1,
-                       "isEffectivelyEnemy"   : aPlanet.effectiveDefensiveValue(players.opponent, aPlanet.farthestForce()) >= 0 ? -1 : 1,
+        var values = { "farthestEffDef"       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()),
                        "isNeutral"            : aPlanet.isNeutral() ? 1 : -1,
                        "growth"               : aPlanet.getGrowth(),
                        "planetVotes"          : planetConsiderationsById[aPlanet.getId()] || 0 }

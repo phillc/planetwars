@@ -1,10 +1,9 @@
 var networks = {
     attackConsideration : {
-        inputs : [
-                   "isEffectivelyEnemy",
-                   "isEffectivelyNotMine",
+        inputs : [ "farthestEffDef",
                    "isNeutral",
                    "growth",
+                   "planetVotes"
                    ],
         hiddenLayer : 4
     },
