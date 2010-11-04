@@ -19,7 +19,7 @@ var maxTurnNumber = 200;
 
 var coordinateAttacks = function(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget) {
     // doesn't count for new ships =\
-    // need to look at ships incoming at a trns farther than its distance (seeing double taps for small amounts right now)
+    // need to account for its own growth
     if (nextClosestPlanets.length > 0){
         var nextClosestPlanet = nextClosestPlanets.shift();
         var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
@@ -37,6 +37,7 @@ var coordinateAttacks = function(myClosestPlanets, nextClosestPlanets, simulated
                     if (nextClosestToTargetDistance >= turnsUntilFarthestArrival) {
                         nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, realTarget);
                     } else {
+                        // maybe this should be a sort of distance(p -> some planet) + distance(some planet -> target)
                         var planet_to_reinforce = _.detect(myClosestPlanets, function(reinforceablePlanet) {
                             var distanceToNearbyThenTarget = nextClosestPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget)
                             return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < nextClosestToTargetDistance * 1.3) ;
@@ -79,7 +80,6 @@ function doTurn(universe) {
                 var values = { distance : distance,
                                effDef   :  effDef + myPlanet.shipBalance() };
                                // the voter's growth
-                               // the voter's ship count
                                // canTakeRightNow
                                // will have more to send
                                // can cover that planet
@@ -95,12 +95,11 @@ function doTurn(universe) {
     var planetsByScore = []
     
     
-    // not all planets... all effectively not mine planets...
     effectivelyNotMyPlanets.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
         var rating = planetConsiderationsById[aPlanet];
         
-        var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()),
+        var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()), // maybe not farthest force for this planet, but out of ALL planets
                        isNeutral            : aPlanet.isNeutral() ? 1 : -1,
                        growth               : aPlanet.getGrowth(),
                        planetVotes          : planetConsiderationsById[aPlanet.getId()] || 0 }
@@ -139,7 +138,9 @@ function doTurn(universe) {
     
     // rebalace the umbrella trumps normal attack
     planetAttackOrder.forEach(function(targetPlanet) {
-        var myClosestPlanets = universe.closestPlanetsToOwnedBy(targetPlanet, players.me);
+        var myClosestPlanets = _.filter(universe.closestPlanetsTo(targetPlanet), function(planet) {
+            return planet.effectivelyOwnedBy(players.me); // || planet.ownedBy(me)
+        });
         var simulatedTarget = targetPlanet.clone();
         coordinateAttacks(myClosestPlanets, myClosestPlanets.slice(0), simulatedTarget, targetPlanet);
     });
