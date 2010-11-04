@@ -1,57 +1,57 @@
 exports.weights = {
   "attackConsideration": {
     "hidden_weights": [
-      0.99480061226956,
+      1.19480061226956,
       -0.035212004606592,
-      0.791255606871356,
-      -0.109806654571526
+      0.891255606871356,
+      -0.0098066545715258
     ],
     "input_weights": [
       {
-        "isNeutral": -0.0989924248862725,
+        "isNeutral": -0.39596969954509,
         "planetVotes": 0.0,
-        "growth": 0.0584866182089254,
+        "growth": -0.0292433091044627,
+        "farthestEffDef": 0
+      },
+      {
+        "isNeutral": -0.008411375434354,
+        "planetVotes": 0.0,
+        "growth": -0.0341977810853238,
         "farthestEffDef": 0.0
       },
       {
-        "isNeutral": 0.004205687717177,
-        "planetVotes": -0.0,
-        "growth": -0.0683955621706476,
-        "farthestEffDef": -0.05
-      },
-      {
-        "isNeutral": -0.046835022652412,
-        "planetVotes": 0.4,
+        "isNeutral": 0.093670045304824,
+        "planetVotes": 0.1,
         "growth": 0.047679320857084,
         "farthestEffDef": 0.0
       },
       {
         "isNeutral": 0.187622204587534,
         "planetVotes": -0.1,
-        "growth": 0.31929472587016,
-        "farthestEffDef": 0.15
+        "growth": 0.63858945174032,
+        "farthestEffDef": 0.1
       }
     ]
   },
-  "created_on": "Wed Nov 03 23:54:01 -0400 2010",
+  "created_on": "Wed Nov 03 23:33:00 -0400 2010",
   "planetVote": {
     "hidden_weights": [
-      -2.80857837129144,
-      -0.015927819178903,
-      -0.0321491347530254
+      -2.90857837129144,
+      -0.131855638357806,
+      0.0160745673765127
     ],
     "input_weights": [
       {
-        "effDef": -2.85023677509184,
+        "effDef": -1.42511838754592,
         "distance": 0.76463853990924
       },
       {
-        "effDef": -0.055837511127996,
-        "distance": 6.0926095147469e-06
+        "effDef": -0.0116750222559921,
+        "distance": 2.43704380589876e-05
       },
       {
-        "effDef": -5.36780165374788,
-        "distance": 1.49613905605486
+        "effDef": 2.68390082687394,
+        "distance": 2.89227811210972
       }
     ]
   }
