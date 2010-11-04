@@ -20,6 +20,7 @@ var maxTurnNumber = 200;
 var coordinateAttacks = function(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget) {
     // doesn't count for new ships =\
     // need to account for its own growth
+    // prevent a scenario where I send ships and volunteer to get sniped
     if (nextClosestPlanets.length > 0){
         var nextClosestPlanet = nextClosestPlanets.shift();
         var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
@@ -98,11 +99,11 @@ function doTurn(universe) {
     effectivelyNotMyPlanets.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
         var rating = planetConsiderationsById[aPlanet];
-        
         var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()), // maybe not farthest force for this planet, but out of ALL planets
                        isNeutral            : aPlanet.isNeutral() ? 1 : -1,
                        growth               : aPlanet.getGrowth(),
-                       planetVotes          : planetConsiderationsById[aPlanet.getId()] || 0 }
+                       planetVotes          : planetConsiderationsById[aPlanet.getId()] || 0,
+                       inMyUmbrella         : universe.inUmbrella(aPlanet, players.me) ? 1 : -1 }
                        // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
         var scoreTuple = [network.compute("attackConsideration", values), aPlanet];

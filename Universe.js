@@ -69,18 +69,38 @@ function Universe(planets) {
             });
             return this.closestPlanetsToOwnedBy(planet, player);
         },
-        planetSurplus : function(planet) {
-            var owner = planet.getOwner();
-            var enemy = enemyOf(owner);
+        planetSurplus : function(planet, player) {
+            if (this.inUmbrella(planet, player)) {
+                return planet.shipBalance();
+            }
+            var enemy = enemyOf(player);
             var closestEnemyPlanet = this.closestPlanetsToOwnedBy(planet, enemy)[0];
             var distance = planet.distanceFrom(closestEnemyPlanet);
-            var nearbyFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, owner);
+            var nearbyFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
             fakePlanet = planet.clone();
             fakePlanet.addIncomingForce(enemy, closestEnemyPlanet.getShips(), distance)
             return fakePlanet.shipBalance();
         },
-        amountNeededToDefend : function(planet) {
+        inUmbrella : function(planet, player) {
+            //very dumb
+            // could squash with planet Surplus and just send enemy to it and all friendly to it, then get ship balance
+            var enemy = players.enemyOf(player);
             
+            var closestFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
+            if (closestFriendlyPlanets.length === 0) {
+                return false;
+            }
+            var closestFriendlyPlanet = closestFriendlyPlanets[0];
+            var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
+            if (closestEnemyPlanets.length === 0) {
+                return true;
+            }
+            var closestEnemyPlanet = closestEnemyPlanets[0];
+            var friendlyDistance = planet.distanceFrom(closestFriendlyPlanet);
+            var enemyDistance = planet.distanceFrom(closestEnemyPlanet);
+            
+            // and it is a stable planet?
+            return friendlyDistance > enemyDistance;
         },
     };
 }

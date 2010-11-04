@@ -3,7 +3,8 @@ var networks = {
         inputs : [ "farthestEffDef",
                    "isNeutral",
                    "growth",
-                   "planetVotes"
+                   "planetVotes",
+                   "inMyUmbrella"
                    ],
         hiddenLayer : 6
     },
