@@ -37,12 +37,13 @@ function doTurn(universe) {
             var distance = myPlanet.distanceFrom(otherPlanet);
             var effDef = otherPlanet.effectiveDefensiveValue(players.me, distance)
             var values = { distance : distance,
-                           effDef   :  effDef + myPlanet.getBalance() };
+                           effDef   :  effDef + myPlanet.shipBalance() };
                            // the voter's growth
                            // the voter's ship count
                            // canTakeRightNow
                            // will have more to send
                            // can cover that planet
+                           // something that would protray, could be sniped (actually, umbrella would do that)
             var voteValue = network.activation(network.compute("planetVote", values));
             planetConsiderationsById[otherPlanetId] += voteValue;
         });
@@ -50,6 +51,8 @@ function doTurn(universe) {
     
     var planetsByScore = []
     
+    
+    // not all planets... all effectively not mine planets...
     allPlanets.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
         var rating = planetConsiderationsById[aPlanet];
@@ -88,6 +91,8 @@ function doTurn(universe) {
     var planetAttackOrder = _.map(planetsByScore, function(pTuple) {
         return pTuple[1];
     });
+    
+    // rebalace the umbrella trumps normal attack
     
     
     var coordinateAttacks = function(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget) {
