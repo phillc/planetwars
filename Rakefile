@@ -64,6 +64,11 @@ task :one do
   # puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js"`
 end
 
+task :vs do
+  puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "node ../pws/MyBot.js" "node MyBot.js" | java -jar tools/ShowGame-1.2.jar`
+  # puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 1000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node MyBot.js"`
+end
+
 task :profile do
   puts `java -jar tools/PlayGame-1.2.jar maps/map7.txt 5000 200 log.txt "java -jar example_bots/ProspectorBot.jar" "node --prof MyBot.js"`
 end

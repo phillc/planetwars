@@ -84,6 +84,7 @@ function Universe(planets) {
         inUmbrella : function(planet, player) {
             //very dumb
             // could squash with planet Surplus and just send enemy to it and all friendly to it, then get ship balance
+            // if you arn't in umbrella, you must be part of it?
             var enemy = players.enemyOf(player);
             
             var closestFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
