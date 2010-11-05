@@ -22,6 +22,13 @@ var attackPlan = function(myClosestPlanets, realTarget) {
         go : function() {
             return this.coordinateAttacks(myClosestPlanets.slice(0), realTarget.clone());
         },
+        planetToReinforce : function(nextClosestPlanet, turnsUntilFarthestArrival, nextClosestToTargetDistance) {
+            // maybe this should be a sort of distance(p -> some planet) + distance(some planet -> target)
+            return _.detect(myClosestPlanets, function(reinforceablePlanet) {
+                var distanceToNearbyThenTarget = nextClosestPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget);
+                return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < nextClosestToTargetDistance * 1.3) ;
+            });
+        },
         coordinateAttacks : function(nextClosestPlanets, simulatedTarget) {
             // doesn't count for new ships =\
         // need to account for its own growth
@@ -43,12 +50,8 @@ var attackPlan = function(myClosestPlanets, realTarget) {
                             if (nextClosestToTargetDistance >= turnsUntilFarthestArrival) {
                                 nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, realTarget);
                             } else {
-                                // maybe this should be a sort of distance(p -> some planet) + distance(some planet -> target)
-                                var planet_to_reinforce = _.detect(myClosestPlanets, function(reinforceablePlanet) {
-                                    var distanceToNearbyThenTarget = nextClosestPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget)
-                                    return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < nextClosestToTargetDistance * 1.3) ;
-                                });
-                                nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, planet_to_reinforce);
+                                var planetToReinforce = this.planetToReinforce(nextClosestPlanet, turnsUntilFarthestArrival, nextClosestToTargetDistance);
+                                nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, planetToReinforce);
                             }
                             return turnsUntilFarthestArrival;
                         }
