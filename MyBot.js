@@ -17,43 +17,52 @@ var tupleSortSmallerFirst = function(tuple1, tuple2) {
 var turnNumber = 0;
 var maxTurnNumber = 200;
 
-var coordinateAttacks = function(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget) {
-    // doesn't count for new ships =\
-    // need to account for its own growth
-    // prevent a scenario where I send ships and volunteer to get sniped
-    if (nextClosestPlanets.length > 0){
-        var nextClosestPlanet = nextClosestPlanets.shift();
-        var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
-        var simulatedTargetEffDef = simulatedTarget.effectiveDefensiveValue(players.me, nextClosestToTargetDistance);
-        if (simulatedTargetEffDef < 0) {
-            var nextClosestPlanetShipBalance = nextClosestPlanet.shipBalance();
-            if (nextClosestPlanetShipBalance > 0) {
-                if (nextClosestPlanetShipBalance > -simulatedTargetEffDef) {
-                    nextClosestPlanet.sendShipsTo(-simulatedTargetEffDef, realTarget);
-                    return nextClosestToTargetDistance;
-                } else if (nextClosestPlanets.length !== 0) {
-                    var simulatedFrom = nextClosestPlanet.clone();
-                    simulatedFrom.recordSendShipsTo(nextClosestPlanetShipBalance, simulatedTarget);
-                    var turnsUntilFarthestArrival = coordinateAttacks(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget);
-                    if (nextClosestToTargetDistance >= turnsUntilFarthestArrival) {
-                        nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, realTarget);
+var attackPlan = function(myClosestPlanets, realTarget) {
+    return {
+        go : function() {
+            return this.coordinateAttacks(myClosestPlanets.slice(0), realTarget.clone());
+        },
+        coordinateAttacks : function(nextClosestPlanets, simulatedTarget) {
+            // doesn't count for new ships =\
+        // need to account for its own growth
+            // prevent a scenario where I send ships and volunteer to get sniped
+            if (nextClosestPlanets.length > 0){
+                var nextClosestPlanet = nextClosestPlanets.shift();
+                var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
+                var simulatedTargetEffDef = simulatedTarget.effectiveDefensiveValue(players.me, nextClosestToTargetDistance);
+                if (simulatedTargetEffDef < 0) {
+                    var nextClosestPlanetShipBalance = nextClosestPlanet.shipBalance();
+                    if (nextClosestPlanetShipBalance > 0) {
+                        if (nextClosestPlanetShipBalance > -simulatedTargetEffDef) {
+                            nextClosestPlanet.sendShipsTo(-simulatedTargetEffDef, realTarget);
+                            return nextClosestToTargetDistance;
+                        } else if (nextClosestPlanets.length !== 0) {
+                            var simulatedFrom = nextClosestPlanet.clone();
+                            simulatedFrom.recordSendShipsTo(nextClosestPlanetShipBalance, simulatedTarget);
+                            var turnsUntilFarthestArrival = this.coordinateAttacks(nextClosestPlanets, simulatedTarget);
+                            if (nextClosestToTargetDistance >= turnsUntilFarthestArrival) {
+                                nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, realTarget);
+                            } else {
+                                // maybe this should be a sort of distance(p -> some planet) + distance(some planet -> target)
+                                var planet_to_reinforce = _.detect(myClosestPlanets, function(reinforceablePlanet) {
+                                    var distanceToNearbyThenTarget = nextClosestPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget)
+                                    return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < nextClosestToTargetDistance * 1.3) ;
+                                });
+                                nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, planet_to_reinforce);
+                            }
+                            return turnsUntilFarthestArrival;
+                        }
                     } else {
-                        // maybe this should be a sort of distance(p -> some planet) + distance(some planet -> target)
-                        var planet_to_reinforce = _.detect(myClosestPlanets, function(reinforceablePlanet) {
-                            var distanceToNearbyThenTarget = nextClosestPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget)
-                            return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < nextClosestToTargetDistance * 1.3) ;
-                        });
-                        nextClosestPlanet.sendShipsTo(nextClosestPlanetShipBalance, planet_to_reinforce);
+                        return this.coordinateAttacks(nextClosestPlanets, simulatedTarget);
                     }
-                    return turnsUntilFarthestArrival;
                 }
-            } else {
-                return coordinateAttacks(myClosestPlanets, nextClosestPlanets, simulatedTarget, realTarget);
             }
+            return Infinity;
         }
     }
-    return Infinity;
 }
+
+
 
 function doTurn(universe) {
     turnNumber += 1;
@@ -142,8 +151,8 @@ function doTurn(universe) {
         var myClosestPlanets = _.filter(universe.closestPlanetsTo(targetPlanet), function(planet) {
             return planet.effectivelyOwnedBy(players.me); // || planet.ownedBy(me)
         });
-        var simulatedTarget = targetPlanet.clone();
-        coordinateAttacks(myClosestPlanets, myClosestPlanets.slice(0), simulatedTarget, targetPlanet);
+        var plan = attackPlan(myClosestPlanets, targetPlanet);
+        plan.go();
     });
 }
 
