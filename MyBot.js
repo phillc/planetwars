@@ -35,6 +35,7 @@ var attackPlan = function(myClosestPlanets, realTarget) {
             // prevent a scenario where I send ships and volunteer to get sniped
             if (closestPlanets.length > 0){
                 var closestPlanet = closestPlanets.shift();
+                var nextClosestPlanet = closestPlanets[0];
                 var closestToTargetDistance = closestPlanet.distanceFrom(realTarget);
                 var simulatedTargetEffDef = simulatedTarget.effectiveDefensiveValue(players.me, closestToTargetDistance);
                 if (simulatedTargetEffDef < 0) {
@@ -43,7 +44,7 @@ var attackPlan = function(myClosestPlanets, realTarget) {
                         if (closestPlanetShipBalance > -simulatedTargetEffDef) {
                             closestPlanet.sendShipsTo(-simulatedTargetEffDef, realTarget);
                             return closestToTargetDistance;
-                        } else if (closestPlanets.length !== 0) {
+                        } else if (nextClosestPlanet) {
                             var simulatedFrom = closestPlanet.clone();
                             simulatedFrom.recordSendShipsTo(closestPlanetShipBalance, simulatedTarget);
                             var turnsUntilFarthestArrival = this.coordinateAttacks(closestPlanets, simulatedTarget);
@@ -76,23 +77,27 @@ function doTurn(universe) {
     })
     var myPlanets = universe.planetsOwnedBy(players.me);
     var myPlanetsLength = myPlanets.length;
+    var opponentPlanets = universe.planetsOwnedBy(players.opponent);
+    var opponentPlanetsLength = opponentPlanets.length;
+    var neutralPlanets = universe.planetsOwnedBy(players.neutral);
+    var neutralPlanetsLength = neutralPlanets.length;
     
-    var planetConsiderationsById = []
+    var myPlanetsVotesById = [];
+    var neutralPlanetsVotesById = [];
+    var opponentPlanetsVotesById = [];
     
-    myPlanets.forEach(function(myPlanet) {
-        effectivelyNotMyPlanets.forEach(function(otherPlanet) {
-            if (!myPlanet.isSamePlanet(otherPlanet)) {
+    myPlanets.forEach(function(voter) {
+        effectivelyNotMyPlanets.forEach(function(candidatePlanet) {
+            if (!voter.isSamePlanet(candidatePlanet)) {
                 // if the growth gain wont pay off by maxTurnNumber, don't even consider
             
-                var otherPlanetId = otherPlanet.getId();
-                planetConsiderationsById[otherPlanetId] = planetConsiderationsById[otherPlanetId] || 0;
             
-                var distance = myPlanet.distanceFrom(otherPlanet);
-                var effDef = otherPlanet.effectiveDefensiveValue(players.me, distance)
+                var distance = voter.distanceFrom(candidatePlanet);
+                var effDef = candidatePlanet.effectiveDefensiveValue(players.me, distance);
             
                 var values = { distance : distance,
-                               effDef   :  effDef + myPlanet.shipBalance() };
-                               // the voter's growth
+                               effDef   : effDef + voter.shipBalance(),
+                               growth   : voter.getGrowth() };
                                // canTakeRightNow
                                // will have more to send
                                // can cover that planet
@@ -100,21 +105,66 @@ function doTurn(universe) {
                 var voteValue = network.compute("planetVote", values);
                 // sys.debug(sys.inspect(values));
                 // sys.debug(sys.inspect(voteValue));
-                planetConsiderationsById[otherPlanetId] += network.activation(voteValue);
+                var candidatePlanetId = candidatePlanet.getId();
+                
+                
+                myPlanetsVotesById[candidatePlanetId] = myPlanetsVotesById[candidatePlanetId] || 0;
+                myPlanetsVotesById[candidatePlanetId] += network.activation(voteValue);
             }
         });
     });
+    
+    opponentPlanets.forEach(function(voter) {
+        effectivelyNotMyPlanets.forEach(function(candidatePlanet) {
+            if (!voter.isSamePlanet(candidatePlanet)) {
+                var distance = voter.distanceFrom(candidatePlanet);
+                var effDef = candidatePlanet.effectiveDefensiveValue(players.opponent, distance);
+            
+                var values = { distance : distance,
+                               effDef   : effDef + voter.shipBalance(),
+                               growth   : voter.getGrowth() };
+                var voteValue = network.compute("opponentPlanetVote", values);
+                // sys.debug(sys.inspect(values));
+                // sys.debug(sys.inspect(voteValue));
+                var candidatePlanetId = candidatePlanet.getId();
+                
+                
+                opponentPlanetsVotesById[candidatePlanetId] = opponentPlanetsVotesById[candidatePlanetId] || 0;
+                opponentPlanetsVotesById[candidatePlanetId] += network.activation(voteValue);
+            }
+        });
+    });
+    
+    neutralPlanets.forEach(function(voter) {
+        effectivelyNotMyPlanets.forEach(function(candidatePlanet) {
+            if (!voter.isSamePlanet(candidatePlanet)) {
+                var distance = voter.distanceFrom(candidatePlanet);
+                var effDef = candidatePlanet.effectiveDefensiveValue(players.neutral, distance);
+            
+                var values = { distance : distance,
+                               growth   : voter.getGrowth() };
+                var voteValue = network.compute("neutralPlanetVote", values);
+                // sys.debug(sys.inspect(values));
+                // sys.debug(sys.inspect(voteValue));
+                var candidatePlanetId = candidatePlanet.getId();
+                neutralPlanetsVotesById[candidatePlanetId] = neutralPlanetsVotesById[candidatePlanetId] || 0;
+                neutralPlanetsVotesById[candidatePlanetId] += network.activation(voteValue);
+            }
+        });
+    });
+    
     
     var planetsByScore = []
     
     
     effectivelyNotMyPlanets.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
-        var rating = planetConsiderationsById[aPlanet];
         var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()), // maybe not farthest force for this planet, but out of ALL planets
                        isNeutral            : aPlanet.isNeutral() ? 1 : -1,
                        growth               : aPlanet.getGrowth(),
-                       planetVotes          : planetConsiderationsById[aPlanet.getId()] || 0,
+                       planetVotes          : myPlanetsVotesById[aPlanet.getId()] || 0,
+                       opponentPlanetVotes  : opponentPlanetsVotesById[aPlanet.getId()] || 0,
+                       neutralPlanetVotes   : neutralPlanetsVotesById[aPlanet.getId()] || 0,
                        inMyUmbrella         : universe.inUmbrella(aPlanet, players.me) ? 1 : -1 }
                        // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
