@@ -18,6 +18,7 @@ var Planet = function(options) {
         incomingForces = [[]];
         
     var futureStateCache = [];
+    var reservedShips = 0;
     
     return {
         invalidateCache : function() {
@@ -101,7 +102,7 @@ var Planet = function(options) {
                     balance = -future.ships;
                 }
             }
-            return balance;
+            return balance - reservedShips;
         },
         createNextTurn : function(prevTurnPlanet, turnNumber) {
             var nextTurnShips = prevTurnPlanet.ships,
@@ -174,6 +175,9 @@ var Planet = function(options) {
                 this.invalidateCache();
                 targetPlanet.invalidateCache();
             }
+        },
+        reserveShips : function(numShips) {
+            reservedShips += numShips;
         },
         sendShipsTo : function(numShips, targetPlanet) {
             // sys.debug("Sending " + numShips + " from planet " + id + " with " + ships + " ships to planet " + targetPlanet.getId() + " with " + targetPlanet.getShips() + " ships and " + targetPlanet.getGrowth() + " growth at a distance of " + this.distanceFrom(targetPlanet))

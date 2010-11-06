@@ -45,17 +45,27 @@ var attackPlan = function(myClosestPlanets, realTarget) {
                             closestPlanet.sendShipsTo(-simulatedTargetEffDef, realTarget);
                             return closestToTargetDistance;
                         } else if (nextClosestPlanet) {
-                            // don't need to send to self if it has the growth by the time needed in the next
-                            var simulatedFrom = closestPlanet.clone();
-                            simulatedFrom.recordSendShipsTo(closestPlanetShipBalance, simulatedTarget);
-                            var turnsUntilFarthestArrival = this.coordinateAttacks(closestPlanets, simulatedTarget);
-                            if (closestToTargetDistance >= turnsUntilFarthestArrival) {
-                                closestPlanet.sendShipsTo(closestPlanetShipBalance, realTarget);
+                            var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
+                            var extraDistance = nextClosestToTargetDistance - closestToTargetDistance;
+                            if (closestPlanet.shipBalance(extraDistance) > -simulatedTargetEffDef) {
+                                closestPlanet.reserveShips(closestPlanetShipBalance)
+                                return closestToTargetDistance + extraDistance;
                             } else {
-                                var planetToReinforce = this.planetToReinforce(closestPlanet, turnsUntilFarthestArrival, closestToTargetDistance);
-                                closestPlanet.sendShipsTo(closestPlanetShipBalance, planetToReinforce);
+                                var simulatedFrom = closestPlanet.clone();
+                                simulatedFrom.recordSendShipsTo(closestPlanetShipBalance, simulatedTarget);
+                                var turnsUntilFarthestArrival = this.coordinateAttacks(closestPlanets, simulatedTarget);
+                                if (closestToTargetDistance >= turnsUntilFarthestArrival) {
+                                    closestPlanet.sendShipsTo(closestPlanetShipBalance, realTarget);
+                                } else {
+                                    var planetToReinforce = this.planetToReinforce(closestPlanet, turnsUntilFarthestArrival, closestToTargetDistance);
+                                    if (planetToReinforce) {
+                                        closestPlanet.sendShipsTo(closestPlanetShipBalance, planetToReinforce);
+                                    } else {
+                                        closestPlanet.reserveShips(closestPlanetShipBalance)
+                                    }
+                                }
+                                return turnsUntilFarthestArrival;
                             }
-                            return turnsUntilFarthestArrival;
                         }
                     } else {
                         return this.coordinateAttacks(closestPlanets, simulatedTarget);
