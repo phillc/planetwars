@@ -7,6 +7,7 @@ var networks = {
                    "opponentPlanetVotes",
                    "neutralPlanetVotes",
                    "inMyUmbrella",
+                   "inOpponentUmbrella",
                    "myTotalGrowth",
                    "opponentTotalGrowth" ],
         hiddenLayer : 7
