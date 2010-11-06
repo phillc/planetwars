@@ -71,15 +71,16 @@ function Universe(planets) {
         },
         planetSurplus : function(planet, player) {
             if (this.inUmbrella(planet, player)) {
+                sys.debug("in umbrella")
                 return planet.shipBalance();
             }
-            var enemy = enemyOf(player);
+            var enemy = players.enemyOf(player);
             var closestEnemyPlanet = this.closestPlanetsToOwnedBy(planet, enemy)[0];
             var distance = planet.distanceFrom(closestEnemyPlanet);
             var nearbyFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
             fakePlanet = planet.clone();
             fakePlanet.addIncomingForce(enemy, closestEnemyPlanet.getShips(), distance)
-            return fakePlanet.shipBalance();
+            return Math.min(planet.shipBalance(), fakePlanet.shipBalance());
         },
         inUmbrella : function(planet, player) {
             return this.umbrellaDepth(planet, player) > 0;
