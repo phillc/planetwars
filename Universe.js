@@ -82,26 +82,34 @@ function Universe(planets) {
             return fakePlanet.shipBalance();
         },
         inUmbrella : function(planet, player) {
-            //very dumb
+            return this.umbrellaDepth(planet, player) > 0;
+        },
+        umbrellaDepth : function(planet, player) {
+            // very dumb
             // could squash with planet Surplus and just send enemy to it and all friendly to it, then get ship balance
             // if you arn't in umbrella, you must be part of it?
             var enemy = players.enemyOf(player);
+            var depth = 0;
             
             var closestFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
-            if (closestFriendlyPlanets.length === 0) {
-                return false;
-            }
-            var closestFriendlyPlanet = closestFriendlyPlanets[0];
+            var closestFriendlyPlanetsLength = closestFriendlyPlanets.length;
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
-            if (closestEnemyPlanets.length === 0) {
-                return true;
-            }
-            var closestEnemyPlanet = closestEnemyPlanets[0];
-            var friendlyDistance = planet.distanceFrom(closestFriendlyPlanet);
-            var enemyDistance = planet.distanceFrom(closestEnemyPlanet);
+            var closestEnemyPlanetsLength = closestEnemyPlanets.length;
             
-            // and it is a stable planet?
-            return friendlyDistance > enemyDistance;
+            if (closestFriendlyPlanetsLength > 0 && closestEnemyPlanetsLength > 0) {
+                var closestEnemyPlanet = closestEnemyPlanets[0];
+                var enemyDistance = planet.distanceFrom(closestEnemyPlanet);
+                
+                for (var count = 0 ; count < closestFriendlyPlanetsLength ; count++) {
+                    var friendlyDistance = planet.distanceFrom(closestFriendlyPlanets[count]);
+                    if (friendlyDistance < enemyDistance ) {
+                        depth++
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return depth;
         },
         totalGrowthFor : function(player) {
             return _.reduce(this.planetsOwnedBy(player), function(memo, planet) {

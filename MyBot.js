@@ -168,7 +168,9 @@ function doTurn(universe) {
                        opponentPlanetVotes  : opponentPlanetsVotesById[aPlanet.getId()] || 0,
                        neutralPlanetVotes   : neutralPlanetsVotesById[aPlanet.getId()] || 0,
                        inMyUmbrella         : universe.inUmbrella(aPlanet, players.me) ? 1 : -1,
+                       myUmbrellaDepth      : universe.umbrellaDepth(aPlanet, players.me),
                        inOpponentUmbrella   : universe.inUmbrella(aPlanet, players.opponent) ? 1 : -1,
+                       opponentUmbrellaDepth : universe.umbrellaDepth(aPlanet, players.opponent),
                        myTotalGrowth : universe.totalGrowthFor(players.me),
                        opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
                        // needs ships (rescue?)
