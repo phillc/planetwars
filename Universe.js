@@ -103,6 +103,11 @@ function Universe(planets) {
             // and it is a stable planet?
             return friendlyDistance > enemyDistance;
         },
+        totalGrowthFor : function(player) {
+            return _.reduce(this.planetsOwnedBy(player), function(memo, planet) {
+                return memo + planet.getGrowth();
+            }, 0)
+        }
     };
 }
 

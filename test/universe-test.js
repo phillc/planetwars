@@ -99,4 +99,19 @@ vows.describe('Universe').addBatch({
             assert.isTrue(meResults[2].isSamePlanet(planet3));
         }
     },
+    'totalGrowthFor' : {
+        'should return growth by player' : function(universe) {
+            var planets = [ Planet({owner : players.me, growth : 5}),
+                            Planet({owner : players.opponent, growth : 5}),
+                            Planet({owner : players.opponent, growth : 3}),
+                            Planet({owner : players.opponent, growth : 2}),
+                            Planet({owner : players.me, growth : 3}),
+                            Planet({owner : players.me, growth : 1}),
+                            Planet({owner : players.opponent, growth : 1}) ];
+            var universe = Universe(planets);
+            assert.equal(universe.totalGrowthFor(players.me), 9);
+            assert.equal(universe.totalGrowthFor(players.opponent), 11);
+        },
+    },
+    
 }).export(module);

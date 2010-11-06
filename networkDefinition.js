@@ -4,25 +4,32 @@ var networks = {
                    "isNeutral",
                    "growth",
                    "planetVotes",
-                   "inMyUmbrella"
-                   ],
-        hiddenLayer : 6
+                   "inMyUmbrella",
+                   "myTotalGrowth",
+                   "opponentTotalGrowth" ],
+        hiddenLayer : 7
     },
     planetVote : {
         inputs : [ "distance",
                    "effDef",
-                   "growth" ],
-        hiddenLayer : 4
+                   "growth",
+                   "myTotalGrowth",
+                   "opponentTotalGrowth" ],
+        hiddenLayer : 5
     },
     opponentPlanetVote : {
         inputs : [ "distance",
                    "effDef",
-                   "growth" ],
+                   "growth",
+                   "myTotalGrowth",
+                   "opponentTotalGrowth" ],
         hiddenLayer : 4
     },
     neutralPlanetVote : {
         inputs : [ "distance",
-                   "growth" ],
+                   "growth",
+                   "myTotalGrowth",
+                   "opponentTotalGrowth" ],
         hiddenLayer : 4
     },
 }

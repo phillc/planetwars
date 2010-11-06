@@ -97,7 +97,9 @@ function doTurn(universe) {
             
                 var values = { distance : distance,
                                effDef   : effDef + voter.shipBalance(),
-                               growth   : voter.getGrowth() };
+                               growth   : voter.getGrowth(),
+                               myTotalGrowth : universe.totalGrowthFor(players.me),
+                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
                                // canTakeRightNow
                                // will have more to send
                                // can cover that planet
@@ -106,8 +108,6 @@ function doTurn(universe) {
                 // sys.debug(sys.inspect(values));
                 // sys.debug(sys.inspect(voteValue));
                 var candidatePlanetId = candidatePlanet.getId();
-                
-                
                 myPlanetsVotesById[candidatePlanetId] = myPlanetsVotesById[candidatePlanetId] || 0;
                 myPlanetsVotesById[candidatePlanetId] += network.activation(voteValue);
             }
@@ -122,13 +122,14 @@ function doTurn(universe) {
             
                 var values = { distance : distance,
                                effDef   : effDef + voter.shipBalance(),
-                               growth   : voter.getGrowth() };
+                               growth   : voter.getGrowth(),
+                               myTotalGrowth : universe.totalGrowthFor(players.me),
+                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
+                               
                 var voteValue = network.compute("opponentPlanetVote", values);
                 // sys.debug(sys.inspect(values));
                 // sys.debug(sys.inspect(voteValue));
                 var candidatePlanetId = candidatePlanet.getId();
-                
-                
                 opponentPlanetsVotesById[candidatePlanetId] = opponentPlanetsVotesById[candidatePlanetId] || 0;
                 opponentPlanetsVotesById[candidatePlanetId] += network.activation(voteValue);
             }
@@ -142,7 +143,10 @@ function doTurn(universe) {
                 var effDef = candidatePlanet.effectiveDefensiveValue(players.neutral, distance);
             
                 var values = { distance : distance,
-                               growth   : voter.getGrowth() };
+                               growth   : voter.getGrowth(),
+                               myTotalGrowth : universe.totalGrowthFor(players.me),
+                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
+                               
                 var voteValue = network.compute("neutralPlanetVote", values);
                 // sys.debug(sys.inspect(values));
                 // sys.debug(sys.inspect(voteValue));
@@ -153,9 +157,7 @@ function doTurn(universe) {
         });
     });
     
-    
     var planetsByScore = []
-    
     
     effectivelyNotMyPlanets.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
@@ -165,7 +167,9 @@ function doTurn(universe) {
                        planetVotes          : myPlanetsVotesById[aPlanet.getId()] || 0,
                        opponentPlanetVotes  : opponentPlanetsVotesById[aPlanet.getId()] || 0,
                        neutralPlanetVotes   : neutralPlanetsVotesById[aPlanet.getId()] || 0,
-                       inMyUmbrella         : universe.inUmbrella(aPlanet, players.me) ? 1 : -1 }
+                       inMyUmbrella         : universe.inUmbrella(aPlanet, players.me) ? 1 : -1,
+                       myTotalGrowth : universe.totalGrowthFor(players.me),
+                       opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
                        // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
         var scoreTuple = [network.compute("attackConsideration", values), aPlanet];
