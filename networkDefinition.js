@@ -4,6 +4,8 @@ var networks = {
                    "isNeutral",
                    "growth",
                    "planetVotes",
+                   "opponentPlanetVotes",
+                   "neutralPlanetVotes",
                    "inMyUmbrella",
                    "myTotalGrowth",
                    "opponentTotalGrowth" ],
