@@ -83,9 +83,12 @@ task :run do
   run_times = (ENV['MUTATIONS'] || 1).to_i
   p "running #{run_times} times"
   run_times.times do
+    p "*" * 80
+    p `date`
+    p `git pull`
     Rake::Task["mutate"].execute
     Rake::Task["matchup"].execute
-    `git add -A`
+    p `git add -A`
     Rake::Task["tcp"].execute
   end
 end
