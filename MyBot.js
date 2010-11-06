@@ -174,6 +174,8 @@ function doTurn(universe) {
         var aPlanetId = aPlanet.getId();
         var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()), // maybe not farthest force for this planet, but out of ALL planets
                        isNeutral            : aPlanet.isNeutral() ? 1 : -1,
+                       isMine               : aPlanet.isOwnedBy(players.me) ? 1 : -1,
+                       isOpponent           : aPlanet.isOwnedBy(players.opponent) ? 1 : -1,
                        growth               : aPlanet.getGrowth(),
                        planetVotes          : myPlanetsVotesById[aPlanet.getId()] || 0,
                        opponentPlanetVotes  : opponentPlanetsVotesById[aPlanet.getId()] || 0,

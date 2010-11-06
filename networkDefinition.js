@@ -2,6 +2,8 @@ var networks = {
     attackConsideration : {
         inputs : [ "farthestEffDef",
                    "isNeutral",
+                   "isMine",
+                   "isOpponent",
                    "growth",
                    "planetVotes",
                    "opponentPlanetVotes",
