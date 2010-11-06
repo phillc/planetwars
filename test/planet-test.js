@@ -151,6 +151,18 @@ vows.describe('Planet').addBatch({
                 planet.addIncomingForce(players.opponent, 5, 5);
                 assert.equal(planet.shipBalance(), 0);
             }
+        },
+        'for 2 turns from now' : {
+            'when the growth rate is 4 and 16 ships are already there,' : {
+                'and there are no incoming ships' : {
+                    'should be the number of ships + growth * turns' : function() {
+                        var planet = Planet({ owner : players.me,
+                                              ships : 16,
+                                              growth : 4 });
+                        assert.equal(planet.shipBalance(2), 24);
+                    },
+                },
+            }
         }
     },
     'farthestForce' : {

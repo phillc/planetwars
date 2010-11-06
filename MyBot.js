@@ -45,6 +45,7 @@ var attackPlan = function(myClosestPlanets, realTarget) {
                             closestPlanet.sendShipsTo(-simulatedTargetEffDef, realTarget);
                             return closestToTargetDistance;
                         } else if (nextClosestPlanet) {
+                            // don't need to send to self if it has the growth by the time needed in the next
                             var simulatedFrom = closestPlanet.clone();
                             simulatedFrom.recordSendShipsTo(closestPlanetShipBalance, simulatedTarget);
                             var turnsUntilFarthestArrival = this.coordinateAttacks(closestPlanets, simulatedTarget);
