@@ -30,8 +30,6 @@ var attackPlan = function(myClosestPlanets, realTarget) {
             });
         },
         coordinateAttacks : function(closestPlanets, simulatedTarget) {
-            // doesn't count for new ships =\
-        // need to account for its own growth
             // prevent a scenario where I send ships and volunteer to get sniped
             if (closestPlanets.length > 0){
                 var closestPlanet = closestPlanets.shift();
