@@ -80,18 +80,23 @@ function Universe(planets) {
             var nearbyFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
             var nearbyFriendlyPlanetsLength = nearbyFriendlyPlanets.length;
             fakePlanet = planet.clone();
-            fakePlanet.addIncomingForce(enemy, closestEnemyPlanet.getShips(), enemyDistance);
-            for (var count = 0 ; count < nearbyFriendlyPlanetsLength ; count++) {
-                var nearbyPlanet = nearbyFriendlyPlanets[count];
-                var nearbyDistance = planet.distanceFrom(nearbyPlanet);
-                if (nearbyDistance < enemyDistance) {
-                    // make not getships... make shipBalance for enemy????
-                    fakePlanet.addIncomingForce(player, nearbyPlanet.getShips(), nearbyDistance)
-                } else {
-                    break;
+            var enemyShipBalance = closestEnemyPlanet.shipBalance()
+            if (enemyShipBalance > 0) {
+                fakePlanet.addIncomingForce(enemy, enemyShipBalance, enemyDistance);
+                for (var count = 0 ; count < nearbyFriendlyPlanetsLength ; count++) {
+                    var nearbyPlanet = nearbyFriendlyPlanets[count];
+                    var nearbyDistance = planet.distanceFrom(nearbyPlanet);
+                    if (nearbyDistance < enemyDistance) {
+                        fakePlanet.addIncomingForce(player, nearbyPlanet.shipBalance(), nearbyDistance)
+                    } else {
+                        break;
+                    }
                 }
+                return Math.min(planet.shipBalance(), fakePlanet.shipBalance());
+                
+            } else {
+                return planet.shipBalance();
             }
-            return Math.min(planet.shipBalance(), fakePlanet.shipBalance());
         },
         inUmbrella : function(planet, player) {
             return this.umbrellaDepth(planet, player) > 0;
