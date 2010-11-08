@@ -17,13 +17,14 @@ var tupleSortSmallerFirst = function(tuple1, tuple2) {
 var turnNumber = 0;
 var maxTurnNumber = 200;
 
-var attackPlan = function(myClosestPlanets, realTarget) {
+var attackPlan = function(universe, myClosestPlanets, realTarget) {
     return {
         go : function() {
             return this.coordinateAttacks(myClosestPlanets.slice(0), realTarget.clone());
         },
         planetToReinforce : function(closestPlanet, turnsUntilFarthestArrival, closestToTargetDistance) {
             // maybe this should be a sort of distance(p -> some planet) + distance(some planet -> target)
+            // make this so that it choses one that is DEFENITELY mine
             return _.detect(myClosestPlanets, function(reinforceablePlanet) {
                 var distanceToNearbyThenTarget = closestPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget);
                 return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < closestToTargetDistance * 1.3) ;
@@ -37,7 +38,7 @@ var attackPlan = function(myClosestPlanets, realTarget) {
                 var closestToTargetDistance = closestPlanet.distanceFrom(realTarget);
                 var simulatedTargetEffDef = simulatedTarget.effectiveDefensiveValue(players.me, closestToTargetDistance);
                 if (simulatedTargetEffDef < 0) {
-                    var closestPlanetShipBalance = closestPlanet.shipBalance();
+                    var closestPlanetShipBalance = universe.planetCanSendTo(closestPlanet, realTarget, players.me);
                     if (closestPlanetShipBalance > 0) {
                         if (closestPlanetShipBalance > -simulatedTargetEffDef) {
                             closestPlanet.sendShipsTo(-simulatedTargetEffDef, realTarget);
@@ -108,7 +109,8 @@ function doTurn(universe) {
                                effDef   : effDef + voter.shipBalance(),
                                growth   : voter.getGrowth(),
                                myTotalGrowth : universe.totalGrowthFor(players.me),
-                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
+                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
+                               neutralTotalGrowth : universe.totalGrowthFor(players.neutral) };
                                // canTakeRightNow
                                // will have more to send
                                // can cover that planet
@@ -133,7 +135,8 @@ function doTurn(universe) {
                                effDef   : effDef + voter.shipBalance(),
                                growth   : voter.getGrowth(),
                                myTotalGrowth : universe.totalGrowthFor(players.me),
-                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
+                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
+                               neutralTotalGrowth : universe.totalGrowthFor(players.neutral) };
                                
                 var voteValue = network.compute("opponentPlanetVote", values);
                 // sys.debug(sys.inspect(values));
@@ -154,7 +157,8 @@ function doTurn(universe) {
                 var values = { distance : distance,
                                growth   : voter.getGrowth(),
                                myTotalGrowth : universe.totalGrowthFor(players.me),
-                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
+                               opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
+                               neutralTotalGrowth : universe.totalGrowthFor(players.neutral) };
                                
                 var voteValue = network.compute("neutralPlanetVote", values);
                 // sys.debug(sys.inspect(values));
@@ -183,7 +187,8 @@ function doTurn(universe) {
                        inOpponentUmbrella   : universe.inUmbrella(aPlanet, players.opponent) ? 1 : -1,
                        opponentUmbrellaDepth : universe.umbrellaDepth(aPlanet, players.opponent),
                        myTotalGrowth : universe.totalGrowthFor(players.me),
-                       opponentTotalGrowth : universe.totalGrowthFor(players.opponent) };
+                       opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
+                       neutralTotalGrowth : universe.totalGrowthFor(players.neutral) };
                        // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
         var scoreTuple = [network.compute("attackConsideration", values), aPlanet];
@@ -222,7 +227,7 @@ function doTurn(universe) {
         var myClosestPlanets = _.filter(universe.closestPlanetsTo(targetPlanet), function(planet) {
             return planet.effectivelyOwnedBy(players.me); // || planet.ownedBy(me)
         });
-        var plan = attackPlan(myClosestPlanets, targetPlanet);
+        var plan = attackPlan(universe, myClosestPlanets, targetPlanet);
         plan.go();
     });
 }

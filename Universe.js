@@ -70,24 +70,33 @@ function Universe(planets) {
             return this.closestPlanetsToOwnedBy(planet, player);
         },
         planetSurplus : function(planet, player) {
-            if (this.inUmbrella(planet, player)) {
+            var enemy = players.enemyOf(player);
+            var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
+            if (this.inUmbrella(planet, player) || closestEnemyPlanets.length === 0) {
                 return planet.shipBalance();
             }
-            var enemy = enemyOf(player);
-            var closestEnemyPlanet = this.closestPlanetsToOwnedBy(planet, enemy)[0];
-            var distance = planet.distanceFrom(closestEnemyPlanet);
+            var closestEnemyPlanet = closestEnemyPlanets[0];
+            var enemyDistance = planet.distanceFrom(closestEnemyPlanet);
             var nearbyFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
+            var nearbyFriendlyPlanetsLength = nearbyFriendlyPlanets.length;
             fakePlanet = planet.clone();
-            fakePlanet.addIncomingForce(enemy, closestEnemyPlanet.getShips(), distance)
-            return fakePlanet.shipBalance();
+            fakePlanet.addIncomingForce(enemy, closestEnemyPlanet.getShips(), enemyDistance);
+            for (var count = 0 ; count < nearbyFriendlyPlanetsLength ; count++) {
+                var nearbyPlanet = nearbyFriendlyPlanets[count];
+                var nearbyDistance = planet.distanceFrom(nearbyPlanet);
+                if (nearbyDistance < enemyDistance) {
+                    // make not getships... make shipBalance for enemy????
+                    fakePlanet.addIncomingForce(player, nearbyPlanet.getShips(), nearbyDistance)
+                } else {
+                    break;
+                }
+            }
+            return Math.min(planet.shipBalance(), fakePlanet.shipBalance());
         },
         inUmbrella : function(planet, player) {
             return this.umbrellaDepth(planet, player) > 0;
         },
         umbrellaDepth : function(planet, player) {
-            // very dumb
-            // could squash with planet Surplus and just send enemy to it and all friendly to it, then get ship balance
-            // if you arn't in umbrella, you must be part of it?
             var enemy = players.enemyOf(player);
             var depth = 0;
             
@@ -115,6 +124,15 @@ function Universe(planets) {
             return _.reduce(this.planetsOwnedBy(player), function(memo, planet) {
                 return memo + planet.getGrowth();
             }, 0)
+        },
+        planetCanSendTo : function(planet, targetPlanet, player) {
+            var enemy = players.enemyOf(player);
+            var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
+            if (closestEnemyPlanets.length > 0 && closestEnemyPlanets[0].isSamePlanet(targetPlanet)) {
+                return planet.shipBalance();
+            } else {
+                return this.planetSurplus(planet, player);
+            }
         }
     };
 }

@@ -13,15 +13,17 @@ var networks = {
                    "inOpponentUmbrella",
                    "opponentUmbrellaDepth",
                    "myTotalGrowth",
-                   "opponentTotalGrowth" ],
-        hiddenLayer : 7
+                   "opponentTotalGrowth",
+                   "neutralTotalGrowth" ],
+        hiddenLayer : 8
     },
     planetVote : {
         inputs : [ "distance",
                    "effDef",
                    "growth",
                    "myTotalGrowth",
-                   "opponentTotalGrowth" ],
+                   "opponentTotalGrowth",
+                   "neutralTotalGrowth" ],
         hiddenLayer : 5
     },
     opponentPlanetVote : {
@@ -29,14 +31,16 @@ var networks = {
                    "effDef",
                    "growth",
                    "myTotalGrowth",
-                   "opponentTotalGrowth" ],
+                   "opponentTotalGrowth",
+                   "neutralTotalGrowth" ],
         hiddenLayer : 4
     },
     neutralPlanetVote : {
         inputs : [ "distance",
                    "growth",
                    "myTotalGrowth",
-                   "opponentTotalGrowth" ],
+                   "opponentTotalGrowth",
+                   "neutralTotalGrowth" ],
         hiddenLayer : 4
     },
 }
