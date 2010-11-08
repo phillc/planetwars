@@ -1,283 +1,245 @@
 exports.weights = {
   "attackConsideration": {
     "hidden_weights": [
-      -0.42842192210164,
-      1.39451586114534,
-      -1.06466582973125,
-      -0.04569667495709,
-      0.081925409095128,
-      0.193937556757792,
-      0.63410032744202,
-      0.0
+      0.46421096105082,
+      4.77806344458136,
+      0.029041614358203,
+      0.18278669982836,
+      -0.00903729545243599,
+      0.271968778378896,
+      -0.0104406352325631
     ],
     "input_weights": [
       {
-        "myTotalGrowth": 0.090660443793133,
-        "opponentPlanetVotes": 0.342618126078825,
-        "isOpponent": 0.072459675880632,
-        "isMine": 0.446682238772912,
-        "opponentTotalGrowth": 1.76575318382134,
-        "opponentUmbrellaDepth": 0.067321844634243,
-        "neutralTotalGrowth": -0.05,
-        "isNeutral": 14.0937734489346,
-        "inOpponentUmbrella": 0.081269666099006,
-        "planetVotes": 0.283436347012825,
-        "growth": -0.632631673391182,
-        "farthestEffDef": 1.29582841531331,
-        "myUmbrellaDepth": -1.78254358024354,
-        "inMyUmbrella": -0.307071120930392,
-        "neutralPlanetVotes": -2.45340608092076
+        "myTotalGrowth": -0.0563208875862665,
+        "opponentPlanetVotes": -0.242618126078826,
+        "isOpponent": 0.022459675880632,
+        "isMine": 4.37345791018328,
+        "opponentTotalGrowth": -0.782876591910668,
+        "opponentUmbrellaDepth": 0.169287378536973,
+        "isNeutral": 0.413965210139604,
+        "inOpponentUmbrella": -0.0398412917376242,
+        "planetVotes": 23.3399262088208,
+        "growth": 0.116315836695591,
+        "farthestEffDef": -0.373957103828328,
+        "myUmbrellaDepth": 0.445635895060885,
+        "inMyUmbrella": -0.0691919450581495,
+        "neutralPlanetVotes": 1.07670304046038
       },
       {
-        "myTotalGrowth": 1.32375613613657,
-        "opponentPlanetVotes": 0.049062811664439,
-        "isOpponent": 1.62962805108302,
-        "isMine": 6.00941748668496,
-        "opponentTotalGrowth": -0.00380561586706765,
-        "opponentUmbrellaDepth": -0.09151607564395,
-        "neutralTotalGrowth": 0.0,
-        "isNeutral": -0.94680978628183,
-        "inOpponentUmbrella": -40.4060930492136,
-        "planetVotes": 0.0393810861472515,
+        "myTotalGrowth": 0.97375613613657,
+        "opponentPlanetVotes": -0.00648429708389025,
+        "isOpponent": -0.147800876596344,
+        "isMine": -1.05235437167124,
+        "opponentTotalGrowth": -0.0076112317341353,
+        "opponentUmbrellaDepth": -0.666064302575802,
+        "isNeutral": -7.9744782902546,
+        "inOpponentUmbrella": -0.40634520389396,
+        "planetVotes": 0.484951310821988,
         "growth": 0.14518509787046,
-        "farthestEffDef": 0.060825167817158,
-        "myUmbrellaDepth": 1.20748691207589,
-        "inMyUmbrella": 0.277332872512412,
-        "neutralPlanetVotes": 0.242327691540994
+        "farthestEffDef": 0.0326031459771447,
+        "myUmbrellaDepth": -0.131133016998814,
+        "inMyUmbrella": 0.177332872512412,
+        "neutralPlanetVotes": 0.315344616918012
       },
       {
-        "myTotalGrowth": -0.00456128582206458,
-        "opponentPlanetVotes": -0.202217841386592,
-        "isOpponent": 1.62336699518289,
-        "isMine": -0.119997984092709,
-        "opponentTotalGrowth": 0.0176641083968055,
-        "opponentUmbrellaDepth": -0.229412269163693,
-        "neutralTotalGrowth": 0.1,
-        "isNeutral": 8.33477286212044,
-        "inOpponentUmbrella": -1.52216561248322,
-        "planetVotes": 0.000841214487647498,
-        "growth": 0.37814857766455,
-        "farthestEffDef": -0.00987029037887299,
-        "myUmbrellaDepth": -0.232906816805591,
-        "inMyUmbrella": 0.00173687581026419,
-        "neutralPlanetVotes": -0.043265613722177
+        "myTotalGrowth": -0.00912257164412916,
+        "opponentPlanetVotes": 0.077217841386594,
+        "isOpponent": 6.69346798073156,
+        "isMine": -0.0700005039768228,
+        "opponentTotalGrowth": -0.241312867174444,
+        "opponentUmbrellaDepth": -0.0397061345818465,
+        "isNeutral": 16.2695457242409,
+        "inOpponentUmbrella": 1.64433122496645,
+        "planetVotes": -0.80672971590118,
+        "growth": 0.7562971553291,
+        "farthestEffDef": 1.11584929212394,
+        "myUmbrellaDepth": -0.058546591597205,
+        "inMyUmbrella": -0.000217109476283024,
+        "neutralPlanetVotes": -0.013468772555646
       },
       {
-        "myTotalGrowth": -0.092436285392278,
-        "opponentPlanetVotes": -0.281931378355254,
-        "isOpponent": 2.33787431973512,
-        "isMine": -1.5923886611561,
-        "opponentTotalGrowth": -0.123304975348076,
-        "opponentUmbrellaDepth": -0.00338170268422725,
-        "neutralTotalGrowth": -0.0,
-        "isNeutral": 0.571597872755082,
-        "inOpponentUmbrella": -0.343345860410952,
-        "planetVotes": 1.71587557523502,
-        "growth": 0.178132048922006,
-        "farthestEffDef": 0.0477134811420485,
-        "myUmbrellaDepth": 0.298546172800375,
-        "inMyUmbrella": -0.631558279001815,
-        "neutralPlanetVotes": 4.61666785057448
+        "myTotalGrowth": 0.150472732162982,
+        "opponentPlanetVotes": 0.163862756710506,
+        "isOpponent": -2.08787431973512,
+        "isMine": 0.024881072830564,
+        "opponentTotalGrowth": -0.231673756162981,
+        "opponentUmbrellaDepth": 0.495892757052366,
+        "isNeutral": -0.028402127244918,
+        "inOpponentUmbrella": -3.34676688328762,
+        "planetVotes": 0.75793778761751,
+        "growth": 0.006264097844011,
+        "farthestEffDef": 0.190853924568194,
+        "myUmbrellaDepth": -0.0632269135998125,
+        "inMyUmbrella": -0.415779139500908,
+        "neutralPlanetVotes": 0.62708348132181
       },
       {
-        "myTotalGrowth": 4.64546931422864,
-        "opponentPlanetVotes": -0.168477197372012,
-        "isOpponent": -0.89196245037171,
-        "isMine": 0.605380123050634,
-        "opponentTotalGrowth": 0.321799522314864,
-        "opponentUmbrellaDepth": 0.022613865251309,
-        "neutralTotalGrowth": 0.1,
-        "isNeutral": 4.43969031756832,
-        "inOpponentUmbrella": 0.063761422434946,
-        "planetVotes": 0.180456809301682,
-        "growth": 0.287938852935514,
-        "farthestEffDef": -8.35954265693072,
-        "myUmbrellaDepth": 1.23547114215373,
-        "inMyUmbrella": -0.198174828443395,
-        "neutralPlanetVotes": -3.90677217350508
+        "myTotalGrowth": -1.16136732855716,
+        "opponentPlanetVotes": 0.082880700656997,
+        "isOpponent": 1.68392490074342,
+        "isMine": 0.0526900615253175,
+        "opponentTotalGrowth": 0.210899761157432,
+        "opponentUmbrellaDepth": 0.154772269497382,
+        "isNeutral": 0.77996128969604,
+        "inOpponentUmbrella": 0.420182758959136,
+        "planetVotes": -0.00747144941864485,
+        "growth": -1.55175541174206,
+        "farthestEffDef": 2.13988566423268,
+        "myUmbrellaDepth": 0.217735571076864,
+        "inMyUmbrella": -0.0963496568867894,
+        "neutralPlanetVotes": 0.90169304337627
       },
       {
-        "myTotalGrowth": -0.074642106580191,
-        "opponentPlanetVotes": 0.103090654512404,
-        "isOpponent": 2.05940976079714,
-        "isMine": -0.189744235789928,
-        "opponentTotalGrowth": 1.7996125689126,
-        "opponentUmbrellaDepth": -0.548844443517515,
-        "neutralTotalGrowth": -0.0,
-        "isNeutral": -0.42530051162705,
-        "inOpponentUmbrella": 0.031859374591419,
-        "planetVotes": 0.225574189425285,
-        "growth": 0.461258221877028,
-        "farthestEffDef": 0.012362679850186,
-        "myUmbrellaDepth": -0.225407242495192,
-        "inMyUmbrella": 0.66264153259427,
-        "neutralPlanetVotes": 2.46749026750182
+        "myTotalGrowth": -0.075357893419809,
+        "opponentPlanetVotes": 0.003090654512404,
+        "isOpponent": 0.069926220099642,
+        "isMine": 2.15897694315972,
+        "opponentTotalGrowth": 8.3984502756504,
+        "opponentUmbrellaDepth": -1.84537777407006,
+        "isNeutral": -0.237349744186474,
+        "inOpponentUmbrella": -0.118140625408581,
+        "planetVotes": 4.8367481232182,
+        "growth": 0.430629110938514,
+        "farthestEffDef": -0.602197122397024,
+        "myUmbrellaDepth": -0.121824094688101,
+        "inMyUmbrella": -0.478160383148568,
+        "neutralPlanetVotes": 1.63374513375091
       },
       {
-        "myTotalGrowth": 10.0111788438284,
-        "opponentPlanetVotes": -0.082032519361051,
-        "isOpponent": -3.644491756033,
-        "isMine": 0.0564020175037635,
-        "opponentTotalGrowth": -2.44878292536218,
-        "opponentUmbrellaDepth": -30.911024901822,
-        "neutralTotalGrowth": 0.0,
-        "isNeutral": 0.137921605622975,
-        "inOpponentUmbrella": 0.187057308449296,
-        "planetVotes": -0.330714583928829,
-        "growth": -2.55577202720616,
-        "farthestEffDef": -1.27835813944644,
-        "myUmbrellaDepth": -2.71186760130342,
-        "inMyUmbrella": 0.544826811101792,
-        "neutralPlanetVotes": -0.52292835974012
-      },
-      {
-        "myTotalGrowth": -0.2,
-        "opponentPlanetVotes": -0.4,
-        "isOpponent": -0.1,
-        "isMine": -0.1,
-        "opponentTotalGrowth": -0.0,
-        "opponentUmbrellaDepth": -0.1,
-        "neutralTotalGrowth": -0.0,
-        "isNeutral": 0.1,
-        "inOpponentUmbrella": 0.0,
-        "planetVotes": 0.0,
-        "growth": 0.0,
-        "farthestEffDef": 0.1,
-        "myUmbrellaDepth": -0.1,
-        "inMyUmbrella": -0.2,
-        "neutralPlanetVotes": 0.2
+        "myTotalGrowth": -0.900698677739274,
+        "opponentPlanetVotes": 0.054491870159737,
+        "isOpponent": -3.444491756033,
+        "isMine": -0.124391929984946,
+        "opponentTotalGrowth": 1.74878292536218,
+        "opponentUmbrellaDepth": -7.62775622545548,
+        "isNeutral": 0.0120783943770255,
+        "inOpponentUmbrella": 0.351770766202816,
+        "planetVotes": -0.130714583928829,
+        "growth": -0.29447150340077,
+        "farthestEffDef": -0.24458953486161,
+        "myUmbrellaDepth": -0.577966900325856,
+        "inMyUmbrella": 0.084051675693862,
+        "neutralPlanetVotes": 0.059116044967515
       }
     ]
   },
   "neutralPlanetVote": {
     "hidden_weights": [
-      -0.063794443900557,
-      -0.122022225098962,
-      0.6416768675094,
-      0.453458945860604
+      0.172411112198887,
+      0.159522225098961,
+      -1.2583231324906,
+      -0.0566823682325755
     ],
     "input_weights": [
       {
-        "myTotalGrowth": -0.126390928429771,
-        "opponentTotalGrowth": -4.0790575237194,
-        "neutralTotalGrowth": 0.0,
-        "growth": 0.00833488096486711,
-        "distance": 0.0645319723633055
+        "myTotalGrowth": -1.42225485487633,
+        "opponentTotalGrowth": 4.3790575237194,
+        "growth": 0.233432381751494,
+        "distance": 0.114531972363306
       },
       {
-        "myTotalGrowth": 1.89813828408749,
-        "opponentTotalGrowth": -0.63867909852598,
-        "neutralTotalGrowth": -0.1,
-        "growth": -0.0295543689918107,
-        "distance": 5.3046337963836
+        "myTotalGrowth": -0.449534571021872,
+        "opponentTotalGrowth": -0.41933954926299,
+        "growth": -0.236434951934487,
+        "distance": -2.5523168981918
       },
       {
-        "myTotalGrowth": 10.7942118058436,
-        "opponentTotalGrowth": 0.087002051472408,
-        "neutralTotalGrowth": 0.2,
-        "growth": 0.182757209244721,
-        "distance": 0.0763948657751808
+        "myTotalGrowth": -0.130055514866576,
+        "opponentTotalGrowth": -0.0273126282170255,
+        "growth": -0.01637860462236,
+        "distance": 0.044420536899277
       },
       {
-        "myTotalGrowth": 1.53767707055521,
-        "opponentTotalGrowth": -0.0695547499742235,
-        "neutralTotalGrowth": 0.0,
-        "growth": 0.371483133164084,
-        "distance": -0.336780490643126
+        "myTotalGrowth": 0.234419267638802,
+        "opponentTotalGrowth": 0.078218999896893,
+        "growth": 0.100891152088622,
+        "distance": 0.00790243866960925
       }
     ]
   },
-  "created_on": "Mon Nov 08 04:59:02 -0500 2010",
+  "created_on": "Sun Nov 07 13:52:03 -0500 2010",
   "planetVote": {
     "hidden_weights": [
-      0.093799755933751,
-      -0.413626118942152,
-      -0.288752926449472,
-      1.12095015389416,
-      -0.065483234462694
+      0.850398047470008,
+      0.00681305947107598,
+      -0.627505852898944,
+      -0.0901187692367695,
+      -0.376134124298448
     ],
     "input_weights": [
       {
-        "myTotalGrowth": 2.05207748914118,
-        "effDef": 0.019956046668882,
-        "opponentTotalGrowth": -2.01275648193652,
-        "neutralTotalGrowth": 0.1,
-        "growth": 0.00457582931844905,
-        "distance": -0.0057362579039805
+        "myTotalGrowth": -0.563019372285297,
+        "effDef": 0.980703253297888,
+        "opponentTotalGrowth": -0.806378240968256,
+        "growth": -0.026786730904815,
+        "distance": -0.0917801264636884
       },
       {
-        "myTotalGrowth": 0.28998604051071,
-        "effDef": -0.43250161251434,
-        "opponentTotalGrowth": -5.29411868719556,
-        "neutralTotalGrowth": 0.0,
-        "growth": -0.0370398292146855,
-        "distance": -1.36305726551284
+        "myTotalGrowth": 0.207493020255355,
+        "effDef": -0.416250806257169,
+        "opponentTotalGrowth": 0.748529671798892,
+        "growth": 0.099079658429371,
+        "distance": 1.86305726551284
       },
       {
-        "myTotalGrowth": -2.73900891130734,
-        "effDef": -0.0881328087486725,
-        "opponentTotalGrowth": 0.580939966936528,
-        "neutralTotalGrowth": 0.0,
-        "growth": -0.20552565461897,
-        "distance": 0.029770915997473
+        "myTotalGrowth": 2.48900891130734,
+        "effDef": -1.40506246998938,
+        "opponentTotalGrowth": 0.070234991734132,
+        "growth": -0.18894869076206,
+        "distance": 0.160114542001264
       },
       {
-        "myTotalGrowth": 0.440239557972842,
-        "effDef": -3.25235013153044,
-        "opponentTotalGrowth": 0.201452233228673,
-        "neutralTotalGrowth": 0.0,
-        "growth": 0.349217662320472,
-        "distance": 0.068230835646054
+        "myTotalGrowth": 0.480479115945684,
+        "effDef": 1.42617506576522,
+        "opponentTotalGrowth": 0.0310684708464159,
+        "growth": 0.049217662320472,
+        "distance": 0.172923342584215
       },
       {
-        "myTotalGrowth": -0.327108751120604,
-        "effDef": -0.021734333442727,
-        "opponentTotalGrowth": 0.55641066829976,
-        "neutralTotalGrowth": -0.1,
-        "growth": -0.16436612303847,
-        "distance": -2.54778792665476
+        "myTotalGrowth": -0.145782497758792,
+        "effDef": -0.026125332458188,
+        "opponentTotalGrowth": -0.034775666768735,
+        "growth": 1.05746449215388,
+        "distance": 0.723893963327375
       }
     ]
   },
   "opponentPlanetVote": {
     "hidden_weights": [
-      0.057416110439912,
-      0.083286616221668,
-      2.21392849068088,
-      0.111379823144561
+      0.237315534077184,
+      0.116573232443336,
+      -0.79098212267022,
+      -0.291038585156484
     ],
     "input_weights": [
       {
-        "myTotalGrowth": -3.56813126883794,
-        "effDef": -0.021644378395158,
-        "opponentTotalGrowth": 0.232128654240714,
-        "neutralTotalGrowth": 0.0,
-        "growth": 0.285278595871188,
-        "distance": -0.072180223462031
+        "myTotalGrowth": 14.2725250753518,
+        "effDef": -0.12164437839516,
+        "opponentTotalGrowth": -0.414257308481427,
+        "growth": -0.00184017551610146,
+        "distance": -0.127441787696248
       },
       {
-        "myTotalGrowth": 3.19920201195076,
-        "effDef": 0.205700039355366,
-        "opponentTotalGrowth": -0.218644776453959,
-        "neutralTotalGrowth": -0.0,
-        "growth": -0.277230996525077,
-        "distance": -1.44622442158675
+        "myTotalGrowth": -0.156274937126539,
+        "effDef": -0.301425009838842,
+        "opponentTotalGrowth": -0.574579105815836,
+        "growth": -0.072769003474923,
+        "distance": -0.118278052698344
       },
       {
-        "myTotalGrowth": -0.179646553653272,
-        "effDef": -4.39434917111424,
-        "opponentTotalGrowth": 0.196675004934759,
-        "neutralTotalGrowth": 0,
-        "growth": 0.078325181682126,
-        "distance": -0.11228232149982
+        "myTotalGrowth": -0.032411638413318,
+        "effDef": -4.99434917111424,
+        "opponentTotalGrowth": 3.44680007895614,
+        "growth": -0.078325181682126,
+        "distance": 0.0472588225468694
       },
       {
-        "myTotalGrowth": -0.0147461606059518,
-        "effDef": 1.00077121804606,
-        "opponentTotalGrowth": -0.029054098709744,
-        "neutralTotalGrowth": -0.4,
-        "growth": -0.15562635231027,
-        "distance": 0.0783307534038135
+        "myTotalGrowth": -0.370507678788096,
+        "effDef": -0.075192804511516,
+        "opponentTotalGrowth": 0.030236475322564,
+        "growth": -0.71125270462054,
+        "distance": 0.626646027230508
       }
     ]
   }
