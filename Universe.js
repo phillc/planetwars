@@ -163,15 +163,14 @@ function Universe(planets) {
             var closestFriendlyPlanet = this.closestPlanetsToOwnedBy(toPlanet, player)[0];
             if(closestFriendlyPlanet) {
                 var distanceToFriendly = closestFriendlyPlanet.distanceFrom(toPlanet);
-                clone.addIncomingForce(player, closestFriendlyPlanet.shipBalance(0, player), distanceToFriendly);
                 var enemy = players.enemyOf(player)
                 var closestEnemyPlanets = this.closestPlanetsToOwnedBy(toPlanet, enemy)
                 var closestEnemyPlanetsLength = closestEnemyPlanets.length;
                 for (var count = 0 ; count < closestEnemyPlanetsLength ; count++) {
-                    var nearbyPlanet = closestEnemyPlanets[count];
-                    var nearbyDistance = toPlanet.distanceFrom(nearbyPlanet);
-                    if (nearbyDistance < distanceToFriendly) {
-                        clone.addIncomingForce(enemy, nearbyPlanet.shipBalance(distanceToFriendly - nearbyDistance, enemy), nearbyDistance);
+                    var nearbyEnemyPlanet = closestEnemyPlanets[count];
+                    var nearbyEnemyDistance = toPlanet.distanceFrom(nearbyEnemyPlanet);
+                    if (nearbyEnemyDistance < distanceToFriendly) {
+                        clone.addIncomingForce(enemy, nearbyEnemyPlanet.shipBalance(distanceToFriendly - nearbyEnemyDistance, enemy), nearbyEnemyDistance);
                     } else {
                         break;
                     }
