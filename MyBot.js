@@ -105,12 +105,13 @@ function doTurn(universe) {
                 var distance = voter.distanceFrom(candidatePlanet);
                 var effDef = candidatePlanet.effectiveDefensiveValue(players.me, distance);
             
-                var values = { distance : distance,
-                               effDef   : effDef + voter.shipBalance(0, players.me),
-                               growth   : voter.getGrowth(),
-                               myTotalGrowth : universe.totalGrowthFor(players.me),
+                var values = { distance            : distance,
+                               effDef              : effDef + voter.shipBalance(0, players.me),
+                               shipsNeededAt       : universe.shipsNeededAtFor(candidatePlanet, distance, players.me),
+                               growth              : voter.getGrowth(),
+                               myTotalGrowth       : universe.totalGrowthFor(players.me),
                                opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
-                               neutralTotalGrowth : universe.totalGrowthFor(players.neutral) };
+                               neutralTotalGrowth  : universe.totalGrowthFor(players.neutral) };
                                // canTakeRightNow
                                // will have more to send
                                // can cover that planet
@@ -132,11 +133,12 @@ function doTurn(universe) {
                 var effDef = candidatePlanet.effectiveDefensiveValue(players.opponent, distance);
             
                 var values = { distance : distance,
-                               effDef   : effDef + voter.shipBalance(0, players.opponent),
-                               growth   : voter.getGrowth(),
-                               myTotalGrowth : universe.totalGrowthFor(players.me),
+                               effDef              : effDef + voter.shipBalance(0, players.opponent),
+                               shipsNeededAt       : universe.shipsNeededAtFor(candidatePlanet, distance, players.opponent),
+                               growth              : voter.getGrowth(),
+                               myTotalGrowth       : universe.totalGrowthFor(players.me),
                                opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
-                               neutralTotalGrowth : universe.totalGrowthFor(players.neutral) };
+                               neutralTotalGrowth  : universe.totalGrowthFor(players.neutral) };
                                
                 var voteValue = network.compute("opponentPlanetVote", values);
                 // sys.debug(sys.inspect(values));
@@ -154,11 +156,12 @@ function doTurn(universe) {
                 var distance = voter.distanceFrom(candidatePlanet);
                 var effDef = candidatePlanet.effectiveDefensiveValue(players.neutral, distance);
             
-                var values = { distance : distance,
-                               growth   : voter.getGrowth(),
-                               myTotalGrowth : universe.totalGrowthFor(players.me),
+                var values = { distance            : distance,
+                               growth              : voter.getGrowth(),
+                               shipsNeededAt       : universe.shipsNeededAtFor(candidatePlanet, distance, players.me),
+                               myTotalGrowth       : universe.totalGrowthFor(players.me),
                                opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
-                               neutralTotalGrowth : universe.totalGrowthFor(players.neutral) };
+                               neutralTotalGrowth  : universe.totalGrowthFor(players.neutral) };
                                
                 var voteValue = network.compute("neutralPlanetVote", values);
                 // sys.debug(sys.inspect(values));
@@ -175,6 +178,7 @@ function doTurn(universe) {
     planetsThatNeedShips.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
         var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()), // maybe not farthest force for this planet, but out of ALL planets
+                       shipsNeededAt        : universe.shipsNeededAtFor(aPlanet, aPlanet.farthestForce(), players.me),
                        isNeutral            : aPlanet.isNeutral() ? 1 : -1,
                        isMine               : aPlanet.isOwnedBy(players.me) ? 1 : -1,
                        isOpponent           : aPlanet.isOwnedBy(players.opponent) ? 1 : -1,
