@@ -46,7 +46,7 @@ var networks = {
                    "neutralTotalGrowth",
                    "shipsNeededAt" ],
         hiddenLayer : 4
-    },
+    }
 }
 exports.networks = networks;
 exports.toJSON = networks;
