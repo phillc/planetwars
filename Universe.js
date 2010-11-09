@@ -69,14 +69,15 @@ function Universe(planets) {
             });
             return this.closestPlanetsToOwnedBy(planet, player);
         },
-        planetSurplus : function(planet, player) {
+        planetSurplus : function(planet, player, turns) {
+            var turns = turns || 0;
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
             var closestEnemyPlanetsLength = closestEnemyPlanets.length;
             var closestFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
             var closestFriendlyPlanetsLength = closestFriendlyPlanets.length;
             if (this.inUmbrella(planet, player) || closestEnemyPlanetsLength === 0 || closestFriendlyPlanetsLength === 0) {
-                return planet.shipBalance(0, player);
+                return planet.shipBalance(turns, player);
             }
             var fakePlanet = planet.clone();
             var closestEnemyPlanet = closestEnemyPlanets[0];
@@ -90,7 +91,7 @@ function Universe(planets) {
                 var enemyPlanet = closestEnemyPlanets[eCount];
                 var planetDistance = enemyPlanet.distanceFrom(planet);
                 if (planetDistance <= maxConsiderDistance){
-                    var enemyShipBalance = enemyPlanet.shipBalance(0, enemy)
+                    var enemyShipBalance = enemyPlanet.shipBalance(turns, enemy)
                     if (enemyShipBalance > 0) {
                         fakePlanet.addIncomingForce(enemy, enemyShipBalance, planetDistance);
                     }
@@ -103,7 +104,7 @@ function Universe(planets) {
                 var friendlyPlanet = closestFriendlyPlanets[fCount];
                 var planetDistance = friendlyPlanet.distanceFrom(planet);
                 if (planetDistance <= maxConsiderDistance){
-                    var friendlyShipBalance = friendlyPlanet.shipBalance(0, player)
+                    var friendlyShipBalance = friendlyPlanet.shipBalance(turns, player)
                     if (friendlyShipBalance > 0) {
                         fakePlanet.addIncomingForce(player, friendlyShipBalance, planetDistance);
                     }
@@ -111,7 +112,7 @@ function Universe(planets) {
                     break;
                 }
             }
-            return Math.min(planet.shipBalance(0, player), fakePlanet.shipBalance(0, player));
+            return Math.min(planet.shipBalance(turns, player), fakePlanet.shipBalance(turns, player));
         },
         inUmbrella : function(planet, player) {
             return this.umbrellaDepth(planet, player) > 0;

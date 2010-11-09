@@ -39,7 +39,7 @@ var attackPlan = function(universe, myClosestPlanets, realTarget) {
                         } else if (nextClosestPlanet) {
                             var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
                             var extraDistance = nextClosestToTargetDistance - sendingToTargetDistance;
-                            if (sendingPlanet.shipBalance(extraDistance, players.me) > shipsNeededAtTarget) {
+                            if (universe.planetSurplus(sendingPlanet, players.me, extraDistance) > shipsNeededAtTarget) {
                                 sendingPlanet.reserveShips(sendingPlanetShipBalance)
                                 return sendingToTargetDistance + extraDistance;
                             } else {
