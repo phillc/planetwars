@@ -24,7 +24,6 @@ var attackPlan = function(universe, myClosestPlanets, realTarget) {
         },
         planetToReinforce : function(closestPlanet, turnsUntilFarthestArrival, closestToTargetDistance) {
             // maybe this should be a sort of distance(p -> some planet) + distance(some planet -> target)
-            // make this so that it choses one that is DEFENITELY mine
             return _.detect(myClosestPlanets, function(reinforceablePlanet) {
                 var distanceToNearbyThenTarget = closestPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget);
                 return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < closestToTargetDistance * 1.3) ;
@@ -36,17 +35,18 @@ var attackPlan = function(universe, myClosestPlanets, realTarget) {
                 var closestPlanet = closestPlanets.shift();
                 var nextClosestPlanet = closestPlanets[0];
                 var closestToTargetDistance = closestPlanet.distanceFrom(realTarget);
-                var simulatedTargetEffDef = simulatedTarget.effectiveDefensiveValue(players.me, closestToTargetDistance);
-                if (simulatedTargetEffDef < 0) {
+                // var shipsNeededAtTarget = -simulatedTarget.effectiveDefensiveValue(players.me, closestToTargetDistance);
+                var shipsNeededAtTarget = universe.shipsNeededAtFor(simulatedTarget, closestToTargetDistance, players.me)
+                if (shipsNeededAtTarget > 0) {
                     var closestPlanetShipBalance = universe.planetCanSendTo(closestPlanet, realTarget, players.me);
                     if (closestPlanetShipBalance > 0) {
-                        if (closestPlanetShipBalance > -simulatedTargetEffDef) {
-                            closestPlanet.sendShipsTo(-simulatedTargetEffDef, realTarget);
+                        if (closestPlanetShipBalance > shipsNeededAtTarget) {
+                            closestPlanet.sendShipsTo(shipsNeededAtTarget, realTarget);
                             return closestToTargetDistance;
                         } else if (nextClosestPlanet) {
                             var nextClosestToTargetDistance = nextClosestPlanet.distanceFrom(realTarget);
                             var extraDistance = nextClosestToTargetDistance - closestToTargetDistance;
-                            if (closestPlanet.shipBalance(extraDistance) > -simulatedTargetEffDef) {
+                            if (closestPlanet.shipBalance(extraDistance, players.me) > shipsNeededAtTarget) {
                                 closestPlanet.reserveShips(closestPlanetShipBalance)
                                 return closestToTargetDistance + extraDistance;
                             } else {
@@ -82,8 +82,8 @@ function doTurn(universe) {
     turnNumber += 1;
     
     var allPlanets = universe.allPlanets();
-    var effectivelyNotMyPlanets = _.filter(allPlanets, function(planet) {
-        return !planet.effectivelyOwnedBy(players.me);
+    var planetsThatNeedShips = _.filter(allPlanets, function(planet) {
+        return !planet.effectivelyOwnedBy(players.me) || !universe.inUmbrella(planet, players.me);
     })
     var myPlanets = universe.planetsOwnedBy(players.me);
     var myPlanetsLength = myPlanets.length;
@@ -97,7 +97,7 @@ function doTurn(universe) {
     var opponentPlanetsVotesById = [];
     
     myPlanets.forEach(function(voter) {
-        effectivelyNotMyPlanets.forEach(function(candidatePlanet) {
+        planetsThatNeedShips.forEach(function(candidatePlanet) {
             if (!voter.isSamePlanet(candidatePlanet)) {
                 // if the growth gain wont pay off by maxTurnNumber, don't even consider
             
@@ -106,7 +106,7 @@ function doTurn(universe) {
                 var effDef = candidatePlanet.effectiveDefensiveValue(players.me, distance);
             
                 var values = { distance : distance,
-                               effDef   : effDef + voter.shipBalance(),
+                               effDef   : effDef + voter.shipBalance(0, players.me),
                                growth   : voter.getGrowth(),
                                myTotalGrowth : universe.totalGrowthFor(players.me),
                                opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
@@ -126,13 +126,13 @@ function doTurn(universe) {
     });
     
     opponentPlanets.forEach(function(voter) {
-        effectivelyNotMyPlanets.forEach(function(candidatePlanet) {
+        planetsThatNeedShips.forEach(function(candidatePlanet) {
             if (!voter.isSamePlanet(candidatePlanet)) {
                 var distance = voter.distanceFrom(candidatePlanet);
                 var effDef = candidatePlanet.effectiveDefensiveValue(players.opponent, distance);
             
                 var values = { distance : distance,
-                               effDef   : effDef + voter.shipBalance(),
+                               effDef   : effDef + voter.shipBalance(0, players.opponent),
                                growth   : voter.getGrowth(),
                                myTotalGrowth : universe.totalGrowthFor(players.me),
                                opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
@@ -149,7 +149,7 @@ function doTurn(universe) {
     });
     
     neutralPlanets.forEach(function(voter) {
-        effectivelyNotMyPlanets.forEach(function(candidatePlanet) {
+        planetsThatNeedShips.forEach(function(candidatePlanet) {
             if (!voter.isSamePlanet(candidatePlanet)) {
                 var distance = voter.distanceFrom(candidatePlanet);
                 var effDef = candidatePlanet.effectiveDefensiveValue(players.neutral, distance);
@@ -172,7 +172,7 @@ function doTurn(universe) {
     
     var planetsByScore = []
     
-    effectivelyNotMyPlanets.forEach(function(aPlanet){
+    planetsThatNeedShips.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
         var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()), // maybe not farthest force for this planet, but out of ALL planets
                        isNeutral            : aPlanet.isNeutral() ? 1 : -1,
@@ -198,25 +198,6 @@ function doTurn(universe) {
     });
     
     planetsByScore.sort(tupleSortGreaterFirst);
-    
-    
-    // redistribute ships
-    // ships that are not sendable, but perhaps can go to front line to free up more ships
-    
-    
-    
-    
-    
-    // Surplus by target? As in, if a surplus is kept because of one planet, the target planet actually has more surplus
-    
-    // var myPlanetsBySurplus = [];
-    // myPlanets.forEach(function(myPlanet) {
-    //     var surplus = 
-    //     if (surplus > 0) {
-    //         myPlanetsBySurplus.push([surplus, myPlanet]);
-    //     }
-    // });
-    
     
     var planetAttackOrder = _.map(planetsByScore, function(pTuple) {
         return pTuple[1];

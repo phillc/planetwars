@@ -85,21 +85,21 @@ var Planet = function(options) {
             futureStateCache[turns] = thisTurn;
             return thisTurn;
         },
-        shipBalance : function(turns) {
+        shipBalance : function(turns, player) {
             var turns = turns || 0;
             var balance = ships;
             var farthestAction = Math.max(turns, this.farthestForce());
             
             for(var i = 0 ; i <= farthestAction ; i++) {
                 var future = this.futureState(i);
-                if (future.owner === owner) {
+                if (player.samePlayerAs(owner)) {
                     if (i <= turns) {
                         balance = future.ships
                     } else {
                         balance = Math.min(balance, future.ships);
                     }
                 } else {
-                    balance = -future.ships;
+                    balance = Math.min(balance, -future.ships);
                 }
             }
             return balance - reservedShips;
