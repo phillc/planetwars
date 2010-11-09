@@ -86,6 +86,7 @@ task :run do
     p "*" * 80
     p `date`
     p `git pull`
+    Rake::Task["compile"].execute
     Rake::Task["mutate"].execute
     Rake::Task["matchup"].execute
     p `git add -A`
@@ -110,8 +111,8 @@ task :matchup do
 end
 
 task :compile do
-  `mkdir compiled`
   `rm -rf compiled/*`
+  `mkdir compiled`
   Dir["*.js"].each do |filename|
     command = "java -jar compiler.jar --js=#{filename} --js_output_file=compiled/#{filename}"
     puts command
