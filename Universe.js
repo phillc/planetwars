@@ -102,6 +102,8 @@ function Universe(planets) {
             return this.umbrellaDepth(planet, player) > 0;
         },
         umbrellaDepth : function(planet, player) {
+            
+            // what if this were how many enemy planet can send ship balance before taking my planet
             var enemy = players.enemyOf(player);
             var depth = 0;
             
@@ -133,7 +135,7 @@ function Universe(planets) {
         planetCanSendTo : function(planet, targetPlanet, player) {
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
-            if (closestEnemyPlanets.length > 0 && closestEnemyPlanets[0].isSamePlanet(targetPlanet)) {
+            if ((closestEnemyPlanets.length > 0 && closestEnemyPlanets[0].isSamePlanet(targetPlanet)) || this.inUmbrella(targetPlanet, player)) {
                 return planet.shipBalance(0, player);
             } else {
                 return this.planetSurplus(planet, player);
@@ -153,8 +155,8 @@ function Universe(planets) {
                 for (var count = 0 ; count < closestEnemyPlanetsLength ; count++) {
                     var nearbyPlanet = closestEnemyPlanets[count];
                     var nearbyDistance = toPlanet.distanceFrom(nearbyPlanet);
-                    if (nearbyDistance < closestFriendlyPlanet) {
-                        clone.addIncomingForce(enemy, nearbyPlanet.shipBalance(0, enemy), nearbyDistance);
+                    if (nearbyDistance < distanceToFriendly) {
+                        clone.addIncomingForce(enemy, nearbyPlanet.shipBalance(distanceToFriendly - nearbyDistance, enemy), nearbyDistance);
                     } else {
                         break;
                     }
