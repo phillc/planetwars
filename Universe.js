@@ -72,38 +72,43 @@ function Universe(planets) {
         planetSurplus : function(planet, player) {
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
-            if (this.inUmbrella(planet, player) || closestEnemyPlanets.length === 0) {
+            var closestFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
+            if (this.inUmbrella(planet, player) || closestEnemyPlanets.length === 0 || closestFriendlyPlanets.length === 0) {
                 return planet.shipBalance(0, player);
             }
+            var fakePlanet = planet.clone();
             var closestEnemyPlanet = closestEnemyPlanets[0];
+            var closestFriendlyPlanet = closestFriendlyPlanets[0];
+            
             var enemyDistance = planet.distanceFrom(closestEnemyPlanet);
-            var nearbyFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
-            var nearbyFriendlyPlanetsLength = nearbyFriendlyPlanets.length;
-            fakePlanet = planet.clone();
-            var enemyShipBalance = closestEnemyPlanet.shipBalance(0, enemy)
-            if (enemyShipBalance > 0) {
-                fakePlanet.addIncomingForce(enemy, enemyShipBalance, enemyDistance);
-                for (var count = 0 ; count < nearbyFriendlyPlanetsLength ; count++) {
-                    var nearbyPlanet = nearbyFriendlyPlanets[count];
-                    var nearbyDistance = planet.distanceFrom(nearbyPlanet);
-                    if (nearbyDistance < enemyDistance) {
-                        fakePlanet.addIncomingForce(player, nearbyPlanet.shipBalance(0, enemy), nearbyDistance)
-                    } else {
-                        break;
-                    }
+            var friendlyDistance = planet.distanceFrom(closestFriendlyPlanet);
+            var maxConsiderDistance = Math.max(enemyDistance, friendlyDistance) * 1.3;
+            
+            _.filter(closestEnemyPlanets, function(enemyPlanet) {
+                return planet.distanceFrom(enemyPlanet) <= maxConsiderDistance;
+            }).forEach(function(enemyPlanet) {
+                var enemyShipBalance = enemyPlanet.shipBalance(0, enemy)
+                var planetDistance = enemyPlanet.distanceFrom(planet);
+                if (enemyShipBalance > 0) {
+                    fakePlanet.addIncomingForce(enemy, enemyShipBalance, planetDistance);
                 }
-                return Math.min(planet.shipBalance(0, player), fakePlanet.shipBalance(0, player));
-                
-            } else {
-                return planet.shipBalance(0, player);
-            }
+            });
+            
+            _.filter(closestFriendlyPlanets, function(friendlyPlanet) {
+                return planet.distanceFrom(friendlyPlanet) <= maxConsiderDistance;
+            }).forEach(function(friendlyPlanet) {
+                var friendlyShipBalance = friendlyPlanet.shipBalance(0, player)
+                var planetDistance = friendlyPlanet.distanceFrom(planet);
+                if (friendlyShipBalance > 0) {
+                    fakePlanet.addIncomingForce(player, friendlyShipBalance, planetDistance);
+                }
+            });
+            return Math.min(planet.shipBalance(0, player), fakePlanet.shipBalance(0, player));
         },
         inUmbrella : function(planet, player) {
             return this.umbrellaDepth(planet, player) > 0;
         },
         umbrellaDepth : function(planet, player) {
-            
-            // what if this were how many enemy planet can send ship balance before taking my planet
             var enemy = players.enemyOf(player);
             var depth = 0;
             
@@ -149,6 +154,7 @@ function Universe(planets) {
             var closestFriendlyPlanet = this.closestPlanetsToOwnedBy(toPlanet, player)[0];
             if(closestFriendlyPlanet) {
                 var distanceToFriendly = closestFriendlyPlanet.distanceFrom(toPlanet);
+                clone.addIncomingForce(player, closestFriendlyPlanet.shipBalance(0, player), distanceToFriendly);
                 var enemy = players.enemyOf(player)
                 var closestEnemyPlanets = this.closestPlanetsToOwnedBy(toPlanet, enemy)
                 var closestEnemyPlanetsLength = closestEnemyPlanets.length;
