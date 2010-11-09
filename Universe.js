@@ -72,8 +72,10 @@ function Universe(planets) {
         planetSurplus : function(planet, player) {
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
+            var closestEnemyPlanetsLength = closestEnemyPlanets.length;
             var closestFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
-            if (this.inUmbrella(planet, player) || closestEnemyPlanets.length === 0 || closestFriendlyPlanets.length === 0) {
+            var closestFriendlyPlanetsLength = closestFriendlyPlanets.length;
+            if (this.inUmbrella(planet, player) || closestEnemyPlanetsLength === 0 || closestFriendlyPlanetsLength === 0) {
                 return planet.shipBalance(0, player);
             }
             var fakePlanet = planet.clone();
@@ -84,25 +86,31 @@ function Universe(planets) {
             var friendlyDistance = planet.distanceFrom(closestFriendlyPlanet);
             var maxConsiderDistance = Math.max(enemyDistance, friendlyDistance) * 1.3;
             
-            _.filter(closestEnemyPlanets, function(enemyPlanet) {
-                return planet.distanceFrom(enemyPlanet) <= maxConsiderDistance;
-            }).forEach(function(enemyPlanet) {
-                var enemyShipBalance = enemyPlanet.shipBalance(0, enemy)
+            for(var eCount = 0 ; eCount < closestEnemyPlanetsLength ; eCount++) {
+                var enemyPlanet = closestEnemyPlanets[eCount];
                 var planetDistance = enemyPlanet.distanceFrom(planet);
-                if (enemyShipBalance > 0) {
-                    fakePlanet.addIncomingForce(enemy, enemyShipBalance, planetDistance);
+                if (planetDistance <= maxConsiderDistance){
+                    var enemyShipBalance = enemyPlanet.shipBalance(0, enemy)
+                    if (enemyShipBalance > 0) {
+                        fakePlanet.addIncomingForce(enemy, enemyShipBalance, planetDistance);
+                    }
+                } else {
+                    break;
                 }
-            });
+            }
             
-            _.filter(closestFriendlyPlanets, function(friendlyPlanet) {
-                return planet.distanceFrom(friendlyPlanet) <= maxConsiderDistance;
-            }).forEach(function(friendlyPlanet) {
-                var friendlyShipBalance = friendlyPlanet.shipBalance(0, player)
+            for(var fCount = 0 ; fCount < closestFriendlyPlanetsLength ; fCount++) {
+                var friendlyPlanet = closestFriendlyPlanets[fCount];
                 var planetDistance = friendlyPlanet.distanceFrom(planet);
-                if (friendlyShipBalance > 0) {
-                    fakePlanet.addIncomingForce(player, friendlyShipBalance, planetDistance);
+                if (planetDistance <= maxConsiderDistance){
+                    var friendlyShipBalance = friendlyPlanet.shipBalance(0, player)
+                    if (friendlyShipBalance > 0) {
+                        fakePlanet.addIncomingForce(player, friendlyShipBalance, planetDistance);
+                    }
+                } else {
+                    break;
                 }
-            });
+            }
             return Math.min(planet.shipBalance(0, player), fakePlanet.shipBalance(0, player));
         },
         inUmbrella : function(planet, player) {
