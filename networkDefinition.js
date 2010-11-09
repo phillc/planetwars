@@ -1,6 +1,7 @@
 var networks = {
     attackConsideration : {
         inputs : [ "farthestEffDef",
+                   "shipsNeededAt",
                    "isNeutral",
                    "isMine",
                    "isOpponent",
@@ -23,7 +24,8 @@ var networks = {
                    "growth",
                    "myTotalGrowth",
                    "opponentTotalGrowth",
-                   "neutralTotalGrowth" ],
+                   "neutralTotalGrowth",
+                   "shipsNeededAt" ],
         hiddenLayer : 5
     },
     opponentPlanetVote : {
@@ -32,7 +34,8 @@ var networks = {
                    "growth",
                    "myTotalGrowth",
                    "opponentTotalGrowth",
-                   "neutralTotalGrowth" ],
+                   "neutralTotalGrowth",
+                   "shipsNeededAt" ],
         hiddenLayer : 4
     },
     neutralPlanetVote : {
@@ -40,7 +43,8 @@ var networks = {
                    "growth",
                    "myTotalGrowth",
                    "opponentTotalGrowth",
-                   "neutralTotalGrowth" ],
+                   "neutralTotalGrowth",
+                   "shipsNeededAt" ],
         hiddenLayer : 4
     },
 }

@@ -73,29 +73,29 @@ function Universe(planets) {
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
             if (this.inUmbrella(planet, player) || closestEnemyPlanets.length === 0) {
-                return planet.shipBalance();
+                return planet.shipBalance(0, player);
             }
             var closestEnemyPlanet = closestEnemyPlanets[0];
             var enemyDistance = planet.distanceFrom(closestEnemyPlanet);
             var nearbyFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
             var nearbyFriendlyPlanetsLength = nearbyFriendlyPlanets.length;
             fakePlanet = planet.clone();
-            var enemyShipBalance = closestEnemyPlanet.shipBalance()
+            var enemyShipBalance = closestEnemyPlanet.shipBalance(0, enemy)
             if (enemyShipBalance > 0) {
                 fakePlanet.addIncomingForce(enemy, enemyShipBalance, enemyDistance);
                 for (var count = 0 ; count < nearbyFriendlyPlanetsLength ; count++) {
                     var nearbyPlanet = nearbyFriendlyPlanets[count];
                     var nearbyDistance = planet.distanceFrom(nearbyPlanet);
                     if (nearbyDistance < enemyDistance) {
-                        fakePlanet.addIncomingForce(player, nearbyPlanet.shipBalance(), nearbyDistance)
+                        fakePlanet.addIncomingForce(player, nearbyPlanet.shipBalance(0, enemy), nearbyDistance)
                     } else {
                         break;
                     }
                 }
-                return Math.min(planet.shipBalance(), fakePlanet.shipBalance());
+                return Math.min(planet.shipBalance(0, player), fakePlanet.shipBalance(0, player));
                 
             } else {
-                return planet.shipBalance();
+                return planet.shipBalance(0, player);
             }
         },
         inUmbrella : function(planet, player) {
@@ -134,10 +134,33 @@ function Universe(planets) {
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
             if (closestEnemyPlanets.length > 0 && closestEnemyPlanets[0].isSamePlanet(targetPlanet)) {
-                return planet.shipBalance();
+                return planet.shipBalance(0, player);
             } else {
                 return this.planetSurplus(planet, player);
             }
+        },
+        shipsNeededAtFor : function(toPlanet, turns, player) {
+            if (this.inUmbrella(toPlanet, player)) {
+                return -toPlanet.effectiveDefensiveValue(player, turns);
+            }
+            var clone = toPlanet.clone();
+            var closestFriendlyPlanet = this.closestPlanetsToOwnedBy(toPlanet, player)[0];
+            if(closestFriendlyPlanet) {
+                var distanceToFriendly = closestFriendlyPlanet.distanceFrom(toPlanet);
+                var enemy = players.enemyOf(player)
+                var closestEnemyPlanets = this.closestPlanetsToOwnedBy(toPlanet, enemy)
+                var closestEnemyPlanetsLength = closestEnemyPlanets.length;
+                for (var count = 0 ; count < closestEnemyPlanetsLength ; count++) {
+                    var nearbyPlanet = closestEnemyPlanets[count];
+                    var nearbyDistance = toPlanet.distanceFrom(nearbyPlanet);
+                    if (nearbyDistance < closestFriendlyPlanet) {
+                        clone.addIncomingForce(enemy, nearbyPlanet.shipBalance(0, enemy), nearbyDistance);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return -clone.effectiveDefensiveValue(player, turns);
         }
     };
 }

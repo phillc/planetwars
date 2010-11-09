@@ -94,7 +94,7 @@ vows.describe('Planet').addBatch({
                     var planet = Planet({ owner : players.me,
                                           ships : 16,
                                           growth : 4 });
-                    assert.equal(planet.shipBalance(), 16);
+                    assert.equal(planet.shipBalance(0, players.me), 16);
                 },
             },
             'and there are an insignificant amount coming in the future' : {
@@ -103,7 +103,7 @@ vows.describe('Planet').addBatch({
                                           ships : 16,
                                           growth : 4 });
                     planet.addIncomingForce(players.opponent, 2, 5)
-                    assert.equal(planet.shipBalance(), 16);
+                    assert.equal(planet.shipBalance(0, players.me), 16);
                 }
             },
             'and there is an enemy force coming that can be countered just by growth' : {
@@ -112,7 +112,7 @@ vows.describe('Planet').addBatch({
                                           ships : 10,
                                           growth : 5 });
                     planet.addIncomingForce(players.opponent, 15, 4)
-                    assert.equal(planet.shipBalance(), 10);
+                    assert.equal(planet.shipBalance(0, players.me), 10);
                 }
             },
             'and there are 20 enemy ships 3 turns away' : {
@@ -121,7 +121,7 @@ vows.describe('Planet').addBatch({
                                           ships : 16,
                                           growth : 4 });
                     planet.addIncomingForce(players.opponent, 20, 3);
-                    assert.equal(planet.shipBalance(), 8);
+                    assert.equal(planet.shipBalance(0, players.me), 8);
                 },
                 'and there are 5 friendly ships 3 turns away' : {
                     'should be the number of ships + (turns away * growth) - enemy ships + friendly ships' : function() {
@@ -130,7 +130,7 @@ vows.describe('Planet').addBatch({
                                               growth : 4 });
                         planet.addIncomingForce(players.opponent, 20, 3);
                         planet.addIncomingForce(players.me, 5, 3);
-                        assert.equal(planet.shipBalance(), 13);
+                        assert.equal(planet.shipBalance(0, players.me), 13);
                     }
                 }
             },
@@ -139,7 +139,7 @@ vows.describe('Planet').addBatch({
                                       ships : 16,
                                       growth : 4 });
                 planet.addIncomingForce(players.me, 100, 1);
-                assert.equal(planet.shipBalance(), -80);
+                assert.equal(planet.shipBalance(0, players.me), -80);
             }
         },
         'when an enemy fleet would set my planet to 0 ships, and another enemy fleet is incoming later' : {
@@ -149,7 +149,7 @@ vows.describe('Planet').addBatch({
                                       growth : 5 });
                 planet.addIncomingForce(players.opponent, 25, 3);
                 planet.addIncomingForce(players.opponent, 5, 5);
-                assert.equal(planet.shipBalance(), 0);
+                assert.equal(planet.shipBalance(0, players.me), 0);
             }
         },
         'for 2 turns from now' : {
@@ -159,7 +159,7 @@ vows.describe('Planet').addBatch({
                         var planet = Planet({ owner : players.me,
                                               ships : 16,
                                               growth : 4 });
-                        assert.equal(planet.shipBalance(2), 24);
+                        assert.equal(planet.shipBalance(2, players.me), 24);
                     },
                 },
             }
