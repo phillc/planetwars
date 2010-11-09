@@ -187,7 +187,7 @@ var Planet = function(options) {
                                      Math.floor(targetPlanet.getId()) + ' ' +
                                      Math.floor(numShips) + '\n');
             }
-        },
+        }
     };
 }
 

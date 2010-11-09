@@ -109,6 +109,24 @@ task :matchup do
   Mutations.matchup
 end
 
+task :compile do
+  `mkdir compiled`
+  `rm -rf compiled/*`
+  Dir["*.js"].each do |filename|
+    command = "java -jar compiler.jar --js=#{filename} --js_output_file=compiled/#{filename}"
+    puts command
+    puts `#{command}`
+  end
+end
+
+task :make do
+  Rake::Task["compile"].execute
+  `rm -rf staging/*`
+  `mkdir -p staging/contest_package`
+  `cp compiled/*.js staging/contest_package`
+  `cd staging && zip -r contest_package.zip contest_package && rm -rf contest_package`
+end
+
 require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
@@ -130,7 +148,7 @@ module Mutations
     p filenames.sort
     filenames.sort.each do |filename|
       p "*" * 80
-      my_command = "node MyBot.js #{filename}"
+      my_command = "node compiled/MyBot.js ../#{filename}"
       
       possible_opponents = filenames.sort_by { rand }
       possible_opponents.delete(filename)
@@ -138,7 +156,7 @@ module Mutations
       NUMBER_OF_MATCHES.times do
         map = rand(MAPS.end) + 1
         challenger = possible_opponents.shift
-        challenger_command = "node MyBot.js #{challenger}"
+        challenger_command = "node compiled/MyBot.js ../#{challenger}"
         cmd = %Q{java -jar tools/PlayGame-1.2.jar maps/map#{map}.txt 1000 200 log.txt '#{my_command}' '#{challenger_command}' 2>&1}
         p "running #{cmd}"
         output = `#{cmd}`.split("\n")
