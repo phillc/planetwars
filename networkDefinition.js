@@ -20,7 +20,7 @@ var networks = {
                    "opponentTotalSurplus",
                    "effectivelyOwnedByMe",
                    "effectivelyOwnedByOpponent" ],
-        hiddenLayer : 8
+        hiddenLayer : 10
     },
     planetVote : {
         inputs : [ "distance",
