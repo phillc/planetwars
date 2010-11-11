@@ -147,6 +147,12 @@ function Universe(planets) {
                 return memo + planet.getGrowth();
             }, 0)
         },
+        totalSurplusFor : function(player) {
+            // planets effectively owned by???
+            return _.reduce(this.planetsOwnedBy(player), function(memo, planet) {
+                return memo + this.planetSurplus(planet, player);
+            }, 0, this)
+        },
         planetCanSendTo : function(planet, targetPlanet, player) {
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
@@ -193,7 +199,6 @@ function Universe(planets) {
             }
             return -clone.effectiveDefensiveValue(player, turns);
         }
-
     };
 }
 

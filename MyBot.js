@@ -116,7 +116,8 @@ function doTurn(universe) {
                                growth              : voter.getGrowth(),
                                myTotalGrowth       : universe.totalGrowthFor(players.me),
                                opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
-                               neutralTotalGrowth  : universe.totalGrowthFor(players.neutral) };
+                               neutralTotalGrowth  : universe.totalGrowthFor(players.neutral),
+                               planetCanSendTo     : universe.planetCanSendTo(voter, candidatePlanet, players.me) };
                                // canTakeRightNow
                                // will have more to send
                                // can cover that planet
@@ -143,7 +144,8 @@ function doTurn(universe) {
                                growth              : voter.getGrowth(),
                                myTotalGrowth       : universe.totalGrowthFor(players.me),
                                opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
-                               neutralTotalGrowth  : universe.totalGrowthFor(players.neutral) };
+                               neutralTotalGrowth  : universe.totalGrowthFor(players.neutral),
+                               planetCanSendTo     : universe.planetCanSendTo(voter, candidatePlanet, players.opponent) };
                                
                 var voteValue = network.compute("opponentPlanetVote", values);
                 // sys.debug(sys.inspect(values));
@@ -182,22 +184,24 @@ function doTurn(universe) {
     
     planetsThatNeedShips.forEach(function(aPlanet){
         var aPlanetId = aPlanet.getId();
-        var values = { farthestEffDef       : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()), // maybe not farthest force for this planet, but out of ALL planets
-                       shipsNeededAt        : universe.shipsNeededAtFor(aPlanet, aPlanet.farthestForce(), players.me),
-                       isNeutral            : aPlanet.isNeutral() ? 1 : -1,
-                       isMine               : aPlanet.isOwnedBy(players.me) ? 1 : -1,
-                       isOpponent           : aPlanet.isOwnedBy(players.opponent) ? 1 : -1,
-                       growth               : aPlanet.getGrowth(),
-                       planetVotes          : myPlanetsVotesById[aPlanet.getId()] || 0,
-                       opponentPlanetVotes  : opponentPlanetsVotesById[aPlanet.getId()] || 0,
-                       neutralPlanetVotes   : neutralPlanetsVotesById[aPlanet.getId()] || 0,
-                       inMyUmbrella         : universe.inUmbrella(aPlanet, players.me) ? 1 : -1,
-                       myUmbrellaDepth      : universe.umbrellaDepth(aPlanet, players.me),
-                       inOpponentUmbrella   : universe.inUmbrella(aPlanet, players.opponent) ? 1 : -1,
+        var values = { farthestEffDef        : aPlanet.effectiveDefensiveValue(players.me, aPlanet.farthestForce()), // maybe not farthest force for this planet, but out of ALL planets
+                       shipsNeededAt         : universe.shipsNeededAtFor(aPlanet, aPlanet.farthestForce(), players.me),
+                       isNeutral             : aPlanet.isNeutral() ? 1 : -1,
+                       isMine                : aPlanet.isOwnedBy(players.me) ? 1 : -1,
+                       isOpponent            : aPlanet.isOwnedBy(players.opponent) ? 1 : -1,
+                       growth                : aPlanet.getGrowth(),
+                       planetVotes           : myPlanetsVotesById[aPlanet.getId()] || 0,
+                       opponentPlanetVotes   : opponentPlanetsVotesById[aPlanet.getId()] || 0,
+                       neutralPlanetVotes    : neutralPlanetsVotesById[aPlanet.getId()] || 0,
+                       inMyUmbrella          : universe.inUmbrella(aPlanet, players.me) ? 1 : -1,
+                       myUmbrellaDepth       : universe.umbrellaDepth(aPlanet, players.me),
+                       inOpponentUmbrella    : universe.inUmbrella(aPlanet, players.opponent) ? 1 : -1,
                        opponentUmbrellaDepth : universe.umbrellaDepth(aPlanet, players.opponent),
-                       myTotalGrowth : universe.totalGrowthFor(players.me),
-                       opponentTotalGrowth : universe.totalGrowthFor(players.opponent),
-                       neutralTotalGrowth : universe.totalGrowthFor(players.neutral) };
+                       myTotalGrowth         : universe.totalGrowthFor(players.me),
+                       opponentTotalGrowth   : universe.totalGrowthFor(players.opponent),
+                       neutralTotalGrowth    : universe.totalGrowthFor(players.neutral),
+                       myTotalSurplus        : universe.totalSurplusFor(players.me),
+                       opponentTotalSurplus  : universe.totalSurplusFor(players.opponent)};
                        // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
         var scoreTuple = [network.compute("attackConsideration", values), aPlanet];

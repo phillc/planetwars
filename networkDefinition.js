@@ -15,7 +15,9 @@ var networks = {
                    "opponentUmbrellaDepth",
                    "myTotalGrowth",
                    "opponentTotalGrowth",
-                   "neutralTotalGrowth" ],
+                   "neutralTotalGrowth",
+                   "myTotalSurplus",
+                   "opponentTotalSurplus" ],
         hiddenLayer : 8
     },
     planetVote : {
@@ -25,7 +27,8 @@ var networks = {
                    "myTotalGrowth",
                    "opponentTotalGrowth",
                    "neutralTotalGrowth",
-                   "shipsNeededAt" ],
+                   "shipsNeededAt",
+                   "planetCanSendTo" ],
         hiddenLayer : 5
     },
     opponentPlanetVote : {
@@ -35,7 +38,8 @@ var networks = {
                    "myTotalGrowth",
                    "opponentTotalGrowth",
                    "neutralTotalGrowth",
-                   "shipsNeededAt" ],
+                   "shipsNeededAt",
+                   "planetCanSendTo" ],
         hiddenLayer : 4
     },
     neutralPlanetVote : {
