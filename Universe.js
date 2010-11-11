@@ -72,19 +72,20 @@ function Universe(planets) {
         planetSurplus : function(planet, player, turns) {
             var turns = turns || 0;
             var enemy = players.enemyOf(player);
+            if (this.inUmbrella(planet, player) || this.planetsOwnedBy(enemy).length === 0 || this.planetsOwnedBy(player).length === 0) {
+                return planet.shipBalance(turns, player);
+            }
+            
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
             var closestEnemyPlanetsLength = closestEnemyPlanets.length;
             var closestFriendlyPlanets = this.closestPlanetsToOwnedBy(planet, player);
             var closestFriendlyPlanetsLength = closestFriendlyPlanets.length;
-            if (this.inUmbrella(planet, player) || closestEnemyPlanetsLength === 0 || closestFriendlyPlanetsLength === 0) {
-                return planet.shipBalance(turns, player);
-            }
             var fakePlanet = planet.clone();
             var closestEnemyPlanet = closestEnemyPlanets[0];
             var closestFriendlyPlanet = closestFriendlyPlanets[0];
             
-            var enemyDistance = planet.distanceFrom(closestEnemyPlanet);
-            var friendlyDistance = planet.distanceFrom(closestFriendlyPlanet);
+            var enemyDistance = closestEnemyPlanet ? planet.distanceFrom(closestEnemyPlanet) : 0;
+            var friendlyDistance = closestFriendlyPlanet ? planet.distanceFrom(closestFriendlyPlanet) : 0;
             var maxConsiderDistance = Math.max(enemyDistance, friendlyDistance) * 1.3;
             
             for(var eCount = 0 ; eCount < closestEnemyPlanetsLength ; eCount++) {
@@ -149,7 +150,7 @@ function Universe(planets) {
         planetCanSendTo : function(planet, targetPlanet, player) {
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
-            if ((closestEnemyPlanets.length > 0 && closestEnemyPlanets[0].isSamePlanet(targetPlanet)) || this.inUmbrella(targetPlanet, player)) {
+            if ((closestEnemyPlanets.length > 0 && closestEnemyPlanets[0].isSamePlanet(targetPlanet)) || this.inUmbrella(planet, player)) {
                 return planet.shipBalance(0, player);
             } else {
                 return this.planetSurplus(planet, player);
