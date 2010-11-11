@@ -138,8 +138,8 @@ module Mutations
     RUN_MUTATIONS.times { Mutations::CreatedMutation.create_random } if filenames.empty?
     if filenames.length < RUN_MUTATIONS
       get_and_increment("mutations/count")
+      existing_mutations.each{ |m| m.mutate } 
       Mutations::CreatedMutation.create_random
-      filenames.map{ |filename| ExistingMutation.new(filename) }.each{ |m| m.mutate } 
     end
     create_mutations if filenames.length < RUN_MUTATIONS
   end
@@ -203,6 +203,10 @@ module Mutations
   def self.filenames
     Dir["mutations/mutation*.js"]
   end
+  
+  def self.existing_mutations
+    filenames.map{ |filename| ExistingMutation.new(filename) }
+  end
       
   def self.get_and_increment file
     number = File.read(file).chomp.to_i + 1
@@ -211,6 +215,7 @@ module Mutations
   end
 
   class Mutation
+    attr_reader :network_weights
     JS_IFY = "exports.weights = "
     BASE_FILENAME = "mutation"
     
@@ -226,9 +231,13 @@ module Mutations
       "mutations/#{BASE_FILENAME}#{@network_number}.js"
     end
     
-    def mutate# strategy = :random
-      # if strategy == :crossover
-      CreatedMutation.create_from @network_weights
+    def mutate
+      if rand(10) > 1
+        CreatedMutation.create_from @network_weights
+      else
+        existing = Mutation.existing_mutations
+        CreatedMutation.create_crossbreed @network_weights, existing[rand(existing.size)].network_weights
+      end
     end
   end
   
@@ -267,6 +276,7 @@ module Mutations
                                   :hidden_weights => hidden_weights }
       end
       weights[:created_on] = Time.now
+      weights[:created_by] = "Random"
       m = new weights
       m.store
     end
@@ -292,8 +302,64 @@ module Mutations
       end
       
       weights[:created_on] = Time.now
+      weights[:created_by] = "mutation"
       m = new weights
       m.store
+    end
+    
+    def self.create_crossbreed mutation_weights1, mutation_weights2 
+      weights1 = {}
+      weights2 = {}
+      defined_networks.each do |network_name, info|
+        hidden_layer_number = info["hiddenLayer"].to_i
+        inputs = info["inputs"]
+        
+        input_weights1 = []
+        input_weights2 = []
+        hidden_layer_number.times do |num|
+          old_weights1 = (mutation_weights1[network_name] && mutation_weights1[network_name]["input_weights"][num]) || {}
+          old_weights2 = (mutation_weights2[network_name] && mutation_weights2[network_name]["input_weights"][num]) || {}
+          input_weights1.push(old_weights1)
+          input_weights2.push(old_weights2)
+        end
+        
+        hidden_weights1 = []
+        hidden_weights2 = []
+        hidden_layer_number.times do |num|
+          old_weight1 = (mutation_weights1[network_name] && mutation_weights1[network_name]["hidden_weights"][num]) || 0
+          old_weight2 = (mutation_weights2[network_name] && mutation_weights2[network_name]["hidden_weights"][num]) || 0
+          hidden_weights1.push(old_weight1)
+          hidden_weights2.push(old_weight2)
+        end
+        
+        hidden_layer_number.times do
+          first = rand(hidden_layer_number)
+          second = rand(hidden_layer_number)
+          
+          copy = Hash[input_weights1[first]]
+          input_weights1[first] = input_weights2[second]
+          input_weights2[second] = copy
+          
+          copy = hidden_weights1[first]
+          hidden_weights1[first] = hidden_weights2[second]
+          hidden_weights2[second] = copy
+        end
+        
+        weights1[network_name] = { :input_weights => input_weights1,
+                                   :hidden_weights => hidden_weights1 }
+        weights2[network_name] = { :input_weights => input_weights2,
+                                   :hidden_weights => hidden_weights2 }
+      end
+      
+      weights1[:created_on] = Time.now
+      weights1[:created_by] = "Crossbreed"
+      weights2[:created_on] = Time.now
+      weights2[:created_by] = "Crossbreed"
+      
+      m1 = new weights1
+      m1.store
+      m2 = new weights2
+      m2.store
     end
       
     def self.randomize_inputs inputs
