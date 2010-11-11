@@ -86,7 +86,7 @@ function Universe(planets) {
             
             var enemyDistance = closestEnemyPlanet ? planet.distanceFrom(closestEnemyPlanet) : 0;
             var friendlyDistance = closestFriendlyPlanet ? planet.distanceFrom(closestFriendlyPlanet) : 0;
-            var maxConsiderDistance = Math.max(enemyDistance, friendlyDistance) * 1.3;
+            var maxConsiderDistance = Math.max(enemyDistance, friendlyDistance, 5) * 1.3;
             
             for(var eCount = 0 ; eCount < closestEnemyPlanetsLength ; eCount++) {
                 var enemyPlanet = closestEnemyPlanets[eCount];
