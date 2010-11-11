@@ -235,7 +235,7 @@ module Mutations
       if rand(10) > 1
         CreatedMutation.create_from @network_weights
       else
-        existing = Mutation.existing_mutations
+        existing = Mutations.existing_mutations
         CreatedMutation.create_crossbreed @network_weights, existing[rand(existing.size)].network_weights
       end
     end
