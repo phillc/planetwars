@@ -132,7 +132,7 @@ require 'json'
 module Mutations
   KEEP_MUTATIONS = 15
   RUN_MUTATIONS = 30
-  NUMBER_OF_MATCHES = 5
+  NUMBER_OF_MATCHES = 8
   
   def self.create_mutations
     RUN_MUTATIONS.times { Mutations::CreatedMutation.create_random } if filenames.empty?
