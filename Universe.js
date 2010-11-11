@@ -150,7 +150,7 @@ function Universe(planets) {
         planetCanSendTo : function(planet, targetPlanet, player) {
             var enemy = players.enemyOf(player);
             var closestEnemyPlanets = this.closestPlanetsToOwnedBy(planet, enemy);
-            if ((closestEnemyPlanets.length > 0 && closestEnemyPlanets[0].isSamePlanet(targetPlanet)) || this.inUmbrella(planet, player)) {
+            if (closestEnemyPlanets.length > 0 && closestEnemyPlanets[0].isSamePlanet(targetPlanet)) {
                 return planet.shipBalance(0, player);
             } else {
                 return this.planetSurplus(planet, player);

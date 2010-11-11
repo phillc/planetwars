@@ -53,6 +53,9 @@ var attackPlan = function(universe, myClosestPlanets, realTarget) {
                                 }
                                 return turnsUntilFarthestArrival;
                             }
+                        } else {
+                            this.reinforceACloserPlanetIfPossible(sendingPlanet, sendingPlanetShipBalance, turnsUntilFarthestArrival, sendingToTargetDistance);
+                            return Infinity;
                         }
                     } else {
                         return this.coordinateAttacks(closestPlanets, simulatedTarget);
