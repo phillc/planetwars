@@ -17,7 +17,9 @@ var networks = {
                    "opponentTotalGrowth",
                    "neutralTotalGrowth",
                    "myTotalSurplus",
-                   "opponentTotalSurplus" ],
+                   "opponentTotalSurplus",
+                   "effectivelyOwnedByMe",
+                   "effectivelyOwnedByOpponent" ],
         hiddenLayer : 8
     },
     planetVote : {

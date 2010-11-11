@@ -201,7 +201,9 @@ function doTurn(universe) {
                        opponentTotalGrowth   : universe.totalGrowthFor(players.opponent),
                        neutralTotalGrowth    : universe.totalGrowthFor(players.neutral),
                        myTotalSurplus        : universe.totalSurplusFor(players.me),
-                       opponentTotalSurplus  : universe.totalSurplusFor(players.opponent)};
+                       opponentTotalSurplus  : universe.totalSurplusFor(players.opponent),
+                       effectivelyOwnedByMe  : aPlanet.effectivelyOwnedBy(players.me) ? 1 : -1,
+                       effectivelyOwnedByOpponent : aPlanet.effectivelyOwnedBy(players.opponent) ? 1 : -1 };
                        // needs ships (rescue?)
                        // under my umbrella (some count of my ship getting there faster than enemy ship)
         var scoreTuple = [network.compute("attackConsideration", values), aPlanet];
