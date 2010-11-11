@@ -167,18 +167,33 @@ function Universe(planets) {
                 var enemy = players.enemyOf(player)
                 var closestEnemyPlanets = this.closestPlanetsToOwnedBy(toPlanet, enemy)
                 var closestEnemyPlanetsLength = closestEnemyPlanets.length;
-                for (var count = 0 ; count < closestEnemyPlanetsLength ; count++) {
-                    var nearbyEnemyPlanet = closestEnemyPlanets[count];
-                    var nearbyEnemyDistance = toPlanet.distanceFrom(nearbyEnemyPlanet);
-                    if (nearbyEnemyDistance < distanceToFriendly) {
-                        clone.addIncomingForce(enemy, nearbyEnemyPlanet.shipBalance(distanceToFriendly - nearbyEnemyDistance, enemy), nearbyEnemyDistance);
-                    } else {
-                        break;
+                if (toPlanet.isNeutral()) {
+                    var enemyCouldSendShips = 0;
+                    for (var count = 0 ; count < closestEnemyPlanetsLength ; count++) {
+                        var nearbyEnemyPlanet = closestEnemyPlanets[count];
+                        var nearbyEnemyDistance = toPlanet.distanceFrom(nearbyEnemyPlanet);
+                        if (nearbyEnemyDistance < distanceToFriendly) {
+                            enemyCouldSendShips = enemyCouldSendShips + nearbyEnemyPlanet.shipBalance(distanceToFriendly - nearbyEnemyDistance, enemy)
+                        } else {
+                            break;
+                        }
+                    }
+                    return -clone.effectiveDefensiveValue(player, turns) + enemyCouldSendShips;
+                } else {
+                    for (var count = 0 ; count < closestEnemyPlanetsLength ; count++) {
+                        var nearbyEnemyPlanet = closestEnemyPlanets[count];
+                        var nearbyEnemyDistance = toPlanet.distanceFrom(nearbyEnemyPlanet);
+                        if (nearbyEnemyDistance < distanceToFriendly) {
+                            clone.addIncomingForce(enemy, nearbyEnemyPlanet.shipBalance(distanceToFriendly - nearbyEnemyDistance, enemy), nearbyEnemyDistance);
+                        } else {
+                            break;
+                        }
                     }
                 }
             }
             return -clone.effectiveDefensiveValue(player, turns);
         }
+
     };
 }
 
