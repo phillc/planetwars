@@ -75,7 +75,7 @@ var attackPlan = function(universe, myClosestPlanets, realTarget) {
         planetToReinforce : function(sendingPlanet, turnsUntilFarthestArrival, closestToTargetDistance) {
             return _.detect(myClosestPlanets, function(reinforceablePlanet) {
                 var distanceToNearbyThenTarget = sendingPlanet.distanceFrom(reinforceablePlanet) + reinforceablePlanet.distanceFrom(realTarget);
-                return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < closestToTargetDistance * 1.3) ;
+                return (distanceToNearbyThenTarget < turnsUntilFarthestArrival) && (distanceToNearbyThenTarget < closestToTargetDistance * 1.5) ;
             });
         }
     }
