@@ -87,9 +87,7 @@ function doTurn(universe) {
     turnNumber += 1;
     
     var allPlanets = universe.allPlanets();
-    var planetsThatNeedShips = _.filter(allPlanets, function(planet) {
-        return !planet.effectivelyOwnedBy(players.me) || !universe.inUmbrella(planet, players.me);
-    })
+    var planetsThatNeedShips = allPlanets;
     var myPlanets = universe.planetsOwnedBy(players.me);
     var myPlanetsLength = myPlanets.length;
     var opponentPlanets = universe.planetsOwnedBy(players.opponent);
