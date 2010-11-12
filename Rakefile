@@ -233,7 +233,7 @@ module Mutations
     end
     
     def mutate
-      if rand(10) > 1
+      if rand(30) > 1
         CreatedMutation.create_from @network_weights
       else
         existing = Mutations.existing_mutations
