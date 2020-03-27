@@ -2,7 +2,6 @@ require('./underscore');
 
 var planetWars = require('./PlanetWars'),
     players = require('./players'),
-    sys = require('sys'),
     network = require('./network');
 
 

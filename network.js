@@ -1,4 +1,3 @@
-var sys = require("sys");
 require("./underscore");
 
 var networks = require("./networkDefinition").networks;
@@ -41,7 +40,7 @@ var compute = function(networkName, values) {
         hidden_layer_results.push(_.reduce(keys, function(memo, key){
             // sys.debug("key: " + key + " values[key]: " + values[key])
             if (typeof values[key] !== "number") {
-                sys.debug("" + key + " wasnt a number yo " + values[key])
+                console.error("" + key + " wasnt a number yo " + values[key])
                 throw "Not a number";
             }
             return memo + activation(values[key] * (input_weights[key] || 0));

@@ -1,5 +1,4 @@
-var sys = require('sys'),
-    players = require('./players');
+var players = require('./players');
 
 var planetDistancesCache = [];
 var distance = function(a, b) {

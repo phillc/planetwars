@@ -1,4 +1,3 @@
-var sys = require('sys');
 var startTime;
 
 var TIME_ERROR = "Time!"
@@ -18,7 +17,7 @@ exports.setStartTime = function(){
 
 exports.checkTime = function(){
     if(timeDiff() > 700) {
-        sys.debug("********* TIMED OUT ***********")
+        console.error("********* TIMED OUT ***********")
         throw TIME_ERROR;
     };
 }
@@ -28,5 +27,5 @@ exports.isTimeException = function(err) {
 }
 
 exports.sayTime = function () {
-    sys.debug("TIME: " + timeDiff());
+    console.error("TIME: " + timeDiff());
 }

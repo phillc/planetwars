@@ -1,5 +1,4 @@
-var sys = require('sys'),
-    Planet = require('./Planet').Planet,
+var Planet = require('./Planet').Planet,
     players = require('./players'),
     Universe = require('./Universe').Universe;
 
@@ -45,7 +44,7 @@ function parseInput(turnInput, turnFn) {
 exports.play = function play(turnFn) {
     var stdin = process.openStdin();
     var buffer = '';
-    sys.debug('Play()');
+    console.error('Play()');
     stdin.on('data', function(chunk) {
         buffer += chunk;
         var endOfTurn = buffer.indexOf('\ngo\n');
@@ -57,7 +56,7 @@ exports.play = function play(turnFn) {
     });
 
     stdin.on('end', function() {
-        sys.debug('end of stdin, exiting');
+        console.error('end of stdin, exiting');
         process.exit();
     });
 };
